@@ -111,8 +111,8 @@ object LyricsRepository {
         // Every source but [SimpMusicLyrics] is asked for a name, and
         // YouTube's is not the name anyone catalogued. Cleaned once, here,
         // rather than by whichever source thought to do it for itself.
-        val searchTitle = title.forLyricsSearch()
         val searchArtist = artist.artistForLyricsSearch()
+        val searchTitle = title.forLyricsSearch().withoutArtistPrefix(searchArtist)
 
         // Settled before anyone is asked for words, so every source that can
         // name the recording does. What the caller knows beats what we worked

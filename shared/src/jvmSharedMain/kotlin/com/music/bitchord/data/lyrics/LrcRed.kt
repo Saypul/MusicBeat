@@ -153,7 +153,7 @@ object LrcRed {
 
     /** Bracket words that make it a different recording, not a different label. */
     private val VERSION_WORDS = setOf(
-        "live", "remix", "remixed", "mix", "acoustic", "unplugged", "instrumental",
+        "live", "remix", "remixed", "mix", "mixed", "acoustic", "unplugged", "instrumental",
         "karaoke", "cappella", "acapella", "demo", "edit", "version", "cover",
         "sped", "slowed", "reverb", "nightcore", "lofi", "orchestral", "extended",
     )

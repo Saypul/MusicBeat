@@ -33,6 +33,23 @@ fun String.forLyricsSearch(): String {
 }
 
 /**
+ * "NOAH - Separuh Aku" by NOAH, as "Separuh Aku".
+ *
+ * A music video's upload names its artist in the title as well, and a title
+ * matcher that only compares the part before " - " then reads the artist as
+ * the song. Taken off only when it *is* the artist, so a title that really has
+ * a dash in it is left alone.
+ */
+fun String.withoutArtistPrefix(artist: String): String {
+    val (head, rest) = split(" - ", " – ", " — ", limit = 2).takeIf { it.size == 2 } ?: return this
+    return if (artist.isNotBlank() && head.trim().equals(artist.trim(), ignoreCase = true) && rest.isNotBlank()) {
+        rest.trim()
+    } else {
+        this
+    }
+}
+
+/**
  * Trims " - Topic" off an auto-generated channel name.
  *
  * YouTube's own artist channels for licensed music are named this way, and it

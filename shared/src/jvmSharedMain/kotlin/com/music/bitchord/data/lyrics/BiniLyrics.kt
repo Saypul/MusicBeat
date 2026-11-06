@@ -76,7 +76,33 @@ object BiniLyrics {
         val body = lyricsGet(url.toString()) ?: return@withContext null
         val response = runCatching { lyricsJson.decodeFromString<Response>(body) }.getOrNull()
             ?: return@withContext null
-        response.results?.firstOrNull()
+        val results = response.results.orEmpty()
+        if (!isrc.isNullOrBlank()) results.firstOrNull() else best(results, title, artist, durationMs)
+    }
+
+    /**
+     * The hit that is this recording, or null if none of them is sure to be.
+     *
+     * A name search here ranks covers, remixes and live takes right alongside
+     * the song — "Separuh Aku" by NOAH comes back next to a cover of it — and
+     * its first answer used to be taken as-is. Whatever it named then became
+     * the ISRC every other source was handed, so one wrong pick put another
+     * recording's words and timing on the track. The hits are held to exactly
+     * the test lrc.red's own search hits are ([LrcRed.best]): same title, same
+     * version words, a shared artist, and a length within a few seconds.
+     */
+    fun best(results: List<Hit>, title: String, artist: String, durationMs: Long): Hit? {
+        val asLrcRed = results.map { hit ->
+            LrcRed.Hit(
+                isrc = hit.isrc,
+                title = hit.trackName,
+                artist = hit.artistName,
+                album = hit.albumName,
+                duration = hit.duration?.toDouble(),
+            )
+        }
+        val chosen = LrcRed.best(asLrcRed, title, artist, durationMs) ?: return null
+        return results[asLrcRed.indexOf(chosen)]
     }
 
     /**
