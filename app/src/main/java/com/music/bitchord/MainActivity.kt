@@ -4586,6 +4586,17 @@ private fun BitChordApp(
                 } else {
                     null
                 },
+                // Like any page opened from the player, it takes the player
+                // down first, or the page would land behind it.
+                onEqualizer = if (fromPlayer) {
+                    {
+                        songActions = null
+                        dismissPlayer()
+                        navigator.push(AppRoute.Equalizer)
+                    }
+                } else {
+                    null
+                },
             )
         }
         // ---- Now Playing ----

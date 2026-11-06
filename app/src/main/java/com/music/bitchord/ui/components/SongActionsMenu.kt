@@ -171,6 +171,8 @@ fun SongActionsMenu(
     onCopyLog: (() -> Unit)? = null,
     /** Opens the timing control offered only by the main player's menu. */
     onLyricsOffset: (() -> Unit)? = null,
+    /** Opens the equaliser page; the player's menu only, where the sound is the thing playing. */
+    onEqualizer: (() -> Unit)? = null,
     /**
      * True while a lookup for this track's album/artist ids is still in
      * flight, so it isn't yet known whether "Open album" and "Open artist"
@@ -372,7 +374,7 @@ fun SongActionsMenu(
 
         // The player's own: about the track playing right now rather than
         // about the song as a thing in a library.
-        if (showSleepTimer || onLyricsOffset != null || onCopyLog != null) {
+        if (showSleepTimer || onLyricsOffset != null || onEqualizer != null || onCopyLog != null) {
             if (startsGroup()) IosMenuSeparator()
             if (showSleepTimer) {
                 ActionRow(
@@ -381,6 +383,14 @@ fun SongActionsMenu(
                     value = sleepTimerStatus(),
                     accent = palette.accent,
                 ) { pickingSleepTimer = true }
+            }
+            onEqualizer?.let {
+                ActionRow(
+                    icon = SfIcons.GraphicEq,
+                    label = stringResource(R.string.equalizer),
+                    accent = palette.accent,
+                    onClick = it,
+                )
             }
             // Local files and completed downloads use the same player lyric
             // clock (including embedded synced lyrics), so they need this

@@ -57,13 +57,30 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.music.bitchord.R
 import com.music.bitchord.data.settings.AppSettings
+import com.music.bitchord.data.settings.EqOutput
 import com.music.bitchord.data.settings.EqualizerMode
+import com.music.bitchord.data.settings.USER_EQ_PRESET_NAME_MAX
+import com.music.bitchord.data.settings.UserEqPreset
 import com.music.bitchord.playback.AudioOutputStatus
+import com.music.bitchord.playback.AudioRouting
 import com.music.bitchord.playback.EqLayout
 import com.music.bitchord.playback.EqualizerPreset
+import com.music.bitchord.sharedui.resources.Res
+import com.music.bitchord.sharedui.resources.hdmi_output
+import com.music.bitchord.sharedui.resources.this_phone
+import com.music.bitchord.sharedui.resources.usb_audio
+import com.music.bitchord.sharedui.resources.wired_headphones
 import com.music.bitchord.ui.haptics.Haptic
 import com.music.bitchord.ui.haptics.rememberHaptics
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import java.util.Locale
+import org.jetbrains.compose.resources.stringResource as sharedStringResource
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -101,7 +118,13 @@ fun EqualizerScreen(
     val balance by AppSettings.equalizerBalance.collectAsStateWithLifecycle()
     val bands by AppSettings.equalizerBands.collectAsStateWithLifecycle()
     val preset by AppSettings.equalizerPreset.collectAsStateWithLifecycle()
+    val userPresets by AppSettings.equalizerUserPresets.collectAsStateWithLifecycle()
+    val perDevice by AppSettings.equalizerPerDevice.collectAsStateWithLifecycle()
+    val output by AppSettings.equalizerOutput.collectAsStateWithLifecycle()
     val outputStatus by AudioOutputStatus.current.collectAsStateWithLifecycle()
+    // A saved curve is named by what it was saved as; a built-in one by its preset.
+    val userPreset = userPresets.firstOrNull { it.matches(bands) }
+    var savingPreset by remember { mutableStateOf(false) }
 
     val haptics = rememberHaptics()
 
@@ -131,6 +154,31 @@ fun EqualizerScreen(
                 onClick = {
                     haptics.play(if (!enabled) Haptic.ToggleOn else Haptic.ToggleOff)
                     AppSettings.setEqualizerEnabled(!enabled)
+                },
+            )
+        }
+
+        // Outside the dimmed block: a profile remembers whether the equaliser
+        // is on at all, so this has to stay reachable while it is off.
+        SettingsGroup(footer = stringResource(R.string.equalizer_per_device_footer)) {
+            SettingsRow(
+                icon = SfIcons.Sliders,
+                title = stringResource(R.string.equalizer_per_device),
+                subtitle = output?.takeIf { perDevice }?.let {
+                    stringResource(R.string.equalizer_per_device_now, it.label())
+                },
+                trailing = {
+                    IosSwitch(
+                        checked = perDevice,
+                        onCheckedChange = {
+                            haptics.play(if (it) Haptic.ToggleOn else Haptic.ToggleOff)
+                            AppSettings.setEqualizerPerDevice(it)
+                        },
+                    )
+                },
+                onClick = {
+                    haptics.play(if (!perDevice) Haptic.ToggleOn else Haptic.ToggleOff)
+                    AppSettings.setEqualizerPerDevice(!perDevice)
                 },
             )
         }
@@ -194,7 +242,7 @@ fun EqualizerScreen(
                         SettingsRow(
                             icon = SfIcons.GraphicEq,
                             title = stringResource(R.string.equalizer_preset),
-                            value = preset.localizedLabel(),
+                            value = userPreset?.name ?: preset.localizedLabel(),
                             onClick = onOpenPresets,
                             enabled = enabled,
                         )
@@ -206,6 +254,13 @@ fun EqualizerScreen(
                         BandSliders(
                             bands = bands,
                             onChange = { AppSettings.setEqualizerBands(it) },
+                            enabled = enabled,
+                        )
+                        RowDivider()
+                        SettingsRow(
+                            icon = SfIcons.Add,
+                            title = stringResource(R.string.equalizer_save_preset),
+                            onClick = { savingPreset = true },
                             enabled = enabled,
                         )
                         RowDivider()
@@ -269,6 +324,72 @@ fun EqualizerScreen(
 
         Spacer(Modifier.height(32.dp))
     }
+
+    if (savingPreset) {
+        SavePresetDialog(
+            // A saved curve being tuned and saved again keeps its own name.
+            initialName = userPreset?.name.orEmpty(),
+            onSave = { name ->
+                haptics.play(Haptic.Select)
+                AppSettings.saveEqualizerUserPreset(name)
+                savingPreset = false
+            },
+            onDismiss = { savingPreset = false },
+        )
+    }
+}
+
+/** Names the Manual tab's current curve and keeps it among the presets. */
+@Composable
+private fun SavePresetDialog(
+    initialName: String,
+    onSave: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(initialName) }
+    val canSave = name.isNotBlank()
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.equalizer_save_preset_title)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.equalizer_save_preset_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it.take(USER_EQ_PRESET_NAME_MAX) },
+                    label = { Text(stringResource(R.string.equalizer_preset_name)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Done,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSave(name) }, enabled = canSave) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        },
+    )
+}
+
+/** What to call an output: its own name where it has one, otherwise what kind of thing it is. */
+@Composable
+private fun EqOutput.label(): String = when {
+    name.isNotBlank() -> name
+    kind == AudioRouting.Kind.WIRED -> sharedStringResource(Res.string.wired_headphones)
+    kind == AudioRouting.Kind.USB -> sharedStringResource(Res.string.usb_audio)
+    kind == AudioRouting.Kind.HDMI -> sharedStringResource(Res.string.hdmi_output)
+    else -> sharedStringResource(Res.string.this_phone)
 }
 
 // ---- Tone pad --------------------------------------------------------------
@@ -808,6 +929,9 @@ fun EqualizerPresetPage(
     modifier: Modifier = Modifier,
 ) {
     val selected by AppSettings.equalizerPreset.collectAsStateWithLifecycle()
+    val bands by AppSettings.equalizerBands.collectAsStateWithLifecycle()
+    val userPresets by AppSettings.equalizerUserPresets.collectAsStateWithLifecycle()
+    val selectedUser = userPresets.firstOrNull { it.matches(bands) }
     Column(
         modifier
             .fillMaxWidth()
@@ -817,8 +941,12 @@ fun EqualizerPresetPage(
         SettingsPageTitle(stringResource(R.string.equalizer_preset))
         ChoiceGroup(
             // Custom is a state the bands can be in, not a curve anyone can
-            // choose, so it is only ever listed when it is the one in force.
-            options = EqualizerPreset.entries.filter { it != EqualizerPreset.CUSTOM || selected == EqualizerPreset.CUSTOM },
+            // choose, so it is only ever listed when it is the one in force —
+            // and not when the curve is one of the listener's own, which is
+            // named in the group below instead.
+            options = EqualizerPreset.entries.filter {
+                it != EqualizerPreset.CUSTOM || (selected == EqualizerPreset.CUSTOM && selectedUser == null)
+            },
             selected = selected,
             label = { it.localizedLabel() },
             footer = null,
@@ -827,7 +955,73 @@ fun EqualizerPresetPage(
             AppSettings.setEqualizerPreset(preset)
             onChosen()
         }
+        if (userPresets.isNotEmpty()) {
+            SettingsGroup(
+                header = stringResource(R.string.equalizer_my_presets),
+                footer = stringResource(R.string.equalizer_my_presets_footer),
+            ) {
+                userPresets.forEachIndexed { index, preset ->
+                    if (index > 0) RowDivider()
+                    UserPresetRow(
+                        preset = preset,
+                        selected = preset == selectedUser,
+                        onClick = {
+                            AppSettings.applyEqualizerUserPreset(preset)
+                            onChosen()
+                        },
+                        onDelete = { AppSettings.deleteEqualizerUserPreset(preset) },
+                    )
+                }
+            }
+        }
         Spacer(Modifier.height(32.dp))
+    }
+}
+
+/** One saved curve: tap to use it, the bin to forget it. */
+@Composable
+private fun UserPresetRow(
+    preset: UserEqPreset,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    val haptics = rememberHaptics()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                haptics.play(Haptic.Select)
+                onClick()
+            }
+            .padding(start = ROW_INSET, end = 6.dp, top = 4.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = preset.name,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.weight(1f),
+        )
+        if (selected) {
+            Icon(
+                imageVector = SfIcons.Check,
+                contentDescription = stringResource(R.string.selected),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp),
+            )
+        }
+        IconButton(onClick = {
+            haptics.play(Haptic.Select)
+            onDelete()
+        }) {
+            Icon(
+                imageVector = SfIcons.Trash,
+                contentDescription = stringResource(R.string.equalizer_delete_preset, preset.name),
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 }
 

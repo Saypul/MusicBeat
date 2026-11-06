@@ -141,6 +141,7 @@ import com.music.bitchord.data.settings.AudioQuality
 import com.music.bitchord.data.settings.BitPerfectMode
 import com.music.bitchord.data.settings.permits
 import com.music.bitchord.data.settings.EqualizerMode
+import com.music.bitchord.data.settings.EqOutput
 import com.music.bitchord.data.settings.OutputPcmMode
 import com.music.bitchord.data.sources.SourceKind
 import com.music.bitchord.data.sources.SourceResolver
@@ -6744,6 +6745,9 @@ class PlaybackService : MediaLibraryService() {
 
         val activeDevice = resolveActiveOutputDevice()
         val routeKind = resolveActiveRouteKind(activeDevice)
+        // Every route change comes through here, so this is where a per-device
+        // equaliser follows the music from one output to the next.
+        AppSettings.onEqualizerOutputChanged(EqOutput.of(activeDevice))
 
         val format = currentAudioInputFormat
         val measured by lazy(LazyThreadSafetyMode.NONE) { format?.measure() }

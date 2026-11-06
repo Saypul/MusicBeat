@@ -407,6 +407,24 @@ object AppSettings {
      */
     val equalizerPreset = MutableStateFlow(EqualizerPreset.FLAT)
 
+    /** Curves the listener saved by name, in the order they were saved. */
+    val equalizerUserPresets = MutableStateFlow<List<UserEqPreset>>(emptyList())
+
+    /**
+     * Whether each output keeps an equaliser of its own. On, everything the
+     * equaliser screen sets is remembered against [equalizerOutput], and moving
+     * the music to another output brings back what was set for that one.
+     */
+    val equalizerPerDevice = MutableStateFlow(false)
+
+    /** Where the music is playing, as [PlaybackService] last resolved it; null before it has. */
+    val equalizerOutput = MutableStateFlow<EqOutput?>(null)
+
+    private var equalizerProfiles: Map<String, EqSnapshot> = emptyMap()
+
+    /** Set while a profile is being put back, so its own setters don't each save it again. */
+    private var applyingEqualizerProfile = false
+
     val playbackSpeed = MutableStateFlow(1.0f)
     val themeMode = MutableStateFlow(ThemeMode.DARK)
     val appFont = MutableStateFlow(AppFont.DEFAULT)
@@ -955,6 +973,9 @@ object AppSettings {
         equalizerBalance.value = prefs.getFloat(KEY_EQ_BALANCE, 0f).coerceIn(-1f, 1f)
         equalizerBands.value = readEqualizerBands()
         equalizerPreset.value = EqualizerPreset.matching(equalizerBands.value)
+        equalizerUserPresets.value = EqualizerCodec.presets(prefs.getString(KEY_EQ_USER_PRESETS, null))
+        equalizerPerDevice.value = prefs.getBoolean(KEY_EQ_PER_DEVICE, false)
+        equalizerProfiles = EqualizerCodec.profiles(prefs.getString(KEY_EQ_PROFILES, null))
         playbackSpeed.value = prefs.getFloat(KEY_SPEED, 1.0f)
         themeMode.value = runCatching {
             ThemeMode.valueOf(prefs.getString(KEY_THEME, null) ?: "DARK")
@@ -1257,11 +1278,13 @@ object AppSettings {
     fun setEqualizerEnabled(value: Boolean) {
         equalizerEnabled.value = value
         prefs.edit().putBoolean(KEY_EQ_ENABLED, value).apply()
+        rememberEqualizerForOutput()
     }
 
     fun setEqualizerMode(value: EqualizerMode) {
         equalizerMode.value = value
         prefs.edit().putString(KEY_EQ_MODE, value.name).apply()
+        rememberEqualizerForOutput()
     }
 
     fun setEqualizerTone(x: Int, y: Int) {
@@ -1271,17 +1294,20 @@ object AppSettings {
         equalizerToneX.value = clampedX
         equalizerToneY.value = clampedY
         prefs.edit().putInt(KEY_EQ_TONE_X, clampedX).putInt(KEY_EQ_TONE_Y, clampedY).apply()
+        rememberEqualizerForOutput()
     }
 
     fun setEqualizerFocused(value: Boolean) {
         equalizerFocused.value = value
         prefs.edit().putBoolean(KEY_EQ_FOCUSED, value).apply()
+        rememberEqualizerForOutput()
     }
 
     fun setEqualizerBalance(value: Float) {
         val clamped = value.coerceIn(-1f, 1f)
         equalizerBalance.value = clamped
         prefs.edit().putFloat(KEY_EQ_BALANCE, clamped).apply()
+        rememberEqualizerForOutput()
     }
 
     /**
@@ -1298,12 +1324,97 @@ object AppSettings {
         equalizerBands.value = clamped
         equalizerPreset.value = EqualizerPreset.matching(clamped)
         prefs.edit().putString(KEY_EQ_BANDS, clamped.joinToString(",")).apply()
+        rememberEqualizerForOutput()
     }
 
     /** Applies a preset's curve. [EqualizerPreset.CUSTOM] carries none, so it does nothing. */
     fun setEqualizerPreset(preset: EqualizerPreset) {
         if (preset == EqualizerPreset.CUSTOM) return
         setEqualizerBands(preset.bands)
+    }
+
+    /**
+     * Saves the Manual tab's curve as it stands under [name]. A name already in
+     * the list is that preset saved again, in its old place, rather than a
+     * second row with the same label.
+     */
+    fun saveEqualizerUserPreset(name: String) {
+        val trimmed = name.trim().take(USER_EQ_PRESET_NAME_MAX)
+        if (trimmed.isEmpty()) return
+        val preset = UserEqPreset(trimmed, equalizerBands.value)
+        val current = equalizerUserPresets.value
+        val index = current.indexOfFirst { it.name.equals(trimmed, ignoreCase = true) }
+        storeEqualizerUserPresets(
+            if (index >= 0) current.toMutableList().also { it[index] = preset } else current + preset,
+        )
+    }
+
+    fun deleteEqualizerUserPreset(preset: UserEqPreset) {
+        storeEqualizerUserPresets(equalizerUserPresets.value.filterNot { it.name == preset.name })
+    }
+
+    fun applyEqualizerUserPreset(preset: UserEqPreset) = setEqualizerBands(preset.bands)
+
+    private fun storeEqualizerUserPresets(value: List<UserEqPreset>) {
+        equalizerUserPresets.value = value
+        prefs.edit().putString(KEY_EQ_USER_PRESETS, EqualizerCodec.presets(value)).apply()
+    }
+
+    /**
+     * Turning it on files what is set now under the output playing now, so the
+     * first switch to another one has something to come back to.
+     */
+    fun setEqualizerPerDevice(value: Boolean) {
+        equalizerPerDevice.value = value
+        prefs.edit().putBoolean(KEY_EQ_PER_DEVICE, value).apply()
+        rememberEqualizerForOutput()
+    }
+
+    /**
+     * Called by [PlaybackService] whenever the route is resolved again. A move
+     * to an output with a profile puts that profile back; a move to one without
+     * leaves the sound as it is and starts that output's profile from it.
+     */
+    fun onEqualizerOutputChanged(output: EqOutput) {
+        val previous = equalizerOutput.value
+        equalizerOutput.value = output
+        if (!equalizerPerDevice.value || previous?.key == output.key) return
+        val profile = equalizerProfiles[output.key]
+        if (profile == null) {
+            rememberEqualizerForOutput()
+            return
+        }
+        applyingEqualizerProfile = true
+        try {
+            setEqualizerEnabled(profile.enabled)
+            setEqualizerMode(
+                runCatching { EqualizerMode.valueOf(profile.mode) }.getOrDefault(EqualizerMode.DYNAMIC),
+            )
+            setEqualizerTone(profile.toneX, profile.toneY)
+            setEqualizerFocused(profile.focused)
+            setEqualizerBalance(profile.balance)
+            setEqualizerBands(profile.bands)
+        } finally {
+            applyingEqualizerProfile = false
+        }
+        rememberEqualizerForOutput()
+    }
+
+    private fun rememberEqualizerForOutput() {
+        if (applyingEqualizerProfile || !equalizerPerDevice.value) return
+        val output = equalizerOutput.value ?: return
+        val snapshot = EqSnapshot(
+            enabled = equalizerEnabled.value,
+            mode = equalizerMode.value.name,
+            toneX = equalizerToneX.value,
+            toneY = equalizerToneY.value,
+            focused = equalizerFocused.value,
+            balance = equalizerBalance.value,
+            bands = equalizerBands.value,
+        )
+        if (equalizerProfiles[output.key] == snapshot) return
+        equalizerProfiles = equalizerProfiles + (output.key to snapshot)
+        prefs.edit().putString(KEY_EQ_PROFILES, EqualizerCodec.profiles(equalizerProfiles)).apply()
     }
 
     private fun readEqualizerBands(): List<Float> {
@@ -2157,6 +2268,9 @@ object AppSettings {
     private const val KEY_EQ_FOCUSED = "equalizer_focused"
     private const val KEY_EQ_BALANCE = "equalizer_balance"
     private const val KEY_EQ_BANDS = "equalizer_bands"
+    private const val KEY_EQ_USER_PRESETS = "equalizer_user_presets"
+    private const val KEY_EQ_PER_DEVICE = "equalizer_per_device"
+    private const val KEY_EQ_PROFILES = "equalizer_profiles"
     private const val KEY_SPEED = "playback_speed"
     private const val KEY_THEME = "theme_mode"
     private const val KEY_APP_FONT = "app_font"

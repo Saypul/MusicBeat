@@ -294,6 +294,17 @@
     <string name="equalizer_balance">Balance</string>
     <string name="equalizer_balance_left">L</string>
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">Save as preset</string>
+    <string name="equalizer_save_preset_title">Save preset</string>
+    <string name="equalizer_save_preset_message">Saves the seven bands as they are now. A name already in your presets replaces that one.</string>
+    <string name="equalizer_preset_name">Preset name</string>
+    <string name="equalizer_my_presets">My presets</string>
+    <string name="equalizer_my_presets_footer">Tap one to use it.</string>
+    <string name="equalizer_built_in_presets">Built-in</string>
+    <string name="equalizer_delete_preset">Delete %1$s</string>
+    <string name="equalizer_per_device">Per-device profiles</string>
+    <string name="equalizer_per_device_now">Now: %1$s</string>
+    <string name="equalizer_per_device_footer">Each output keeps its own equalizer: the phone speaker, wired headphones and every Bluetooth or USB device. It switches by itself when the music moves to another output.</string>
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">Not running right now</string>
     <string name="equalizer_bitstream_subtitle">This track is sent to the output undecoded</string>
