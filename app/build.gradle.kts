@@ -54,15 +54,26 @@ val listenTogetherServer: String = (
     ).trim().trimEnd('/')
 
 // See the root build.gradle.kts: one version for the phone and its watch app.
+/*
+ * "owner/repo" whose GitHub Releases the in-app updater checks. local.properties
+ * or the environment can point a fork at its own releases; set it blank there
+ * to turn the check off.
+ */
+val updateRepo: String = (
+    localProps.getProperty("MUSICBEAT_UPDATE_REPO")
+        ?: System.getenv("MUSICBEAT_UPDATE_REPO")
+        ?: "Saypul/MusicBeat"
+    ).trim().trim('/')
+
 val betaSuffix = rootProject.extra["bitchordBetaSuffix"] as String
 
 android {
     namespace = "com.music.bitchord"
     // InnerTubeX's AAR requires compiling against 37; targetSdk (runtime behaviour) stays 36.
-    compileSdk = 37
+    compileSdkVersion("android-37.0")
 
     defaultConfig {
-        applicationId = "com.music.bitchord"
+        applicationId = "com.musicbeat.app"
         // 26 keeps reach wide; real-time blur (RenderEffect) kicks in on API 31+,
         // Haze falls back to a translucent scrim below that.
         minSdk = 26
@@ -83,7 +94,8 @@ android {
         // Which release assets are this app's: the phone and TV APKs ship in
         // the same GitHub release, told apart by file name. See
         // AppUpdateChecker.apkAssetUrl.
-        buildConfigField("String", "UPDATE_APK_PREFIX", "\"BitChord-\"")
+        buildConfigField("String", "UPDATE_APK_PREFIX", "\"MusicBeat-\"")
+        buildConfigField("String", "UPDATE_REPO", "\"$updateRepo\"")
     }
 
     splits {
@@ -115,8 +127,8 @@ android {
     productFlavors {
         create("dev") {
             dimension = "env"
-            applicationId = "com.dev.bitchord"
-            resValue("string", "app_name", "BitChord Dev")
+            applicationId = "com.dev.musicbeat"
+            resValue("string", "app_name", "MusicBeat Dev")
         }
         create("prod") {
             dimension = "env"

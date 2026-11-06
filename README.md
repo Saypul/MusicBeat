@@ -1,5 +1,20 @@
 <div align="center">
 
+<img src="docs/musicbeat-logo.svg" alt="MusicBeat logo" width="160" />
+
+# MusicBeat
+
+**MusicBeat is a rebranded fork of [BitChord](https://github.com/kushagrasinghx/BitChord) by Kushagra Singh**, released under the same [GPL-3.0](LICENSE) licence.
+Download the MusicBeat APKs from [this repository's Releases](https://github.com/Saypul/MusicBeat/releases). Package: `com.musicbeat.app`.
+
+The original BitChord README follows below.
+
+</div>
+
+---
+
+<div align="center">
+
 <br/>
 <br/>
 

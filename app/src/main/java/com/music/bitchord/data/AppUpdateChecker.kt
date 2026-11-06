@@ -42,8 +42,14 @@ object AppUpdateChecker {
 
     private const val CACHE_SUBDIR = "updates"
 
-    private const val LATEST_RELEASE_URL =
-        "https://api.github.com/repos/kushagrasinghx/BitChord/releases/latest"
+    /**
+     * "owner/repo" whose GitHub Releases carry this build's APKs, from the
+     * `MUSICBEAT_UPDATE_REPO` build property. Blank switches the check off, so a
+     * build never offers another project's release as its own update.
+     */
+    private val LATEST_RELEASE_URL: String? =
+        BuildConfig.UPDATE_REPO.takeIf { it.isNotBlank() }
+            ?.let { "https://api.github.com/repos/$it/releases/latest" }
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -67,7 +73,8 @@ object AppUpdateChecker {
 
     suspend fun check() = withContext(Dispatchers.IO) {
         runCatching {
-            val request = Request.Builder().url(LATEST_RELEASE_URL).build()
+            val releaseUrl = LATEST_RELEASE_URL ?: return@runCatching
+            val request = Request.Builder().url(releaseUrl).build()
             val body = Http.client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) null else response.body?.string()
             } ?: return@runCatching
