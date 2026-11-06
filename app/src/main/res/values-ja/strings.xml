@@ -130,7 +130,7 @@
     <string name="widget_previous">前へ</string>
     <string name="widget_artwork">アルバムアート</string>
     <string name="widget_nothing_played">まだ何も再生されていません</string>
-    <string name="widget_open_bitchord">MusicBeatを開く</string>
+    <string name="widget_open_musicbeat">MusicBeatを開く</string>
     <string name="widget_preview_title">曲名</string>
     <string name="widget_preview_artist">アーティスト</string>
     <string name="widget_pill_label">再生中 4×1</string>
@@ -322,7 +322,7 @@
     <string name="downloads_finished">ダウンロード · 完了</string>
     <string name="downloading_progress">ダウンロード中 · %1$d%%</string>
     <string name="starting">開始しています</string>
-    <string name="saved_to_bitchord_folder">Music/MusicBeatに保存済み</string>
+    <string name="saved_to_musicbeat_folder">Music/MusicBeatに保存済み</string>
     <string name="nothing_downloading">ダウンロード中の項目はありません</string>
     <string name="nothing_to_explore">現在探索できるものはありません</string>
     <string name="no_youtube_music_results">YouTube Musicからの結果はありません</string>
@@ -642,7 +642,7 @@
     </plurals>
     <string name="no_local_albums">ここにはまだアルバムやプレイリストに属するものがありません。完全なアルバムやプレイリストをダウンロードするとここに表示されます。</string>
     <string name="play_your_replay">あなたのReplayを再生</string>
-    <string name="counted_on_device_with_bitchord">MusicBeatでこのデバイス内で集計</string>
+    <string name="counted_on_device_with_musicbeat">MusicBeatでこのデバイス内で集計</string>
     <string name="this_month">今月</string>
     <string name="this_year">今年</string>
     <string name="all_time">すべての期間</string>
@@ -1083,6 +1083,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">プリセットとして保存</string>
+    <string name="equalizer_save_preset_title">プリセットを保存</string>
+    <string name="equalizer_save_preset_message">現在の7バンドの設定を保存します。同じ名前のプリセットがある場合は置き換えます。</string>
+    <string name="equalizer_preset_name">プリセット名</string>
+    <string name="equalizer_my_presets">マイプリセット</string>
+    <string name="equalizer_my_presets_footer">タップして使用します。</string>
+    <string name="equalizer_delete_preset">%1$sを削除</string>
+    <string name="equalizer_per_device">デバイスごとのプロファイル</string>
+    <string name="equalizer_per_device_now">現在: %1$s</string>
+    <string name="equalizer_per_device_footer">出力ごとに個別のイコライザーを保持します：スマートフォンのスピーカー、有線ヘッドホン、各Bluetooth・USBデバイス。音楽の出力先が変わると自動で切り替わります。</string>
 
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">現在は動作していません</string>

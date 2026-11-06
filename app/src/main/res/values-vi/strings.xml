@@ -144,7 +144,7 @@
     <string name="widget_previous">Trước</string>
     <string name="widget_artwork">Ảnh bìa album</string>
     <string name="widget_nothing_played">Chưa phát bài nào</string>
-    <string name="widget_open_bitchord">Mở MusicBeat</string>
+    <string name="widget_open_musicbeat">Mở MusicBeat</string>
     <string name="widget_preview_title">Tên bài hát</string>
     <string name="widget_preview_artist">Nghệ sĩ</string>
     <string name="widget_pill_label">Đang phát 4×1</string>
@@ -363,7 +363,7 @@
     <string name="starting">Đang bắt đầu</string>
     <string name="start_radio">Phát radio</string>
     <string name="radio_started">Đã bắt đầu radio %1$s</string>
-    <string name="saved_to_bitchord_folder">Đã lưu vào Music/MusicBeat</string>
+    <string name="saved_to_musicbeat_folder">Đã lưu vào Music/MusicBeat</string>
     <string name="nothing_downloading">Không có nội dung đang tải</string>
     <string name="nothing_to_explore">Hiện không có gì để khám phá</string>
     <string name="no_youtube_music_results">Không có kết quả nào từ YouTube Music</string>
@@ -685,7 +685,7 @@
     </plurals>
     <string name="no_local_albums">Chưa có mục nào ở đây thuộc về một album hoặc danh sách phát. Tải xuống toàn bộ album hoặc danh sách phát và nội dung sẽ xuất hiện ở đây.</string>
     <string name="play_your_replay">Phát Replay của bạn</string>
-    <string name="counted_on_device_with_bitchord">Được thống kê trên thiết bị này bằng MusicBeat</string>
+    <string name="counted_on_device_with_musicbeat">Được thống kê trên thiết bị này bằng MusicBeat</string>
     <string name="this_month">Tháng này</string>
     <string name="this_year">Năm nay</string>
     <string name="all_time">Tất cả thời gian</string>
@@ -856,6 +856,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">Lưu thành cài đặt sẵn</string>
+    <string name="equalizer_save_preset_title">Lưu cài đặt sẵn</string>
+    <string name="equalizer_save_preset_message">Lưu bảy dải như hiện tại. Tên đã có trong cài đặt sẵn của bạn sẽ bị thay thế.</string>
+    <string name="equalizer_preset_name">Tên cài đặt sẵn</string>
+    <string name="equalizer_my_presets">Cài đặt sẵn của tôi</string>
+    <string name="equalizer_my_presets_footer">Nhấn vào một mục để dùng.</string>
+    <string name="equalizer_delete_preset">Xóa %1$s</string>
+    <string name="equalizer_per_device">Hồ sơ theo thiết bị</string>
+    <string name="equalizer_per_device_now">Hiện tại: %1$s</string>
+    <string name="equalizer_per_device_footer">Mỗi đầu ra giữ bộ chỉnh âm riêng: loa điện thoại, tai nghe có dây và từng thiết bị Bluetooth hoặc USB. Tự chuyển khi nhạc chuyển sang đầu ra khác.</string>
 
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">Hiện không hoạt động</string>

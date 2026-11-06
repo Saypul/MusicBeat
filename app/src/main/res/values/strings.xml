@@ -188,7 +188,7 @@
     <string name="widget_previous">Previous</string>
     <string name="widget_artwork">Album art</string>
     <string name="widget_nothing_played">Nothing played yet</string>
-    <string name="widget_open_bitchord">Open MusicBeat</string>
+    <string name="widget_open_musicbeat">Open MusicBeat</string>
     <string name="widget_preview_title">Song title</string>
     <string name="widget_preview_artist">Artist</string>
     <string name="widget_pill_label">Now playing 4×1</string>
@@ -300,7 +300,6 @@
     <string name="equalizer_preset_name">Preset name</string>
     <string name="equalizer_my_presets">My presets</string>
     <string name="equalizer_my_presets_footer">Tap one to use it.</string>
-    <string name="equalizer_built_in_presets">Built-in</string>
     <string name="equalizer_delete_preset">Delete %1$s</string>
     <string name="equalizer_per_device">Per-device profiles</string>
     <string name="equalizer_per_device_now">Now: %1$s</string>
@@ -543,7 +542,7 @@
     <string name="shared_link">Shared link</string>
     <string name="opened_file">Opened file</string>
     <string name="radio_started">%1$s radio started</string>
-    <string name="saved_to_bitchord_folder">Saved to Music/MusicBeat</string>
+    <string name="saved_to_musicbeat_folder">Saved to Music/MusicBeat</string>
     <string name="nothing_downloading">Nothing downloading</string>
     <string name="nothing_to_explore">Nothing to explore right now</string>
     <string name="no_youtube_music_results">No results from YouTube Music</string>
@@ -910,7 +909,7 @@
     </plurals>
     <string name="no_local_albums">Nothing here belongs to an album or playlist yet. Download a complete album or playlist and it will appear here.</string>
     <string name="play_your_replay">Play your Replay</string>
-    <string name="counted_on_device_with_bitchord">Counted on this device with MusicBeat</string>
+    <string name="counted_on_device_with_musicbeat">Counted on this device with MusicBeat</string>
     <string name="this_month">This month</string>
     <string name="replay_this_week">This week</string>
     <string name="replay_period_weekly">Weekly</string>

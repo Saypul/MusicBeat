@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android TV launcher banner: the MusicBeat mark over its gradient. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+  <path android:pathData="M0,0h320v180h-320z">
+    <aapt:attr name="android:fillColor">
+      <gradient
+          android:type="linear"
+          android:startX="0" android:startY="0"
+          android:endX="320" android:endY="180">
+        <item android:offset="0" android:color="#FF7C3AED" />
+        <item android:offset="1" android:color="#FFDB2777" />
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M128.93,56a4.93,4.93 0,0 1,4.93,4.93v58.14a4.93,4.93 0,0 1,-9.86,0v-58.14a4.93,4.93 0,0 1,4.93,-4.93zM144.47,77.76a4.93,4.93 0,0 1,4.93,4.93v36.38a4.93,4.93 0,0 1,-9.86,0v-36.38a4.93,4.93 0,0 1,4.93,-4.93zM160,98.84a4.93,4.93 0,0 1,4.93,4.93v15.3a4.93,4.93 0,0 1,-9.86,0v-15.3a4.93,4.93 0,0 1,4.93,-4.93zM175.53,77.76a4.93,4.93 0,0 1,4.93,4.93v36.38a4.93,4.93 0,0 1,-9.86,0v-36.38a4.93,4.93 0,0 1,4.93,-4.93zM191.07,56a4.93,4.93 0,0 1,4.93,4.93v58.14a4.93,4.93 0,0 1,-9.86,0v-58.14a4.93,4.93 0,0 1,4.93,-4.93z" />
+</vector>

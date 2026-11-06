@@ -130,7 +130,7 @@
     <string name="widget_previous">上一首</string>
     <string name="widget_artwork">专辑封面</string>
     <string name="widget_nothing_played">尚未播放任何内容</string>
-    <string name="widget_open_bitchord">打开 MusicBeat</string>
+    <string name="widget_open_musicbeat">打开 MusicBeat</string>
     <string name="widget_preview_title">歌曲标题</string>
     <string name="widget_preview_artist">艺人</string>
     <string name="widget_pill_label">正在播放 4×1</string>
@@ -322,7 +322,7 @@
     <string name="downloads_finished">下载 · 已完成</string>
     <string name="downloading_progress">正在下载 · %1$d%%</string>
     <string name="starting">正在开始</string>
-    <string name="saved_to_bitchord_folder">已保存到 Music/MusicBeat</string>
+    <string name="saved_to_musicbeat_folder">已保存到 Music/MusicBeat</string>
     <string name="nothing_downloading">当前没有下载任务</string>
     <string name="nothing_to_explore">目前没有可探索的内容</string>
     <string name="no_youtube_music_results">YouTube Music 没有搜索结果</string>
@@ -642,7 +642,7 @@
     </plurals>
     <string name="no_local_albums">这里还没有任何属于专辑或播放列表的内容。下载完整的专辑或播放列表后，它们会显示在这里。</string>
     <string name="play_your_replay">播放你的 Replay</string>
-    <string name="counted_on_device_with_bitchord">由 MusicBeat 在此设备上统计</string>
+    <string name="counted_on_device_with_musicbeat">由 MusicBeat 在此设备上统计</string>
     <string name="this_month">本月</string>
     <string name="this_year">今年</string>
     <string name="all_time">全部时间</string>
@@ -1082,6 +1082,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">保存为预设</string>
+    <string name="equalizer_save_preset_title">保存预设</string>
+    <string name="equalizer_save_preset_message">按当前状态保存七个频段。若名称已存在于你的预设中，将替换该预设。</string>
+    <string name="equalizer_preset_name">预设名称</string>
+    <string name="equalizer_my_presets">我的预设</string>
+    <string name="equalizer_my_presets_footer">轻点即可使用。</string>
+    <string name="equalizer_delete_preset">删除 %1$s</string>
+    <string name="equalizer_per_device">按设备配置</string>
+    <string name="equalizer_per_device_now">当前：%1$s</string>
+    <string name="equalizer_per_device_footer">每个输出设备都有各自的均衡器：手机扬声器、有线耳机以及每个蓝牙或 USB 设备。音乐切换到其他输出设备时会自动切换。</string>
 
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">当前未运行</string>

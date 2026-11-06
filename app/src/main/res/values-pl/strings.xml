@@ -138,7 +138,7 @@
     <string name="widget_previous">Poprzedni</string>
     <string name="widget_artwork">Okładka albumu</string>
     <string name="widget_nothing_played">Nic nie zostało odtworzone</string>
-    <string name="widget_open_bitchord">Open MusicBeat</string>
+    <string name="widget_open_musicbeat">Open MusicBeat</string>
     <string name="widget_preview_title">Tytuł utworu</string>
     <string name="widget_preview_artist">Artysta</string>
     <string name="widget_pill_label">Now playing 4×1</string>
@@ -325,7 +325,7 @@
     <string name="downloads_finished">Pobieranie · zakończone</string>
     <string name="downloading_progress">Pobieranie · %1$d%%</string>
     <string name="starting">Rozpoczynanie</string>
-    <string name="saved_to_bitchord_folder">Zapisano w Music/MusicBeat</string>
+    <string name="saved_to_musicbeat_folder">Zapisano w Music/MusicBeat</string>
     <string name="nothing_downloading">Nic się nie pobiera</string>
     <string name="nothing_to_explore">Nie ma teraz nic do odkrycia</string>
     <string name="no_youtube_music_results">Brak wyników z YouTube Music</string>
@@ -609,7 +609,7 @@
     <string name="no_listening_history">brak historii odtwarzania</string>
     <string name="no_local_albums">Nic stąd jeszcze nie należy do albumu ani playlisty. Pobierz cały album lub playlistę, a pojawi się tutaj.</string>
     <string name="play_your_replay">Odtwórz swój Replay</string>
-    <string name="counted_on_device_with_bitchord">Obliczono na tym urządzeniu z MusicBeat</string>
+    <string name="counted_on_device_with_musicbeat">Obliczono na tym urządzeniu z MusicBeat</string>
     <string name="this_month">Ten miesiąc</string>
     <string name="this_year">Ten rok</string>
     <string name="all_time">Cały czas</string>
@@ -1143,6 +1143,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">Zapisz jako preset</string>
+    <string name="equalizer_save_preset_title">Zapisz preset</string>
+    <string name="equalizer_save_preset_message">Zapisuje siedem pasm w obecnym ustawieniu. Nazwa, która już istnieje w Twoich presetach, zostanie zastąpiona.</string>
+    <string name="equalizer_preset_name">Nazwa presetu</string>
+    <string name="equalizer_my_presets">Moje presety</string>
+    <string name="equalizer_my_presets_footer">Dotknij, aby użyć.</string>
+    <string name="equalizer_delete_preset">Usuń %1$s</string>
+    <string name="equalizer_per_device">Profile dla urządzeń</string>
+    <string name="equalizer_per_device_now">Teraz: %1$s</string>
+    <string name="equalizer_per_device_footer">Każde wyjście ma własny korektor: głośnik telefonu, słuchawki przewodowe i każde urządzenie Bluetooth lub USB. Przełącza się samo, gdy muzyka przechodzi na inne wyjście.</string>
 
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">Teraz nieaktywny</string>

@@ -1,18 +1,18 @@
 # Maintainers
 
-This document lists the maintainers responsible for BitChord.
+This document lists the maintainers responsible for MusicBeat.
 
 | Maintainer | GitHub | Responsibilities |
 |---|---|---|
-| Kushagra Singh | [@kushagrasinghx](https://github.com/kushagrasinghx) | Project creator, core architecture, release management, and PR reviews |
+| Saypul | [@Saypul](https://github.com/Saypul) | MusicBeat maintainer: direction, release management and PR reviews |
 
 ## Responsibilities
 
 Maintainers oversee project direction, repository maintenance, review and merging of contributions, and release management.
 
-## Contributors
+## BitChord contributors
 
-This list is automatically generated from GitHub repository contributor data.
+MusicBeat is a fork of [BitChord](https://github.com/kushagrasinghx/BitChord), created by Kushagra Singh ([@kushagrasinghx](https://github.com/kushagrasinghx)). The code it started from was written by these BitChord contributors:
 
 <!-- BEGIN CONTRIBUTORS -->
 - [@kushagrasinghx](https://github.com/kushagrasinghx)

@@ -145,7 +145,7 @@
     <string name="widget_previous">Назад</string>
     <string name="widget_artwork">Обложка альбома</string>
     <string name="widget_nothing_played">Пока ничего не воспроизводилось</string>
-    <string name="widget_open_bitchord">Открыть MusicBeat</string>
+    <string name="widget_open_musicbeat">Открыть MusicBeat</string>
     <string name="widget_preview_title">Название песни</string>
     <string name="widget_preview_artist">Исполнитель</string>
     <string name="widget_pill_label">Сейчас играет 4×1</string>
@@ -337,7 +337,7 @@
     <string name="downloads_finished">Загрузки · завершено</string>
     <string name="downloading_progress">Загрузка · %1$d%%</string>
     <string name="starting">Начало</string>
-    <string name="saved_to_bitchord_folder">Сохранено в Музыка/MusicBeat</string>
+    <string name="saved_to_musicbeat_folder">Сохранено в Музыка/MusicBeat</string>
     <string name="nothing_downloading">Ничего не загружается</string>
     <string name="nothing_to_explore">Сейчас нечего смотреть в обзоре</string>
     <string name="no_youtube_music_results">Нет результатов из YouTube Music</string>
@@ -688,7 +688,7 @@
     </plurals>
     <string name="no_local_albums">Здесь пока ничего нет из альбома или плейлиста. Загрузите полный альбом или плейлист, и он появится здесь.</string>
     <string name="play_your_replay">Воспроизвести ваш Replay</string>
-    <string name="counted_on_device_with_bitchord">Подсчитано на этом устройстве с помощью MusicBeat</string>
+    <string name="counted_on_device_with_musicbeat">Подсчитано на этом устройстве с помощью MusicBeat</string>
     <string name="this_month">Этот месяц</string>
     <string name="this_year">Этот год</string>
     <string name="all_time">За всё время</string>
@@ -1131,6 +1131,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">Сохранить как пресет</string>
+    <string name="equalizer_save_preset_title">Сохранить пресет</string>
+    <string name="equalizer_save_preset_message">Сохраняет семь полос в текущем виде. Если такое имя уже есть среди ваших пресетов, он будет заменён.</string>
+    <string name="equalizer_preset_name">Название пресета</string>
+    <string name="equalizer_my_presets">Мои пресеты</string>
+    <string name="equalizer_my_presets_footer">Нажмите, чтобы применить.</string>
+    <string name="equalizer_delete_preset">Удалить %1$s</string>
+    <string name="equalizer_per_device">Профили для устройств</string>
+    <string name="equalizer_per_device_now">Сейчас: %1$s</string>
+    <string name="equalizer_per_device_footer">У каждого выхода свой эквалайзер: динамик телефона, проводные наушники и каждое Bluetooth- или USB-устройство. Он переключается сам, когда музыка переходит на другой выход.</string>
 
     <string name="equalizer_balance_footer">Shifts the sound towards one ear by quietening the other.</string>
     <string name="equalizer_bitstream_title">Сейчас не работает</string>

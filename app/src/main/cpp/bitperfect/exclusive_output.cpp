@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 BitChord Project
+ * Copyright (C) 2026 MusicBeat Project
  *
  * Adapted from Mornye (https://github.com/mornyeapp/Mornye),
  * android/app/src/main/cpp/native_audio.cpp (ExclusiveOutput),
@@ -251,7 +251,7 @@ public:
 Handles<ExclusiveOutput> outputs;
 } // namespace
 
-#define JNI_EXCLUSIVE(name) Java_com_music_bitchord_playback_audio_bitperfect_ExclusiveNative_##name
+#define JNI_EXCLUSIVE(name) Java_com_musicbeat_app_playback_audio_bitperfect_ExclusiveNative_##name
 
 extern "C" {
 JNIEXPORT jlong JNICALL JNI_EXCLUSIVE(open)(JNIEnv *env, jobject, jint rate, jint channels, jint bits,

@@ -1,4 +1,4 @@
-// BitChord: the Automix loop mix's renderer. Two decks, each a decoded region
+// MusicBeat: the Automix loop mix's renderer. Two decks, each a decoded region
 // of one song played through Signalsmith Stretch, looped on whole bars and
 // following a tempo ramp beat by beat, mixed into one stereo stream.
 //
@@ -9,7 +9,7 @@
 // outgoing player's audio sink, so the start of the mix is sample-exact
 // against the song it takes over from, and the two decks can't drift apart.
 //
-// Copyright (C) 2026 Kushagra Singh. GPL-3.0-or-later, with the rest of BitChord.
+// Copyright (C) 2026 Kushagra Singh. GPL-3.0-or-later, with the rest of MusicBeat.
 #pragma once
 
 #include <atomic>
@@ -19,7 +19,7 @@
 
 #include "signalsmith-stretch/signalsmith-stretch.h"
 
-namespace bitchord::loopmix {
+namespace musicbeat::loopmix {
 
 /** A piecewise-linear automation curve over mix time (seconds since t0). */
 struct Envelope {
@@ -134,4 +134,4 @@ class Renderer {
   std::vector<float> mixLeft_, mixRight_;
 };
 
-}  // namespace bitchord::loopmix
+}  // namespace musicbeat::loopmix

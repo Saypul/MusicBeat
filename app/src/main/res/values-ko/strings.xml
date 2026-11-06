@@ -180,7 +180,7 @@
     <string name="widget_previous">이전</string>
     <string name="widget_artwork">앨범 아트</string>
     <string name="widget_nothing_played">아직 재생 안 함</string>
-    <string name="widget_open_bitchord">MusicBeat 열기</string>
+    <string name="widget_open_musicbeat">MusicBeat 열기</string>
     <string name="widget_preview_title">곡 제목</string>
     <string name="widget_preview_artist">아티스트</string>
     <string name="widget_pill_label">지금 재생 4×1</string>
@@ -286,6 +286,16 @@
     <string name="equalizer_balance">균형</string>
     <string name="equalizer_balance_left">좌</string>
     <string name="equalizer_balance_right">우</string>
+    <string name="equalizer_save_preset">프리셋으로 저장</string>
+    <string name="equalizer_save_preset_title">프리셋 저장</string>
+    <string name="equalizer_save_preset_message">현재 일곱 밴드 설정을 그대로 저장합니다. 이미 있는 이름이면 그 프리셋을 대체합니다.</string>
+    <string name="equalizer_preset_name">프리셋 이름</string>
+    <string name="equalizer_my_presets">내 프리셋</string>
+    <string name="equalizer_my_presets_footer">탭하여 사용하세요.</string>
+    <string name="equalizer_delete_preset">%1$s 삭제</string>
+    <string name="equalizer_per_device">기기별 프로필</string>
+    <string name="equalizer_per_device_now">현재: %1$s</string>
+    <string name="equalizer_per_device_footer">출력마다 자체 이퀄라이저를 유지합니다: 휴대전화 스피커, 유선 헤드폰, 각 블루투스 또는 USB 기기. 음악이 다른 출력으로 옮겨 가면 자동으로 전환됩니다.</string>
     <string name="equalizer_balance_footer">한쪽의 소리를 줄여 다른 쪽 귀로 소리를 보냅니다.</string>
     <string name="equalizer_bitstream_title">지금은 동작하지 않음</string>
     <string name="equalizer_bitstream_subtitle">이 곡은 디코딩되지 않은 채 출력으로 전송됩니다</string>
@@ -504,7 +514,7 @@
     <string name="start_radio">라디오 시작</string>
     <string name="shared_link">공유 링크</string>
     <string name="radio_started">%1$s 라디오 시작함</string>
-    <string name="saved_to_bitchord_folder">Music/MusicBeat에 저장 완료</string>
+    <string name="saved_to_musicbeat_folder">Music/MusicBeat에 저장 완료</string>
     <string name="nothing_downloading">다운로드 중인 항목 없음</string>
     <string name="nothing_to_explore">지금은 탐색할 항목 없음</string>
     <string name="no_youtube_music_results">YouTube Music 내 결과 없음</string>
@@ -869,7 +879,7 @@
     </plurals>
     <string name="no_local_albums">여기에 앨범이나 재생목록으로 표시할 항목이 없습니다. 앨범이나 재생목록 전체를 다운로드하면 여기에 나타납니다.</string>
     <string name="play_your_replay">내 리플레이 재생</string>
-    <string name="counted_on_device_with_bitchord">MusicBeat가 이 기기에서 집계</string>
+    <string name="counted_on_device_with_musicbeat">MusicBeat가 이 기기에서 집계</string>
     <string name="this_month">이번 달</string>
     <string name="replay_this_week">이번 주</string>
     <string name="this_year">올해</string>

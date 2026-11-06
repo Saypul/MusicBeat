@@ -144,7 +144,7 @@
     <string name="widget_previous">Önceki</string>
     <string name="widget_artwork">Albüm kapağı</string>
     <string name="widget_nothing_played">Henüz bir şey çalınmadı</string>
-    <string name="widget_open_bitchord">MusicBeat\'u Aç</string>
+    <string name="widget_open_musicbeat">MusicBeat\'u Aç</string>
     <string name="widget_preview_title">Şarkı adı</string>
     <string name="widget_preview_artist">Sanatçı</string>
     <string name="widget_pill_label">Şu an çalıyor 4×1</string>
@@ -354,7 +354,7 @@
     <string name="starting">Başlatılıyor</string>
     <string name="start_radio">Radyoyu başlat</string>
     <string name="radio_started">%1$s radyosu başlatıldı</string>
-    <string name="saved_to_bitchord_folder">Müzik/MusicBeat klasörüne kaydedildi</string>
+    <string name="saved_to_musicbeat_folder">Müzik/MusicBeat klasörüne kaydedildi</string>
     <string name="nothing_downloading">İndirilen bir şey yok</string>
     <string name="nothing_to_explore">Şu anda keşfedilecek bir şey yok</string>
     <string name="no_youtube_music_results">YouTube Music\'ten sonuç yok</string>
@@ -692,7 +692,7 @@
     </plurals>
     <string name="no_local_albums">Burada henüz bir albüme veya çalma listesine ait bir şey yok. Tam bir albüm veya çalma listesi indir, burada görünecek.</string>
     <string name="play_your_replay">Replay\'ini çal</string>
-    <string name="counted_on_device_with_bitchord">Bu cihazda MusicBeat ile sayıldı</string>
+    <string name="counted_on_device_with_musicbeat">Bu cihazda MusicBeat ile sayıldı</string>
     <string name="this_month">Bu ay</string>
     <string name="this_year">Bu yıl</string>
     <string name="all_time">Tüm zamanlar</string>
@@ -1058,6 +1058,16 @@
     <string name="equalizer_balance_left">L</string>
 
     <string name="equalizer_balance_right">R</string>
+    <string name="equalizer_save_preset">Ön ayar olarak kaydet</string>
+    <string name="equalizer_save_preset_title">Ön ayarı kaydet</string>
+    <string name="equalizer_save_preset_message">Yedi bandı şu anki haliyle kaydeder. Ön ayarlarınızda zaten olan bir ad onun yerine geçer.</string>
+    <string name="equalizer_preset_name">Ön ayar adı</string>
+    <string name="equalizer_my_presets">Ön ayarlarım</string>
+    <string name="equalizer_my_presets_footer">Kullanmak için birine dokunun.</string>
+    <string name="equalizer_delete_preset">%1$s ögesini sil</string>
+    <string name="equalizer_per_device">Cihaz başına profiller</string>
+    <string name="equalizer_per_device_now">Şu an: %1$s</string>
+    <string name="equalizer_per_device_footer">Her çıkışın kendi ekolayzırı olur: telefon hoparlörü, kablolu kulaklık ve her Bluetooth veya USB cihazı. Müzik başka bir çıkışa geçtiğinde kendiliğinden değişir.</string>
 
     <string name="equalizer_balance_footer">Diğer kulağı kısarak sesi bir kulağa doğru kaydırır.</string>
     <string name="equalizer_bitstream_title">Şu anda çalışmıyor</string>
