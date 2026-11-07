@@ -41,7 +41,9 @@ fun AudioQuality.permits(kind: SourceKind): Boolean = when (this) {
     // the slow half of the list: an addon fronting several catalogues walks
     // all of them before it answers, which is seconds spent to land on a
     // transcode JioSaavn already has at 320.
-    AudioQuality.HIGH -> !kind.canServeLossless
+    // The archive is the exception: it is never in that walk, and under this
+    // ceiling it hands over its own MP3 of the file.
+    AudioQuality.HIGH -> !kind.canServeLossless || !kind.matchesOtherCatalogues
     AudioQuality.MEDIUM, AudioQuality.LOW -> kind == SourceKind.YOUTUBE
 }
 

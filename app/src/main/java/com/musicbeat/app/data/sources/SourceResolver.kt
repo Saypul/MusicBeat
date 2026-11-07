@@ -207,6 +207,13 @@ object SourceResolver {
         // Resolve the pin only from the enabled list so Off means off for both
         // newly matched tracks and source-backed rows queued earlier.
         val pinned = active.firstOrNull { it.configId == configId }
+        // A row from a catalogue of other recordings plays as itself or not at
+        // all: anything found elsewhere under its title is a different take.
+        if (SourceRegistry.config(configId)?.kind?.matchesOtherCatalogues == false) {
+            return pinned?.let { source ->
+                attempt(source) { source.stream(trackId, request) }?.copy(sourceConfigId = source.configId)
+            }
+        }
 
         // The upgrade path: with lossless asked for and the pinned source
         // unable to serve it, anything ranked above it that can is worth
@@ -1057,6 +1064,7 @@ object SourceResolver {
         requireSharedArtist: Boolean = false,
         driftSec: Int = UPGRADE_DRIFT_SEC,
     ): SourceStream? {
+        if (!source.kind.matchesOtherCatalogues) return null
         for (query in TrackMatcher.queries(target)) {
             val candidates = attempt(source) {
                 source.search(

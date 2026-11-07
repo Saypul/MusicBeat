@@ -2171,7 +2171,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         // Every enabled addon, including ones the connection's quality setting
         // skips for playback: their rows are still worth seeing, and the
         // search page dims them and says why on a tap — see `isBlocked` there.
-        val addons = SourceRegistry.active().filterIsInstance<AddonSource>()
+        // The Internet Archive answers here too: its rows are picked by hand
+        // like an addon's, and it is too slow for the main search's budget.
+        val addons = SourceRegistry.active().filter { it is AddonSource || it.kind == SourceKind.INTERNET_ARCHIVE }
         if (addons.isEmpty()) {
             _addonResults.value = UiState.Error(text(R.string.search_addons_none))
             return
@@ -2494,7 +2496,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             .let { if (it < 0) active.size else it }
 
         val answers = active
-            .filter { it.kind != SourceKind.YOUTUBE }
+            // The archive takes two round trips to answer and has its place in
+            // the Addons search instead — see [runAddonSearch].
+            .filter { it.kind != SourceKind.YOUTUBE && it.kind != SourceKind.INTERNET_ARCHIVE }
             .map { source ->
                 source to async {
                     // Per-source, so one slow or unreachable server delays the

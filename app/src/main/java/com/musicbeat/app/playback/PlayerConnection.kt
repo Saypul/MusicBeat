@@ -640,7 +640,10 @@ private fun Song.matchQuery(): String = buildString {
  * Empty for every other source.
  */
 private fun Song.pickedMixQuery(configId: String): String {
-    if (SourceRegistry.config(configId)?.kind != SourceKind.ADDON) return ""
+    // The archive's rows are picked by hand the same way, and are just as much
+    // themselves — see [SourceKind.matchesOtherCatalogues].
+    val kind = SourceRegistry.config(configId)?.kind
+    if (kind != SourceKind.ADDON && kind != SourceKind.INTERNET_ARCHIVE) return ""
     return "&${SourceResolver.MIX_PARAM}=${SourceResolver.mixOf(sourceQuality)}"
 }
 

@@ -36,8 +36,11 @@ data class SourceConfig(
     /** What the user called it. Blank falls back to the server's host, or the kind's own label. */
     val label: String = "",
     val baseUrl: String = "",
-    /** JioSaavn is opt-in because catalogue matches can select the wrong recording. */
-    val enabled: Boolean = kind != SourceKind.JIOSAAVN,
+    /**
+     * JioSaavn is opt-in because catalogue matches can select the wrong
+     * recording; the Internet Archive because it puts concert tapes in search.
+     */
+    val enabled: Boolean = kind != SourceKind.JIOSAAVN && kind != SourceKind.INTERNET_ARCHIVE,
     /**
      * The addon's `allowDownloads`, as its manifest last said. Stored rather
      * than asked each time so the answer is there without a request — see
@@ -502,6 +505,7 @@ object SourceRegistry {
         SourceKind.CUSTOM_MODULE -> ModuleSource(config)
         SourceKind.MODULE -> ModuleSource(config)
         SourceKind.JIOSAAVN -> JioSaavnSource(config)
+        SourceKind.INTERNET_ARCHIVE -> InternetArchiveSource(config)
         SourceKind.YOUTUBE -> YouTubeSource(config)
     }
 
@@ -546,7 +550,7 @@ object SourceRegistry {
             .build()
             .toString()
 
-    private val BUILT_IN_KINDS = listOf(SourceKind.JIOSAAVN, SourceKind.YOUTUBE)
+    private val BUILT_IN_KINDS = listOf(SourceKind.JIOSAAVN, SourceKind.INTERNET_ARCHIVE, SourceKind.YOUTUBE)
 
     private const val KEY_SOURCES = "sources"
     /** One-shot migration: existing users must explicitly opt in again. */

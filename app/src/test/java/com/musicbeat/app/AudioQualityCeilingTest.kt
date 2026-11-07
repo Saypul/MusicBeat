@@ -25,7 +25,9 @@ class AudioQualityCeilingTest {
 
     @Test
     fun `high skips every source that can serve lossless and keeps JioSaavn`() {
-        lossless.forEach { assertFalse(it.name, AudioQuality.HIGH.permits(it)) }
+        lossless.filter { it.matchesOtherCatalogues }.forEach { assertFalse(it.name, AudioQuality.HIGH.permits(it)) }
+        // Never in the matching walk, and it serves its own MP3 under this ceiling.
+        assertTrue(AudioQuality.HIGH.permits(SourceKind.INTERNET_ARCHIVE))
         assertTrue(AudioQuality.HIGH.permits(SourceKind.JIOSAAVN))
         assertTrue(AudioQuality.HIGH.permits(SourceKind.YOUTUBE))
     }

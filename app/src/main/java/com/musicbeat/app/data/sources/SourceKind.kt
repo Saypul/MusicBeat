@@ -42,6 +42,13 @@ enum class SourceKind(
      */
     val worthPrefetching: Boolean = false,
     /**
+     * Whether this kind may be asked for *another source's* track — a YouTube
+     * song looked up here by title and runtime, to upgrade it or stand in for
+     * it. False for a catalogue of different recordings, whose rows are only
+     * ever played as themselves; see [INTERNET_ARCHIVE].
+     */
+    val matchesOtherCatalogues: Boolean = true,
+    /**
      * Where this kind sits in the walk, low first.
      *
      * Separate from [ordinal] because two kinds share a position: an addon and
@@ -134,6 +141,23 @@ enum class SourceKind(
         needsServer = false,
         canServeLossless = false,
         worthPrefetching = true,
+        rank = 2,
+    ),
+
+    /**
+     * archive.org's audio: live concerts, public-domain and netlabel music,
+     * much of it FLAC. Searched and played as itself, never matched to other
+     * sources' tracks — its copy of a song is usually a different recording.
+     */
+    INTERNET_ARCHIVE(
+        label = "Internet Archive",
+        detail = "Free, legal recordings from archive.org — live concerts, public-domain and " +
+            "netlabel music — in FLAC, some at 24-bit. Its tracks show up in search and play " +
+            "as themselves; they never replace a song from another source.",
+        labels = listOf("FLAC", "Hi-Res", "Free"),
+        needsServer = false,
+        canServeLossless = true,
+        matchesOtherCatalogues = false,
         rank = 2,
     ),
 
