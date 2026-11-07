@@ -392,6 +392,9 @@
     <string name="name">名前</string>
     <string name="no_playlists_yet">プレイリストはまだありません。上の行から作成してください。</string>
     <string name="no_tracks_here">ここにはトラックがありません</string>
+    <string name="local_quality_all">すべて</string>
+    <string name="local_quality_lossless">ロスレス</string>
+    <string name="local_quality_hi_res">ハイレゾ</string>
     <string name="not_connected">未接続</string>
     <string name="one_hour">1時間</string>
     <string name="open_album">アルバムを開く</string>

@@ -41,8 +41,8 @@ buildscript {
  * No "v" in the name — the in-app updater reads it as a number; the "v" is the
  * release tag's alone.
  */
-extra["musicbeatVersionCode"] = 40
-extra["musicbeatVersionName"] = "1.11"
+extra["musicbeatVersionCode"] = 41
+extra["musicbeatVersionName"] = "1.12"
 
 /*
  * Bump this by hand before cutting each sideloaded test build ("beta2",

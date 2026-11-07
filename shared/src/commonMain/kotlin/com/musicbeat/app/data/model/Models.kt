@@ -21,6 +21,14 @@ data class ArtistRef(
     val browseId: String? = null,
 )
 
+/** What a device file's own format says about it — see [Song.localQuality]. */
+enum class LocalQuality {
+    LOSSLESS,
+
+    /** Lossless above CD resolution: more than 16 bits, above 48 kHz, or DSD. */
+    HI_RES,
+}
+
 /** A playable YouTube Music track. */
 data class Song(
     val videoId: String,
@@ -120,6 +128,12 @@ data class Song(
      * ranks on [sourceQuality], where 16-bit and 24-bit are one tier.
      */
     val sourceHiRes: Boolean = false,
+    /**
+     * A file on this device that is lossless, and whether it is hi-res, as the
+     * media scanner describes it. Null for lossy files, for files the scanner
+     * says too little about, and for every row that isn't a device file.
+     */
+    val localQuality: LocalQuality? = null,
     /** Explicit-content state from the catalogue; null when that source does not say. */
     val isExplicit: Boolean? = null,
     /**

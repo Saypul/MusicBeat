@@ -453,6 +453,9 @@
     <string name="name">Nome</string>
     <string name="no_playlists_yet">Ancora nessuna playlist. Usa la riga sopra per crearne una.</string>
     <string name="no_tracks_here">Nessun brano qui</string>
+    <string name="local_quality_all">Tutti</string>
+    <string name="local_quality_lossless">Lossless</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Non connesso</string>
     <string name="one_hour">1 ora</string>
     <string name="open_album">Apri album</string>

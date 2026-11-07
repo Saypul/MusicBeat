@@ -68,6 +68,7 @@ import com.musicbeat.app.R
 import com.musicbeat.app.data.LocalGroup
 import com.musicbeat.app.data.LocalGroups
 import com.musicbeat.app.data.OfflinePlaylists
+import com.musicbeat.app.data.model.LocalQuality
 import com.musicbeat.app.data.model.BrowseType
 import com.musicbeat.app.data.model.CARD_ART_PX
 import com.musicbeat.app.data.model.ROW_ART_PX
@@ -147,7 +148,29 @@ class LocalFolder(
     val playlists: List<LocalGroup> = emptyList(),
     /** Puts "New playlist" at the head of the Playlists tab. */
     val onCreatePlaylist: (() -> Unit)? = null,
+    /**
+     * Whether any of the folder's files is lossless, which is what puts the
+     * All / Lossless / Hi-Res filter under the tabs. A folder of MP3s has
+     * nothing for it to narrow.
+     */
+    val qualityFilterable: Boolean = false,
 )
+
+/** The folder's quality filter — see [LocalFolder.qualityFilterable]. */
+enum class LocalQualityFilter {
+    ALL,
+
+    /** Every lossless file, hi-res ones included. */
+    LOSSLESS,
+    HI_RES,
+    ;
+
+    fun admits(song: Song): Boolean = when (this) {
+        ALL -> true
+        LOSSLESS -> song.localQuality != null
+        HI_RES -> song.localQuality == LocalQuality.HI_RES
+    }
+}
 
 enum class LocalFolderTab {
     SONGS,
@@ -181,6 +204,12 @@ enum class LocalFolderTab {
 @Stable
 class LocalFolderState {
     var tab by mutableStateOf(LocalFolderTab.SONGS)
+
+    /**
+     * Narrows every tab but Playlists to the files that pass — the page's
+     * Play and Shuffle with them, so "Hi-Res" then plays just those.
+     */
+    var quality by mutableStateOf(LocalQualityFilter.ALL)
 
     var selectedIds by mutableStateOf<Set<String>>(emptySet())
         private set
@@ -277,6 +306,17 @@ internal fun LazyListScope.localFolderItems(
             onSelect = { state.tab = tabs[it] },
             modifier = Modifier.padding(start = PAGE_GUTTER, end = PAGE_GUTTER, bottom = 14.dp),
         )
+    }
+    // Playlists are the device's own lists, not readings of the files, so the
+    // filter has nothing to say there.
+    if (folder.qualityFilterable && state.tab != LocalFolderTab.PLAYLISTS) {
+        item(key = "folder-quality") {
+            QualityFilterRow(
+                selected = state.quality,
+                palette = palette,
+                onSelect = { state.quality = it },
+            )
+        }
     }
 
     // Ahead of the list rather than in the top bar: making a playlist is the
@@ -413,6 +453,53 @@ private fun LocalFolderTab.label(): String = stringResource(
         LocalFolderTab.FOLDERS -> R.string.folders
     },
 )
+
+/** All / Lossless / Hi-Res, as pills under the tabs. */
+@Composable
+private fun QualityFilterRow(
+    selected: LocalQualityFilter,
+    palette: ArtworkPalette,
+    onSelect: (LocalQualityFilter) -> Unit,
+) {
+    Row(
+        modifier = Modifier.padding(start = PAGE_GUTTER, end = PAGE_GUTTER, bottom = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        LocalQualityFilter.entries.forEach { filter ->
+            val on = filter == selected
+            Row(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(palette.accent.copy(alpha = if (on) 0.26f else 0.10f))
+                    .clickable { onSelect(filter) }
+                    .padding(horizontal = 14.dp, vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (filter != LocalQualityFilter.ALL) {
+                    Icon(
+                        Icons.Rounded.GraphicEq,
+                        contentDescription = null,
+                        tint = if (on) palette.accent else palette.onBackgroundVariant,
+                        modifier = Modifier.size(14.dp),
+                    )
+                    Spacer(Modifier.width(6.dp))
+                }
+                Text(
+                    text = stringResource(
+                        when (filter) {
+                            LocalQualityFilter.ALL -> R.string.local_quality_all
+                            LocalQualityFilter.LOSSLESS -> R.string.local_quality_lossless
+                            LocalQualityFilter.HI_RES -> R.string.local_quality_hi_res
+                        },
+                    ),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (on) palette.accent else palette.onBackgroundVariant,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun NewPlaylistRow(palette: ArtworkPalette, onClick: () -> Unit) {

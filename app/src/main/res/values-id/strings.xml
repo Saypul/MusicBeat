@@ -392,6 +392,9 @@
     <string name="name">Nama</string>
     <string name="no_playlists_yet">Belum ada playlist. Gunakan baris di atas untuk membuat satu.</string>
     <string name="no_tracks_here">Tidak ada trek di sini</string>
+    <string name="local_quality_all">Semua</string>
+    <string name="local_quality_lossless">Lossless</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Tidak terhubung</string>
     <string name="one_hour">1 jam</string>
     <string name="open_album">Buka album</string>

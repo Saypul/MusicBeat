@@ -371,6 +371,9 @@
     <string name="name">שם</string>
     <string name="no_playlists_yet">עדיין אין רשימות השמעה. השתמש בשורה למעלה כדי ליצור אחת.</string>
     <string name="no_tracks_here">אין כאן רצועות</string>
+    <string name="local_quality_all">הכול</string>
+    <string name="local_quality_lossless">ללא אובדן</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">לא מחובר</string>
     <string name="one_hour">שעה אחת</string>
     <string name="open_album">פתח אלבום</string>

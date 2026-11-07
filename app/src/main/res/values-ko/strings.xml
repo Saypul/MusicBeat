@@ -615,6 +615,9 @@
     <string name="name">이름</string>
     <string name="no_playlists_yet">아직 재생목록이 없습니다. 상단의 행을 이용해 새로 만드세요.</string>
     <string name="no_tracks_here">여기에 음악 없음</string>
+    <string name="local_quality_all">전체</string>
+    <string name="local_quality_lossless">무손실</string>
+    <string name="local_quality_hi_res">하이레즈</string>
     <string name="not_connected">연결되지 않음</string>
     <string name="one_hour">1시간</string>
     <string name="open_album">앨범 열기</string>

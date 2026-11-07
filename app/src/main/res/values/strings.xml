@@ -643,6 +643,9 @@
     <string name="name">Name</string>
     <string name="no_playlists_yet">No playlists yet. Use the row above to create one.</string>
     <string name="no_tracks_here">No tracks here</string>
+    <string name="local_quality_all">All</string>
+    <string name="local_quality_lossless">Lossless</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Not connected</string>
     <string name="one_hour">1 hour</string>
     <string name="open_album">Open album</string>

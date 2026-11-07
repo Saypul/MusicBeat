@@ -436,6 +436,9 @@
     <string name="name">Tên</string>
     <string name="no_playlists_yet">Chưa có danh sách phát nào. Dùng hàng bên trên để tạo danh sách phát.</string>
     <string name="no_tracks_here">Không có bản nhạc nào ở đây</string>
+    <string name="local_quality_all">Tất cả</string>
+    <string name="local_quality_lossless">Lossless</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Chưa kết nối</string>
     <string name="one_hour">1 giờ</string>
     <string name="open_album">Mở album</string>

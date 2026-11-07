@@ -425,6 +425,9 @@
     <string name="name">Название</string>
     <string name="no_playlists_yet">Пока нет плейлистов. Используйте строку выше, чтобы создать новый.</string>
     <string name="no_tracks_here">Здесь нет треков</string>
+    <string name="local_quality_all">Все</string>
+    <string name="local_quality_lossless">Без потерь</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Не подключено</string>
     <string name="one_hour">1 час</string>
     <string name="open_album">Открыть альбом</string>

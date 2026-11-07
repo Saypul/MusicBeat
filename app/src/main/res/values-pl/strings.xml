@@ -368,6 +368,9 @@
     <string name="name">Nazwa</string>
     <string name="no_playlists_yet">Brak playlist. Użyj rzędu powyżej, by jedną stworzyć.</string>
     <string name="no_tracks_here">Nie ma tu utworów</string>
+    <string name="local_quality_all">Wszystko</string>
+    <string name="local_quality_lossless">Bezstratne</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Nie połączono</string>
     <string name="one_hour">1 godzina</string>
     <string name="open_album">Otwórz album</string>

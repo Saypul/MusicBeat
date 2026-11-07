@@ -602,7 +602,7 @@ private fun SongRowContent(
                 song.artist.takeIf { it.isNotBlank() },
                 song.downloadFormat,
             ).joinToString(" · ")
-            val quality = if (showSourceQuality) song.sourceQualityBadge() else null
+            val quality = (if (showSourceQuality) song.sourceQualityBadge() else null) ?: song.localQualityBadge()
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (quality != null) {
                     SourceQualityBadge(

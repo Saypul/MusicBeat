@@ -406,6 +406,9 @@
     <string name="name">नाम</string>
     <string name="no_playlists_yet">अभी तक कोई प्लेलिस्ट नहीं है। एक बनाने के लिए ऊपर दी गई पंक्ति का इस्तेमाल करें।</string>
     <string name="no_tracks_here">यहां कोई ट्रैक नहीं है</string>
+    <string name="local_quality_all">सभी</string>
+    <string name="local_quality_lossless">लॉसलेस</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">कनेक्टेड नहीं</string>
     <string name="one_hour">1 घंटा</string>
     <string name="open_album">एल्बम खोलें</string>

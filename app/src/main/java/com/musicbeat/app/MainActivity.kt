@@ -3154,6 +3154,7 @@ private fun MusicBeatApp(
                                     tabs = if (isDevice) LocalFolderTab.DEVICE else LocalFolderTab.BASIC,
                                     playlists = if (isDevice) offlinePlaylistGroups else emptyList(),
                                     onCreatePlaylist = if (isDevice) ({ creatingOfflinePlaylist = true }) else null,
+                                    qualityFilterable = remember(folderSongs) { folderSongs.any { it.localQuality != null } },
                                 )
                             } else {
                                 null

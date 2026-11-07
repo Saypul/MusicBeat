@@ -435,6 +435,9 @@
     <string name="name">Ad</string>
     <string name="no_playlists_yet">Henüz çalma listesi yok. Bir tane oluşturmak için yukarıdaki satırı kullan.</string>
     <string name="no_tracks_here">Burada parça yok</string>
+    <string name="local_quality_all">Tümü</string>
+    <string name="local_quality_lossless">Kayıpsız</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Bağlı değil</string>
     <string name="one_hour">1 saat</string>
     <string name="open_album">Albümü aç</string>

@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import com.musicbeat.app.data.DebugLog as Log
 import androidx.core.content.ContextCompat
+import com.musicbeat.app.data.model.LocalQuality
 import com.musicbeat.app.data.model.Song
 import com.musicbeat.app.data.settings.AppSettings
 import com.musicbeat.app.download.DownloadStore
@@ -277,19 +278,29 @@ object LocalMediaRepository {
         extraLocalMusic?.invoke(context, songs) ?: songs
     }
 
-    private val AUDIO_PROJECTION = arrayOf(
-        MediaStore.Audio.Media._ID,
-        MediaStore.Audio.Media.DISPLAY_NAME,
-        MediaStore.Audio.Media.TITLE,
-        MediaStore.Audio.Media.ARTIST,
-        MediaStore.Audio.Media.ALBUM,
-        MediaStore.Audio.Media.ALBUM_ID,
-        MediaStore.Audio.Media.DURATION,
-        MediaStore.Audio.Media.DATA,
-        MediaStore.Audio.Media.DATE_ADDED,
-        MediaStore.Audio.Media.DATE_MODIFIED,
-        MediaStore.Audio.Media.TRACK,
-    )
+    // Lazy for the same reason as [ALBUM_ART_URI]: the SDK checks below would
+    // otherwise run whenever a unit test touches this object.
+    private val AUDIO_PROJECTION by lazy {
+        listOfNotNull(
+            MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.DISPLAY_NAME,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.DATE_ADDED,
+            MediaStore.Audio.Media.DATE_MODIFIED,
+            MediaStore.Audio.Media.TRACK,
+            MediaStore.Audio.Media.MIME_TYPE,
+            // What [localQualityOf] reads a file's resolution off: the bitrate
+            // from Android 11, the sample format itself from Android 14.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) MediaStore.MediaColumns.BITRATE else null,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) MediaStore.Audio.Media.BITS_PER_SAMPLE else null,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) MediaStore.Audio.Media.SAMPLERATE else null,
+        ).toTypedArray()
+    }
 
     /**
      * Where [AUDIO_PROJECTION]'s columns landed in one cursor, looked up once
@@ -310,6 +321,10 @@ object LocalMediaRepository {
         val dateAdded = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
         val dateModified = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED)
         val track = cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)
+        val mimeType = cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE)
+        val bitrate = cursor.getColumnIndex(MediaStore.MediaColumns.BITRATE)
+        val bitsPerSample = cursor.getColumnIndex(MediaStore.Audio.Media.BITS_PER_SAMPLE)
+        val sampleRate = cursor.getColumnIndex(MediaStore.Audio.Media.SAMPLERATE)
 
         fun song(cursor: Cursor, videoIdByUri: Map<String, String>): Song {
             val rowId = cursor.getLong(id)
@@ -337,8 +352,70 @@ object LocalMediaRepository {
                 localDateAddedSeconds = cursor.getLong(dateAdded),
                 localDateModifiedSeconds = cursor.getLong(dateModified),
                 trackNumber = trackNumber,
+                localQuality = localQualityOf(
+                    fileName = cursor.getString(data)?.substringAfterLast('/') ?: name,
+                    mimeType = cursor.positiveOrNull(mimeType) { getString(it) },
+                    bitrate = cursor.positiveOrNull(bitrate) { getLong(it) },
+                    bitsPerSample = cursor.positiveOrNull(bitsPerSample) { getInt(it) },
+                    sampleRateHz = cursor.positiveOrNull(sampleRate) { getInt(it) },
+                ),
             )
         }
+
+        /** A column that may be missing, empty, or zero for "unknown" — null in all three cases. */
+        private fun <T : Any> Cursor.positiveOrNull(column: Int, read: Cursor.(Int) -> T): T? {
+            if (column < 0 || isNull(column)) return null
+            return read(column).takeUnless { it is Number && it.toLong() <= 0 }
+        }
+    }
+
+    private val LOSSLESS_EXTENSIONS = setOf("flac", "wav", "aif", "aiff", "ape", "wv")
+    private val DSD_EXTENSIONS = setOf("dsf", "dff")
+    private val LOSSLESS_MIME_HINTS = listOf("flac", "wav", "wave", "aiff", "alac", "ape", "wavpack")
+
+    /** The MP4 containers ALAC comes in, whose MIME type is the same as AAC's. */
+    private val MP4_EXTENSIONS = setOf("m4a", "mp4", "alac")
+
+    /**
+     * Above any AAC encoder's ceiling (~512kbps stereo) and below the leanest
+     * ALAC, which for music sits near 700kbps: the only thing in an `.m4a`
+     * that tells the two apart when the scanner doesn't name the codec.
+     */
+    private const val ALAC_MIN_BITRATE = 600_000L
+
+    /**
+     * Raw 16-bit stereo at 48 kHz. An uncompressed file above it carries more
+     * than CD resolution; a compressed one (FLAC, ALAC) can't reach it at 16
+     * bits, so above it is hi-res too — the fallback when the scanner doesn't
+     * report the sample format, which it only does from Android 14.
+     */
+    private const val CD_RAW_BITRATE = 1_536_000L
+
+    /**
+     * Whether a device file is lossless, and hi-res, from its name and what
+     * the media scanner recorded. A file that can't be shown to be lossless
+     * gets null, so a badge never claims more than the file does.
+     */
+    internal fun localQualityOf(
+        fileName: String,
+        mimeType: String?,
+        bitrate: Long?,
+        bitsPerSample: Int?,
+        sampleRateHz: Int?,
+    ): LocalQuality? {
+        val extension = fileName.substringAfterLast('.', "").lowercase(Locale.ROOT)
+        val mime = mimeType?.lowercase(Locale.ROOT).orEmpty()
+        if (extension in DSD_EXTENSIONS || "dsd" in mime) return LocalQuality.HI_RES
+        val lossless = extension in LOSSLESS_EXTENSIONS ||
+            LOSSLESS_MIME_HINTS.any(mime::contains) ||
+            (extension in MP4_EXTENSIONS && bitrate != null && bitrate >= ALAC_MIN_BITRATE)
+        if (!lossless) return null
+        val hiRes = if (bitsPerSample != null || sampleRateHz != null) {
+            (bitsPerSample ?: 0) > 16 || (sampleRateHz ?: 0) > 48_000
+        } else {
+            bitrate != null && bitrate > CD_RAW_BITRATE
+        }
+        return if (hiRes) LocalQuality.HI_RES else LocalQuality.LOSSLESS
     }
 
     // Lazy so loading this object doesn't touch the framework: unit tests of

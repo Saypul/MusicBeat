@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.musicbeat.app.data.model.LocalQuality
 import com.musicbeat.app.data.model.Song
 import com.musicbeat.app.sharedui.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -38,6 +39,17 @@ fun Song.sourceQualityBadge(): SourceQuality? = when (sourceQuality?.uppercase()
         if (sourceHiRes) SourceQuality.HI_RES_LOSSLESS else SourceQuality.LOSSLESS
     "HIGH", "320" -> SourceQuality.HIGH_QUALITY
     else -> null
+}
+
+/**
+ * A device file's own format, in the same terms. Unlike [sourceQualityBadge]
+ * this is the file itself rather than an offer, so rows show it wherever the
+ * row is a file on this device.
+ */
+fun Song.localQualityBadge(): SourceQuality? = when (localQuality) {
+    LocalQuality.HI_RES -> SourceQuality.HI_RES_LOSSLESS
+    LocalQuality.LOSSLESS -> SourceQuality.LOSSLESS
+    null -> null
 }
 
 /**

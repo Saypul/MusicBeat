@@ -392,6 +392,9 @@
     <string name="name">名稱</string>
     <string name="no_playlists_yet">還沒有播放列表，使用上方的選項建立一個吧。</string>
     <string name="no_tracks_here">這裡沒有曲目</string>
+    <string name="local_quality_all">全部</string>
+    <string name="local_quality_lossless">無損</string>
+    <string name="local_quality_hi_res">高解析度</string>
     <string name="not_connected">未連線</string>
     <string name="one_hour">1 小時</string>
     <string name="open_album">開啟專輯</string>

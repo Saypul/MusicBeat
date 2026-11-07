@@ -406,6 +406,9 @@
     <string name="name">Name</string>
     <string name="no_playlists_yet">Noch keine Playlists. Nutze die Zeile oben, um eine zu erstellen.</string>
     <string name="no_tracks_here">Keine Titel hier</string>
+    <string name="local_quality_all">Alle</string>
+    <string name="local_quality_lossless">Verlustfrei</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Nicht verbunden</string>
     <string name="one_hour">1 Stunde</string>
     <string name="open_album">Album öffnen</string>

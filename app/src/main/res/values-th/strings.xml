@@ -420,6 +420,9 @@
     <string name="name">ชื่อ</string>
     <string name="no_playlists_yet">ยังไม่มีเพลย์ลิสต์ ใช้แถวด้านบนเพื่อสร้างเพลย์ลิสต์</string>
     <string name="no_tracks_here">ไม่มีแทร็กที่นี่</string>
+    <string name="local_quality_all">ทั้งหมด</string>
+    <string name="local_quality_lossless">ไม่สูญเสีย</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">ไม่ได้เชื่อมต่อ</string>
     <string name="one_hour">1 ชั่วโมง</string>
     <string name="open_album">เปิดอัลบั้ม</string>

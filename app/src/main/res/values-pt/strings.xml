@@ -372,6 +372,9 @@
     <string name="name">Nome</string>
     <string name="no_playlists_yet">Nenhuma playlist ainda. Use a linha acima para criar uma.</string>
     <string name="no_tracks_here">Nenhuma faixa aqui</string>
+    <string name="local_quality_all">Tudo</string>
+    <string name="local_quality_lossless">Sem perdas</string>
+    <string name="local_quality_hi_res">Hi-Res</string>
     <string name="not_connected">Não conectado</string>
     <string name="one_hour">1 hora</string>
     <string name="open_album">Abrir álbum</string>

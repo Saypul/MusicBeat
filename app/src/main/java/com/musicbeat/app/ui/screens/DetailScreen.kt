@@ -352,7 +352,13 @@ fun DetailScreen(
      */
     reorder: (@Composable (ArtworkPalette) -> Unit)? = null,
 ) {
-    val rawSongs = (page.songs as? UiState.Success)?.data.orEmpty()
+    val pageSongs = (page.songs as? UiState.Success)?.data.orEmpty()
+    // A device folder's All / Lossless / Hi-Res pick narrows the page at its
+    // source, so the tabs, the counts and Play all read the narrowed set.
+    val qualityFilter = folder?.state?.quality?.takeIf { folder.qualityFilterable } ?: LocalQualityFilter.ALL
+    val rawSongs = remember(pageSongs, qualityFilter) {
+        if (qualityFilter == LocalQualityFilter.ALL) pageSongs else pageSongs.filter(qualityFilter::admits)
+    }
     // A folder keeps its own sort — the one its top bar menu sets — rather
     // than the per-page one a release takes.
     val folderSort = folder?.sort
