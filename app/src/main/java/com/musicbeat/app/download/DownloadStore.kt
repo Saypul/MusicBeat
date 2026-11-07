@@ -91,7 +91,7 @@ object DownloadStore {
             artist.isEmpty() -> title
             title.isEmpty() -> artist
             else -> "$artist - $title"
-        }.ifEmpty { song.videoId }
+        }.ifEmpty { sanitise(song.videoId) }.ifEmpty { "track" }
         return "${stem.take(MAX_STEM_CHARS).trimEnd()}.$extension"
     }
 

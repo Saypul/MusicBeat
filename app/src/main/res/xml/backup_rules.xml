@@ -3,8 +3,9 @@
    Auto-backup rules for Android 11 and older; data_extraction_rules.xml
    replaces these from Android 12.
 
-   The encrypted stores are excluded because their keysets are wrapped by an
-   Android Keystore key that never leaves the device: restored anywhere, they
+   The encrypted stores (sign-ins, passwords, scrobbler and API tokens) are
+   excluded because their keysets are wrapped by an Android Keystore key that
+   never leaves the device: restored anywhere, they
    can't be decrypted (see EncryptedPrefs). Their plain fallbacks are excluded
    because they hold the same credentials in cleartext.
 -->
@@ -17,4 +18,6 @@
     <exclude domain="sharedpref" path="musicbeat_last_played.xml" />
     <exclude domain="sharedpref" path="musicbeat_bounded_context.xml" />
     <exclude domain="sharedpref" path="musicbeat_party_queue_stash.xml" />
+    <!-- WebView cookies and storage: the live Google, Spotify and Discord login sessions. -->
+    <exclude domain="root" path="app_webview/" />
 </full-backup-content>

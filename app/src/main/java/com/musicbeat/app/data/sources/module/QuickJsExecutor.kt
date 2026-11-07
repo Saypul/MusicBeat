@@ -109,6 +109,11 @@ internal object QuickJsExecutor {
             .build()
     }
 
+    /** The same client, unable to connect anywhere on the local network. See [ModuleNetwork]. */
+    private val publicHttpClient by lazy {
+        syncHttpClient.newBuilder().dns(ModuleNetwork.publicOnly()).build()
+    }
+
     private val engineLock = Any()
 
     /** LRU map: access-ordered so the oldest-used entry is first. */
@@ -378,6 +383,10 @@ internal object QuickJsExecutor {
     // ── Fetch binding ────────────────────────────────────────────────────
 
     private suspend fun bindAsyncFetch(qjs: QuickJs, fetchBase: String) {
+        // Resolved on first fetch, which already runs off the main thread.
+        val client by lazy {
+            if (fetchBase.isNotEmpty() && ModuleNetwork.isLocalUrl(fetchBase)) syncHttpClient else publicHttpClient
+        }
         qjs.define("__spine") {
             asyncFunction("fetch", object : AsyncFunctionBinding<String> {
                 override suspend fun invoke(args: Array<Any?>): String {
@@ -389,7 +398,7 @@ internal object QuickJsExecutor {
                     val url = resolveUrl(rawUrl, fetchBase)
 
                     TrackLog.d(TAG, "  → fetch $method ${redactModuleUrl(url)}")
-                    val (statusCode, responseBody) = fetchUrlSync(url, method, headersJson, body)
+                    val (statusCode, responseBody) = fetchUrlSync(client, url, method, headersJson, body)
                     TrackLog.d(TAG, "    HTTP $statusCode (${responseBody.length} bytes)")
 
                     val respObj = JSONObject().apply {
@@ -474,6 +483,7 @@ internal object QuickJsExecutor {
     }
 
     private fun fetchUrlSync(
+        client: OkHttpClient,
         url: String,
         method: String,
         headersJson: String,
@@ -508,7 +518,7 @@ internal object QuickJsExecutor {
             else -> builder.get()
         }
 
-        syncHttpClient.newCall(builder.build()).execute().use { response ->
+        client.newCall(builder.build()).execute().use { response ->
             val responseBody = response.body?.string() ?: ""
             return response.code to responseBody
         }

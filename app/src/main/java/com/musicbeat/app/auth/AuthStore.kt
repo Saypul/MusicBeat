@@ -10,8 +10,9 @@ import android.content.SharedPreferences
  * the Discord integration — that account's own bearer token. Neither is a
  * password: the Google one is typed into accounts.google.com inside a WebView,
  * and the Discord one is read out of a completed login session. But both grant
- * full access to their account, so they don't go in the plain prefs the
- * scrobbler tokens use.
+ * full access to their account, so they don't go in the plain prefs. The
+ * scrobbler tokens, API secrets and Spotify's `sp_dc` are kept here too; see
+ * [serviceSecret].
  *
  * A restored file whose keyset this device can't unwrap is recreated, and a
  * Keystore that can't be used at all degrades to plain prefs rather than
@@ -120,6 +121,30 @@ class AuthStore(context: Context) {
     var smbPassword: String?
         get() = prefs.getString(KEY_SMB_PASSWORD, null)
         set(value) = prefs.edit().putString(KEY_SMB_PASSWORD, value).apply()
+
+    /**
+     * Scrobbler session keys, API secrets and the Spotify `sp_dc` cookie,
+     * under the settings key each one used to have in plain prefs. Those
+     * prefs go to cloud backup and device transfer; this store does not.
+     */
+    fun serviceSecret(key: String): String? = prefs.getString(key, null)
+
+    fun setServiceSecret(key: String, value: String) {
+        prefs.edit().apply { if (value.isEmpty()) remove(key) else putString(key, value) }.apply()
+    }
+
+    /**
+     * Moves [keys] out of [plain] into this store, keeping a value already here.
+     * The plain entries are removed only once the encrypted write has committed.
+     */
+    fun adoptServiceSecrets(plain: SharedPreferences, keys: Set<String>) {
+        val found = keys.mapNotNull { key -> plain.getString(key, null)?.let { key to it } }
+        if (found.isEmpty()) return
+        val edit = prefs.edit()
+        found.forEach { (key, value) -> if (!prefs.contains(key) && value.isNotEmpty()) edit.putString(key, value) }
+        if (!edit.commit()) return
+        plain.edit().apply { found.forEach { (key, _) -> remove(key) } }.apply()
+    }
 
     /**
      * The channel the listener chose to act as, if they chose one.

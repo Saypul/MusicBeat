@@ -8416,6 +8416,21 @@ class PlaybackService : MediaLibraryService() {
             session: MediaSession,
             controller: MediaSession.ControllerInfo,
         ): MediaSession.ConnectionResult {
+            // Any installed app may connect. Transport and browsing stay open to
+            // all of them; the custom commands, which write to the account
+            // (favourite) or rebuild the queue, only go to this app, the system
+            // UI, cars, and controllers the user granted notification access.
+            val trusted = controller.packageName == packageName ||
+                controller.isTrusted ||
+                session.isMediaNotificationController(controller) ||
+                session.isAutoCompanionController(controller) ||
+                session.isAutomotiveController(controller)
+            if (!trusted) {
+                return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                    .setAvailablePlayerCommands(MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS)
+                    .setAvailableSessionCommands(MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS)
+                    .build()
+            }
             val sessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS
                 .buildUpon()
                 .add(favoriteCommand)

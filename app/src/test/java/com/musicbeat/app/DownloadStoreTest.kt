@@ -136,6 +136,10 @@ class DownloadStoreTest {
     @Test
     fun `a row with nothing to name it falls back to the video id`() {
         assertEquals("xyz789.m4a", DownloadStore.fileNameFor(song("", "", "xyz789"), "m4a"))
+        // A source track key carries the source's own path, which never reaches the file system.
+        val keyed = DownloadStore.fileNameFor(song("", "", "src:ia::show/../../disc1/01.flac"), "flac")
+        assertFalse(keyed, keyed.contains('/') || keyed.contains(':'))
+        assertEquals("track.flac", DownloadStore.fileNameFor(song("", "", "/"), "flac"))
     }
 
     // ---- What quality is kept ----------------------------------------------
