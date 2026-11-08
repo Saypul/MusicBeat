@@ -2,7 +2,10 @@ name: Desktop · Windows
 
 # Builds the Windows installer, MSI and portable zip. jpackage only packages for
 # the OS it runs on, so this needs a Windows runner; the APKs stay on their own
-# workflow. Run it by hand, and name a release tag to attach the files to it.
+# workflow. Run it by hand with "publish" to release it as windows-v<version>.
+# Windows releases are never marked "latest": that stays on the phone's v<version>
+# releases, which older phone builds read, and each app's updater only reads its
+# own tags.
 on:
   push:
     branches: [desktop]
@@ -11,9 +14,10 @@ on:
       version:
         description: "Version to stamp into the packages (blank: the phone's version from build.gradle.kts)"
         required: false
-      release_tag:
-        description: "Existing release tag to attach the files to, e.g. v1.14 (blank: artifacts only)"
-        required: false
+      publish:
+        description: "Publish as release windows-v<version> (otherwise artifacts only)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -111,7 +115,7 @@ jobs:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
           project-slug: musicbeat
-          signing-policy-slug: ${{ startsWith(inputs.release_tag, 'v') && 'release-signing' || 'test-signing' }}
+          signing-policy-slug: ${{ inputs.publish && 'release-signing' || 'test-signing' }}
           artifact-configuration-slug: windows
           github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
           wait-for-completion: true
@@ -131,9 +135,15 @@ jobs:
           name: musicbeat-windows-${{ steps.version.outputs.value }}
           path: dist/*
 
-      - name: Attach to the release
-        if: inputs.release_tag != ''
+      - name: Publish windows-v${{ steps.version.outputs.value }}
+        if: inputs.publish
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ inputs.release_tag }}" dist/* --clobber --repo "${{ github.repository }}"
+        run: |
+          tag="windows-v${{ steps.version.outputs.value }}"
+          gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1 || \
+            gh release create "$tag" --repo "${{ github.repository }}" --target "${{ github.sha }}" --latest=false \
+              --title "MusicBeat for Windows ${{ steps.version.outputs.value }}" \
+              --notes "MusicBeat for Windows (beta). Not code-signed: SmartScreen shows \"Windows protected your PC\"; choose More info, then Run anyway."
+          gh release upload "$tag" dist/* --clobber --repo "${{ github.repository }}"

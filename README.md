@@ -88,7 +88,7 @@
 
 Grab the latest signed APK from the [Releases](https://github.com/Saypul/MusicBeat/releases) page. Most phones want the `arm64-v8a` build. Sideloading requires enabling "Install unknown apps" for whichever app you download it with.
 
-On Windows, take `MusicBeat-<version>-windows-x64-setup.exe` from the same page (beta). See the [code signing policy](docs/CODE_SIGNING.md).
+On Windows, take `MusicBeat-<version>-windows-x64-setup.exe` from the newest `windows-v` release on the same page (beta); after that, updates arrive in the app. See the [code signing policy](docs/CODE_SIGNING.md).
 
 </div>
 

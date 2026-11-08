@@ -9,7 +9,9 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.coroutines.Dispatchers
@@ -29,8 +31,10 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * Looks at the repo's "latest release" on GitHub once per launch and says whether it carries a
- * newer build *for this platform*: a release with only the phone's APKs is not an update here.
+ * Looks at the repo's releases on GitHub once per launch and says whether there is a newer build
+ * *for this platform*. The phone and the desktop publish separately in the same repository: the
+ * phone under `v1.x` tags, which are the ones GitHub marks "latest", and the desktop under
+ * `windows-v1.x`, so neither updater offers the other's release.
  *
  * On Windows the installer is fetched in-app, checked against the release's
  * `SHA256SUMS-windows-<version>` file, and run once the user says so — the app quits first so the
@@ -62,8 +66,11 @@ internal object DesktopUpdateChecker {
         data class Failed(val reason: String) : DownloadState
     }
 
-    private val LATEST_RELEASE_URL =
-        MUSICBEAT_REPO_URL.replace("https://github.com/", "https://api.github.com/repos/") + "/releases/latest"
+    private val RELEASES_URL =
+        MUSICBEAT_REPO_URL.replace("https://github.com/", "https://api.github.com/repos/") + "/releases?per_page=30"
+
+    /** Tags the desktop releases under; the phone's `v` tags are never read here. */
+    internal const val TAG_PREFIX = "windows-v"
 
     val currentVersion: String = System.getProperty("musicbeat.version") ?: "1.8-beta1"
 
@@ -89,15 +96,17 @@ internal object DesktopUpdateChecker {
     val download: StateFlow<DownloadState> = _download.asStateFlow()
 
     suspend fun check(): UpdateInfo? = runCatching {
-        val response = http.get(LATEST_RELEASE_URL) {
+        val response = http.get(RELEASES_URL) {
             header("Accept", "application/vnd.github+json")
         }
         if (!response.status.isSuccess()) return@runCatching null
-        val release = json.parseToJsonElement(response.bodyAsText()) as? JsonObject
+        val releases = (json.parseToJsonElement(response.bodyAsText()) as? JsonArray)
+            ?.mapNotNull { it as? JsonObject }
             ?: return@runCatching null
+        val release = desktopRelease(releases) ?: return@runCatching null
         val tag = release["tag_name"]?.jsonPrimitive?.contentOrNull ?: return@runCatching null
         val url = release["html_url"]?.jsonPrimitive?.contentOrNull ?: return@runCatching null
-        val latest = tag.removePrefix("v")
+        val latest = tag.removePrefix(TAG_PREFIX)
         if (!isNewer(latest, currentVersion)) return@runCatching null
         val installer = installerAsset(release) ?: return@runCatching null
         UpdateInfo(
@@ -109,6 +118,17 @@ internal object DesktopUpdateChecker {
             notes = release["body"]?.jsonPrimitive?.contentOrNull,
         )
     }.getOrNull()
+
+    /**
+     * The newest published desktop release with an installer for this platform. GitHub lists
+     * releases newest first.
+     */
+    internal fun desktopRelease(releases: List<JsonObject>): JsonObject? = releases.firstOrNull { release ->
+        release["tag_name"]?.jsonPrimitive?.contentOrNull.orEmpty().startsWith(TAG_PREFIX) &&
+            release["draft"]?.jsonPrimitive?.booleanOrNull != true &&
+            release["prerelease"]?.jsonPrimitive?.booleanOrNull != true &&
+            installerAsset(release) != null
+    }
 
     /**
      * The release names its files `MusicBeat-<version>-windows-x64-setup.exe` and

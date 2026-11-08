@@ -1,5 +1,10 @@
 package com.musicbeat.app.desktop
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -31,5 +36,34 @@ class DesktopUpdateCheckerTest {
         assertTrue(DesktopUpdateChecker.isNewer("1.14", "1.13.1"))
         assertFalse(DesktopUpdateChecker.isNewer("1.13.1", "1.13.1"))
         assertFalse(DesktopUpdateChecker.isNewer("1.9", "1.13.1"))
+    }
+
+    // Installer names for every desktop platform, so the pick does not depend on the test host.
+    private fun release(tag: String, installer: Boolean = true, prerelease: Boolean = false): String {
+        val assets = if (installer) {
+            listOf("MusicBeat-1-windows-x64-setup.exe", "MusicBeat-1-linux-x86_64.AppImage")
+        } else {
+            listOf("MusicBeat-v1.apk")
+        }
+        return """{"tag_name": "$tag", "draft": false, "prerelease": $prerelease, "assets": [${
+            assets.joinToString(",") { """{"name": "$it", "state": "uploaded", "browser_download_url": "https://example/$it"}""" }
+        }]}"""
+    }
+
+    private fun list(vararg releases: String): List<JsonObject> =
+        Json.parseToJsonElement("[${releases.joinToString(",")}]").jsonArray.map { it.jsonObject }
+
+    @Test
+    fun `a phone release is never a desktop update`() {
+        val picked = DesktopUpdateChecker.desktopRelease(
+            list(
+                release("v1.14", installer = false),
+                release("windows-v1.14", prerelease = true),
+                release("windows-v1.13.3"),
+                release("windows-v1.13.2"),
+            ),
+        )
+        assertEquals("windows-v1.13.3", picked?.get("tag_name")?.jsonPrimitive?.content)
+        assertNull(DesktopUpdateChecker.desktopRelease(list(release("v1.14", installer = false))))
     }
 }

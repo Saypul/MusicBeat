@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
@@ -46,10 +48,14 @@ object AppUpdateChecker {
      * "owner/repo" whose GitHub Releases carry this build's APKs, from the
      * `MUSICBEAT_UPDATE_REPO` build property. Blank switches the check off, so a
      * build never offers another project's release as its own update.
+     *
+     * The list rather than `releases/latest`: the same repository also publishes
+     * the Windows app under `windows-v` tags, and those are not this app's
+     * updates. See [phoneRelease].
      */
-    private val LATEST_RELEASE_URL: String? =
+    private val RELEASES_URL: String? =
         BuildConfig.UPDATE_REPO.takeIf { it.isNotBlank() }
-            ?.let { "https://api.github.com/repos/$it/releases/latest" }
+            ?.let { "https://api.github.com/repos/$it/releases?per_page=30" }
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -73,12 +79,15 @@ object AppUpdateChecker {
 
     suspend fun check() = withContext(Dispatchers.IO) {
         runCatching {
-            val releaseUrl = LATEST_RELEASE_URL ?: return@runCatching
-            val request = Request.Builder().url(releaseUrl).build()
+            val releasesUrl = RELEASES_URL ?: return@runCatching
+            val request = Request.Builder().url(releasesUrl).build()
             val body = Http.client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) null else response.body?.string()
             } ?: return@runCatching
-            val release = json.parseToJsonElement(body) as? JsonObject ?: return@runCatching
+            val releases = (json.parseToJsonElement(body) as? JsonArray)
+                ?.mapNotNull { it as? JsonObject }
+                ?: return@runCatching
+            val release = phoneRelease(releases) ?: return@runCatching
             val tag = release["tag_name"]?.jsonPrimitive?.contentOrNull ?: return@runCatching
             val url = release["html_url"]?.jsonPrimitive?.contentOrNull ?: return@runCatching
             val apkUrl = apkAssetUrl(release)
@@ -88,6 +97,19 @@ object AppUpdateChecker {
                 _available.value = UpdateInfo(latest, url, apkUrl, notes)
             }
         }
+    }
+
+    /**
+     * The newest published phone release: a `v` tag (not `windows-v`), neither
+     * a draft nor a pre-release, with this app's APK in it. GitHub lists
+     * releases newest first.
+     */
+    internal fun phoneRelease(releases: List<JsonObject>): JsonObject? = releases.firstOrNull { release ->
+        val tag = release["tag_name"]?.jsonPrimitive?.contentOrNull.orEmpty()
+        tag.startsWith("v") &&
+            release["draft"]?.jsonPrimitive?.booleanOrNull != true &&
+            release["prerelease"]?.jsonPrimitive?.booleanOrNull != true &&
+            apkAssetUrl(release) != null
     }
 
     /**
