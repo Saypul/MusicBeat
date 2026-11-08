@@ -46,14 +46,16 @@ jobs:
       - name: WiX Toolset 3
         shell: pwsh
         run: |
-          $url = "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip"
-          # GitHub's release CDN answers 5xx now and then; a few tries rather than a failed build.
+          # WiX 3.14.1 from its NuGet package: GitHub's own release download for wix3 has been
+          # answering 504. A few tries, since any CDN can blip.
+          $url = "https://www.nuget.org/api/v2/package/wix/3.14.1"
           for ($i = 1; $i -le 5; $i++) {
             try { Invoke-WebRequest -Uri $url -OutFile wix.zip; break }
             catch { if ($i -eq 5) { throw }; Write-Host "WiX download failed ($_); retrying"; Start-Sleep -Seconds (10 * $i) }
           }
           Expand-Archive wix.zip -DestinationPath "$env:RUNNER_TEMP\wix"
-          "$env:RUNNER_TEMP\wix" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          if (-not (Test-Path "$env:RUNNER_TEMP\wix\tools\candle.exe")) { throw "candle.exe is not in the WiX package" }
+          "$env:RUNNER_TEMP\wix\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Work out the version
         id: version
