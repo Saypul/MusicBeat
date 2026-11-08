@@ -73,6 +73,18 @@ jobs:
           echo "LASTFM_SECRET=${{ secrets.LASTFM_SECRET }}" >> local.properties
           echo "LISTEN_TOGETHER_SERVER=${{ secrets.LISTEN_TOGETHER_SERVER }}" >> local.properties
 
+      - name: Gradle distribution
+        shell: bash
+        # The wrapper's own download has a short timeout and no retry, and the distribution is
+        # served from GitHub releases, which have been answering slowly or with 504s.
+        run: |
+          for i in 1 2 3 4 5; do
+            ./gradlew --version && exit 0
+            echo "Gradle download failed (attempt $i); retrying"
+            sleep $((20 * i))
+          done
+          exit 1
+
       - name: Tests
         run: .\gradlew.bat :shared:jvmTest :desktopUi:jvmTest :desktopApp:test "-Pmusicbeat.version=${{ steps.version.outputs.value }}"
 
