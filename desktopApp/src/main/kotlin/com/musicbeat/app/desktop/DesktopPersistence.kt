@@ -200,6 +200,43 @@ class DesktopPersistence {
     fun saveString(key: String, value: String) =
         DesktopPreferenceChunks.write(preferences, key, value)
 
+    /**
+     * A credential. On Windows it is sealed with the user's DPAPI key and kept
+     * under [key]'s `_protected` twin, so the registry never holds it in the
+     * clear, the way [saveSourceConfigs] keeps addon credentials. A value an
+     * older build left in plain text is moved over the first time it is read.
+     * Elsewhere it stays a plain preference.
+     */
+    fun secret(key: String): String {
+        if (!DesktopPlatform.isWindows) return string(key)
+        DesktopPreferenceChunks.read(preferences, protectedKey(key))?.let { sealed ->
+            return runCatching { Base64.getDecoder().decode(sealed) }.getOrNull()
+                ?.let(DesktopWindowsCrypto::unprotect)
+                ?.toString(StandardCharsets.UTF_8)
+                .orEmpty()
+        }
+        return string(key).also { legacy -> if (legacy.isNotEmpty()) saveSecret(key, legacy) }
+    }
+
+    fun saveSecret(key: String, value: String) {
+        if (!DesktopPlatform.isWindows) return saveString(key, value)
+        if (value.isEmpty()) {
+            DesktopPreferenceChunks.remove(preferences, protectedKey(key))
+            DesktopPreferenceChunks.remove(preferences, key)
+            return
+        }
+        val sealed = DesktopWindowsCrypto.protect(value.toByteArray(StandardCharsets.UTF_8))
+        if (sealed == null) {
+            // Losing a sign-in is worse than keeping it as older builds did.
+            DesktopTrackLog.log("Windows could not protect a credential; keeping it as a plain preference")
+            return saveString(key, value)
+        }
+        DesktopPreferenceChunks.write(preferences, protectedKey(key), Base64.getEncoder().encodeToString(sealed))
+        DesktopPreferenceChunks.remove(preferences, key)
+    }
+
+    private fun protectedKey(key: String) = "${key}_protected"
+
     /** A configured module index, when one is still set up. */
     fun moduleIndexUrl(): String =
         sourceConfigs().firstOrNull { it.kind == DesktopSourceKind.CUSTOM_MODULE }?.baseUrl.orEmpty()

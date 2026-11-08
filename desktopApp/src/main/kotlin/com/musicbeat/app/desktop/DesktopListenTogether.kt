@@ -167,10 +167,10 @@ internal object DesktopListenTogether {
         // party slot until the server's grace period expires. Android hands that stale slot back
         // during init; desktop does the same before offering a new room.
         val staleCode = persistence.string(KEY_CODE)
-        val staleToken = persistence.string(KEY_TOKEN)
+        val staleToken = persistence.secret(KEY_TOKEN)
         val staleServer = persistence.string(KEY_ACTIVE_SERVER).ifBlank { defaultHttpBase() }
         persistence.saveString(KEY_CODE, "")
-        persistence.saveString(KEY_TOKEN, "")
+        persistence.saveSecret(KEY_TOKEN, "")
         persistence.saveString(KEY_ACTIVE_SERVER, "")
         if (staleCode.isNotBlank() && staleToken.isNotBlank()) {
             scope.launch {
@@ -325,7 +325,7 @@ internal object DesktopListenTogether {
             activePartyServerBase = if (first.isSuccess) primary else DEFAULT_SERVER
             token = membership.token
             persistence.saveString(KEY_CODE, membership.code)
-            persistence.saveString(KEY_TOKEN, membership.token)
+            persistence.saveSecret(KEY_TOKEN, membership.token)
             persistence.saveString(KEY_ACTIVE_SERVER, activePartyServerBase.orEmpty())
             clock.reset()
             _state.value = State(
@@ -356,7 +356,7 @@ internal object DesktopListenTogether {
         token = null
         activePartyServerBase = null
         persistence.saveString(KEY_CODE, "")
-        persistence.saveString(KEY_TOKEN, "")
+        persistence.saveSecret(KEY_TOKEN, "")
         persistence.saveString(KEY_ACTIVE_SERVER, "")
         _activity.value = emptyList()
         _state.value = State()

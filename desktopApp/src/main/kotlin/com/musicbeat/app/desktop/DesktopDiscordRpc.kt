@@ -126,14 +126,14 @@ internal object DesktopDiscordRpc {
     private val _enabled = MutableStateFlow(DesktopPersistence().boolean(KEY_ENABLED, false))
     val enabled: StateFlow<Boolean> = _enabled
 
-    private val _token = MutableStateFlow(DesktopPersistence().string(KEY_TOKEN, ""))
+    private val _token = MutableStateFlow(DesktopPersistence().secret(KEY_TOKEN))
     val token: StateFlow<String> = _token
 
     /** Checks a token by asking Discord who it belongs to, then keeps it. */
     suspend fun signIn(candidate: String): Result<UserInfo> =
         KizzyRPC.getUserInfo(candidate, USER_AGENT, superProperties())
             .onSuccess { user ->
-                DesktopPersistence().saveString(KEY_TOKEN, candidate)
+                DesktopPersistence().saveSecret(KEY_TOKEN, candidate)
                 DesktopPersistence().saveString(KEY_USERNAME, user.name)
                 _token.value = candidate
                 _username.value = user.name
@@ -142,7 +142,7 @@ internal object DesktopDiscordRpc {
 
     fun signOut() {
         setEnabled(false)
-        DesktopPersistence().saveString(KEY_TOKEN, "")
+        DesktopPersistence().saveSecret(KEY_TOKEN, "")
         DesktopPersistence().saveString(KEY_USERNAME, "")
         _token.value = ""
         _username.value = ""

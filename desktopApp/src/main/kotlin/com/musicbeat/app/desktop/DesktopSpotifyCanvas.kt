@@ -341,10 +341,10 @@ internal object DesktopSpotifyToken {
     @Volatile private var session: Pair<String, String>? = null
 
     /** The listener's `sp_dc` cookie. Nothing here works without it. */
-    fun cookie(): String = DesktopPersistence().string(KEY_SPDC).trim()
+    fun cookie(): String = DesktopPersistence().secret(KEY_SPDC).trim()
 
     fun setCookie(value: String) {
-        DesktopPersistence().saveString(KEY_SPDC, value.trim())
+        DesktopPersistence().saveSecret(KEY_SPDC, value.trim())
         cachedAccessToken = null
         accessTokenExpiresAtMs = 0L
         retryAfterMs = 0L

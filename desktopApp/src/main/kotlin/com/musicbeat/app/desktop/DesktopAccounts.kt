@@ -288,7 +288,7 @@ internal object DesktopAccounts {
 
     fun remove(accountId: String) {
         DesktopSecretStore.remove(attributesFor(accountId))
-        persistence.saveString(cookieFallbackKey(accountId), "")
+        persistence.saveSecret(cookieFallbackKey(accountId), "")
         val remaining = accounts().filterNot { it.accountId == accountId }
         write(remaining)
         val next = remaining.firstOrNull()
@@ -314,17 +314,16 @@ internal object DesktopAccounts {
             secret = cookie.toByteArray(Charsets.UTF_8),
         )
         if (stored) {
-            persistence.saveString(cookieFallbackKey(accountId), "")
+            persistence.saveSecret(cookieFallbackKey(accountId), "")
         } else {
-            DesktopTrackLog.log("no keyring available; keeping the session in preferences instead")
-            DesktopPreferenceChunks.write(persistence.preferences, cookieFallbackKey(accountId), cookie)
+            DesktopTrackLog.log("no keyring available; keeping the session in preferences instead (DPAPI-sealed on Windows)")
+            persistence.saveSecret(cookieFallbackKey(accountId), cookie)
         }
     }
 
     fun cookieOf(accountId: String): String? =
         DesktopSecretStore.lookup(attributesFor(accountId))?.toString(Charsets.UTF_8)?.takeIf { it.isNotBlank() }
-            ?: DesktopPreferenceChunks.read(persistence.preferences, cookieFallbackKey(accountId))
-                ?.takeIf { it.isNotBlank() }
+            ?: persistence.secret(cookieFallbackKey(accountId)).takeIf { it.isNotBlank() }
 
     private fun cookieFallbackKey(accountId: String) = "google_cookie_$accountId"
 

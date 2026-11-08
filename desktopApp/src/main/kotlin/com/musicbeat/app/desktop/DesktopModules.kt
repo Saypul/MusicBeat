@@ -103,13 +103,48 @@ private object DesktopModuleHttp {
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
+    /** Redirects are followed by hand from a module, so each hop can be checked. */
+    private val moduleClient = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofSeconds(20))
+        .followRedirects(HttpClient.Redirect.NEVER)
+        .build()
+
     fun get(url: String): DesktopHttpResponse = request(url, "GET", emptyMap(), null)
+
+    /** A module's own fetch: never onto the local network unless [allowLocal]. See [DesktopModuleNetwork]. */
+    fun moduleRequest(
+        url: String,
+        method: String,
+        headers: Map<String, String>,
+        body: String?,
+        allowLocal: Boolean,
+    ): DesktopHttpResponse {
+        var target = url
+        var currentMethod = method
+        var currentBody = body
+        repeat(MAX_REDIRECTS + 1) {
+            DesktopModuleNetwork.check(target, allowLocal)
+            val response = request(target, currentMethod, headers, currentBody, moduleClient)
+            val location = response.headers["location"]
+            if (response.status !in 300..399 || location.isNullOrBlank()) return response
+            target = URI.create(target).resolve(location).toString()
+            // 303, and 301/302 after a POST, continue as a GET, as browsers and Java's own follower do.
+            if (response.status == 303 || (response.status in 301..302 && currentMethod.uppercase(Locale.ROOT) == "POST")) {
+                currentMethod = "GET"
+                currentBody = null
+            }
+        }
+        error("too many redirects")
+    }
+
+    private const val MAX_REDIRECTS = 5
 
     fun request(
         url: String,
         method: String,
         headers: Map<String, String>,
         body: String?,
+        httpClient: HttpClient = client,
     ): DesktopHttpResponse {
         val builder = HttpRequest.newBuilder(URI.create(url))
             .timeout(Duration.ofSeconds(30))
@@ -131,7 +166,7 @@ private object DesktopModuleHttp {
             "HEAD" -> builder.method("HEAD", HttpRequest.BodyPublishers.noBody())
             else -> builder.GET()
         }
-        val response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString())
+        val response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString())
         return DesktopHttpResponse(
             status = response.statusCode(),
             body = response.body(),
@@ -146,6 +181,9 @@ private class DesktopModuleEngine(
     private val jsCode: String,
     private val baseUrl: String,
 ) : AutoCloseable {
+    /** Resolved on first fetch. */
+    private val allowLocal by lazy { DesktopModuleNetwork.isLocalUrl(baseUrl) }
+
     private val context = Context.newBuilder("js")
         .allowHostAccess(HostAccess.NONE)
         .allowHostClassLookup { false }
@@ -161,7 +199,7 @@ private class DesktopModuleEngine(
             val method = args.getOrNull(1)?.asString() ?: "GET"
             val headers = args.getOrNull(2)?.asString()?.let(::parseHeaders).orEmpty()
             val body = args.getOrNull(3)?.asString()
-            val response = DesktopModuleHttp.request(resolveUrl(url), method, headers, body)
+            val response = DesktopModuleHttp.moduleRequest(resolveUrl(url), method, headers, body, allowLocal)
             buildJsonObject {
                 put("status", response.status)
                 put("ok", response.status in 200..299)

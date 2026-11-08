@@ -18,10 +18,11 @@ internal object DesktopScrobbleSettings {
         MutableStateFlow(persistence.boolean(key, default))
 
     private fun text(key: String) = MutableStateFlow(persistence.string(key, ""))
+    private fun secret(key: String) = MutableStateFlow(persistence.secret(key))
 
     private val _lastfmEnabled = flag(KEY_LASTFM_ENABLED, false)
     private val _lastfmUsername = text(KEY_LASTFM_USERNAME)
-    private val _lastfmSessionKey = text(KEY_LASTFM_SESSION_KEY)
+    private val _lastfmSessionKey = secret(KEY_LASTFM_SESSION_KEY)
     private val _lastfmScrobble = flag(KEY_LASTFM_SCROBBLE, true)
     private val _lastfmNowPlaying = flag(KEY_LASTFM_NOW_PLAYING, true)
     private val _lastfmPrimaryArtistOnly = flag(KEY_LASTFM_PRIMARY_ARTIST, false)
@@ -30,10 +31,10 @@ internal object DesktopScrobbleSettings {
     // Android's AppSettings lets them. Signing in and scrobbling use these
     // first, and fall back to the build-time key only where they are left blank.
     private val _lastfmApiKey = text(KEY_LASTFM_API_KEY)
-    private val _lastfmApiSecret = text(KEY_LASTFM_API_SECRET)
+    private val _lastfmApiSecret = secret(KEY_LASTFM_API_SECRET)
 
     private val _listenBrainzEnabled = flag(KEY_LISTENBRAINZ_ENABLED, false)
-    private val _listenBrainzToken = text(KEY_LISTENBRAINZ_TOKEN)
+    private val _listenBrainzToken = secret(KEY_LISTENBRAINZ_TOKEN)
     private val _listenBrainzPrimaryArtistOnly = flag(KEY_LISTENBRAINZ_PRIMARY_ARTIST, false)
 
     private val _minDuration = MutableStateFlow(persistence.int(KEY_MIN_DURATION, DEFAULT_MIN_DURATION))
@@ -68,7 +69,7 @@ internal object DesktopScrobbleSettings {
         write(_listenBrainzPrimaryArtistOnly, KEY_LISTENBRAINZ_PRIMARY_ARTIST, value)
 
     fun setListenBrainzToken(value: String) {
-        persistence.saveString(KEY_LISTENBRAINZ_TOKEN, value)
+        persistence.saveSecret(KEY_LISTENBRAINZ_TOKEN, value)
         _listenBrainzToken.value = value
     }
 
@@ -78,7 +79,7 @@ internal object DesktopScrobbleSettings {
     }
 
     fun setLastfmApiSecret(value: String) {
-        persistence.saveString(KEY_LASTFM_API_SECRET, value)
+        persistence.saveSecret(KEY_LASTFM_API_SECRET, value)
         _lastfmApiSecret.value = value
     }
 
@@ -100,7 +101,7 @@ internal object DesktopScrobbleSettings {
     /** Records a successful sign-in and turns scrobbling on, as Android does. */
     fun signedInToLastfm(username: String, sessionKey: String) {
         persistence.saveString(KEY_LASTFM_USERNAME, username)
-        persistence.saveString(KEY_LASTFM_SESSION_KEY, sessionKey)
+        persistence.saveSecret(KEY_LASTFM_SESSION_KEY, sessionKey)
         _lastfmUsername.value = username
         _lastfmSessionKey.value = sessionKey
         setLastfmEnabled(true)
@@ -109,7 +110,7 @@ internal object DesktopScrobbleSettings {
     /** Clears the session and everything that depended on it. */
     fun signOutOfLastfm() {
         persistence.saveString(KEY_LASTFM_USERNAME, "")
-        persistence.saveString(KEY_LASTFM_SESSION_KEY, "")
+        persistence.saveSecret(KEY_LASTFM_SESSION_KEY, "")
         _lastfmUsername.value = ""
         _lastfmSessionKey.value = ""
         setLastfmEnabled(false)
