@@ -173,6 +173,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -523,23 +524,60 @@ fun MusicBeatDesktopApp() {
     var availableUpdate by remember { mutableStateOf<DesktopUpdateChecker.UpdateInfo?>(null) }
     LaunchedEffect(Unit) { availableUpdate = DesktopUpdateChecker.check() }
     availableUpdate?.let { update ->
+        val updateDownload by DesktopUpdateChecker.download.collectAsState()
+        val updateScope = rememberCoroutineScope()
+        val dismissUpdate = {
+            if (updateDownload !is DesktopUpdateChecker.DownloadState.Downloading) {
+                DesktopUpdateChecker.resetDownload()
+                availableUpdate = null
+            }
+        }
         AlertDialog(
-            onDismissRequest = { availableUpdate = null },
+            onDismissRequest = dismissUpdate,
             title = { Text(DesktopStrings["d_update_available", "Update available"]) },
             text = {
-                Text(
-                    "MusicBeat ${update.version} is out — you have ${DesktopUpdateChecker.currentVersion}." +
-                        (update.notes?.takeIf { it.isNotBlank() }?.let { "\n\n${it.take(600)}" } ?: ""),
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        "MusicBeat ${update.version} is out — you have ${DesktopUpdateChecker.currentVersion}." +
+                            (update.notes?.takeIf { it.isNotBlank() }?.let { "\n\n${it.take(600)}" } ?: ""),
+                    )
+                    when (val state = updateDownload) {
+                        is DesktopUpdateChecker.DownloadState.Downloading -> state.progress
+                            ?.let { LinearProgressIndicator(progress = { it }, modifier = Modifier.fillMaxWidth()) }
+                            ?: LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        is DesktopUpdateChecker.DownloadState.Ready ->
+                            Text("Downloaded and verified. MusicBeat closes while the installer runs, then opens again.")
+                        is DesktopUpdateChecker.DownloadState.Failed ->
+                            Text("Couldn't get the update: ${state.reason}", color = MaterialTheme.colorScheme.error)
+                        DesktopUpdateChecker.DownloadState.Idle -> Unit
+                    }
+                }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    DesktopExternalLinks.open(update.downloadUrl ?: update.releaseUrl)
-                    availableUpdate = null
-                }) { Text(DesktopStrings["d_download", "Download"]) }
+                val state = updateDownload
+                when {
+                    !DesktopUpdateChecker.installsInApp -> TextButton(onClick = {
+                        DesktopExternalLinks.open(update.downloadUrl)
+                        availableUpdate = null
+                    }) { Text(DesktopStrings["d_download", "Download"]) }
+                    state is DesktopUpdateChecker.DownloadState.Ready -> TextButton(onClick = {
+                        DesktopUpdateChecker.installAndQuit(state.installer)
+                    }) { Text("Install now") }
+                    state is DesktopUpdateChecker.DownloadState.Failed -> TextButton(onClick = {
+                        DesktopExternalLinks.open(update.releaseUrl)
+                        dismissUpdate()
+                    }) { Text("Open release page") }
+                    else -> TextButton(
+                        enabled = state !is DesktopUpdateChecker.DownloadState.Downloading,
+                        onClick = { updateScope.launch { DesktopUpdateChecker.downloadInstaller(update) } },
+                    ) { Text(DesktopStrings["d_download", "Download"]) }
+                }
             },
             dismissButton = {
-                TextButton(onClick = { availableUpdate = null }) {
+                TextButton(
+                    enabled = updateDownload !is DesktopUpdateChecker.DownloadState.Downloading,
+                    onClick = dismissUpdate,
+                ) {
                     Text(DesktopStrings["d_later", "Later"])
                 }
             },

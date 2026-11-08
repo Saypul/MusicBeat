@@ -62,6 +62,9 @@ internal object DesktopTrayMenu {
 
     fun onLayoutChanged(listener: (Int) -> Unit) = synchronized(lock) { onLayoutChanged = listener }
 
+    /** The tray's own Quit, which shuts the native audio down first; the updater uses it too. */
+    fun quitApp() = synchronized(lock) { quit }.invoke()
+
     /** Keeps the menu's text in step with playback; silent when nothing moved. */
     fun publish(title: String?, playing: Boolean) {
         val next = synchronized(lock) {

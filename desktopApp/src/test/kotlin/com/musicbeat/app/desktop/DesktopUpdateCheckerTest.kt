@@ -1,0 +1,35 @@
+package com.musicbeat.app.desktop
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+class DesktopUpdateCheckerTest {
+
+    private val sums = """
+        312ec7f45152090541ae350843b6df85275c66d63a82b7a868e56258692bbf90  MusicBeat-1.13.1-windows-x64.msi
+        91aa1376a41f8947609111421c0fbded36a7e65fea2afb5e067a39cce7fbd01c  MusicBeat-1.13.1-windows-x64-portable.zip
+        82e721a7660f7e55d9d2f2f3fa05e9f962c48242eba456c2bfd140191e7b5f0e *MusicBeat-1.13.1-windows-x64-setup.exe
+    """.trimIndent()
+
+    @Test
+    fun `the installer's digest is read from sha256sum output`() {
+        assertEquals(
+            "82e721a7660f7e55d9d2f2f3fa05e9f962c48242eba456c2bfd140191e7b5f0e",
+            DesktopUpdateChecker.expectedDigest(sums, "MusicBeat-1.13.1-windows-x64-setup.exe"),
+        )
+        // A name that only starts the same way is not the file.
+        assertNull(DesktopUpdateChecker.expectedDigest(sums, "MusicBeat-1.13.1-windows-x64"))
+        assertNull(DesktopUpdateChecker.expectedDigest("not-a-digest  MusicBeat-1.13.1-windows-x64.msi", "MusicBeat-1.13.1-windows-x64.msi"))
+    }
+
+    @Test
+    fun `versions compare numerically`() {
+        assertTrue(DesktopUpdateChecker.isNewer("1.13.2", "1.13.1"))
+        assertTrue(DesktopUpdateChecker.isNewer("1.14", "1.13.1"))
+        assertFalse(DesktopUpdateChecker.isNewer("1.13.1", "1.13.1"))
+        assertFalse(DesktopUpdateChecker.isNewer("1.9", "1.13.1"))
+    }
+}
