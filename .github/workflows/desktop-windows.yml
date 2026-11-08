@@ -82,8 +82,10 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
           Copy-Item desktopApp/build/compose/binaries/main/msi/*.msi "dist/MusicBeat-$v-windows-x64.msi"
           Copy-Item desktopApp/build/compose/binaries/main/exe/*.exe "dist/MusicBeat-$v-windows-x64-setup.exe"
-          7z a -tzip -mx=5 "dist/MusicBeat-$v-windows-x64-portable.zip" `
-            "desktopApp/build/compose/binaries/main/app/MusicBeat/*" | Out-Null
+          # From inside app/, so the zip holds MusicBeat\ and not the build path.
+          Push-Location desktopApp/build/compose/binaries/main/app
+          7z a -tzip -mx=5 "$env:GITHUB_WORKSPACE/dist/MusicBeat-$v-windows-x64-portable.zip" MusicBeat | Out-Null
+          Pop-Location
           Get-ChildItem dist | Format-Table Name, Length
 
       - uses: actions/upload-artifact@v4
