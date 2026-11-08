@@ -47,7 +47,11 @@ jobs:
         shell: pwsh
         run: |
           $url = "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip"
-          Invoke-WebRequest -Uri $url -OutFile wix.zip
+          # GitHub's release CDN answers 5xx now and then; a few tries rather than a failed build.
+          for ($i = 1; $i -le 5; $i++) {
+            try { Invoke-WebRequest -Uri $url -OutFile wix.zip; break }
+            catch { if ($i -eq 5) { throw }; Write-Host "WiX download failed ($_); retrying"; Start-Sleep -Seconds (10 * $i) }
+          }
           Expand-Archive wix.zip -DestinationPath "$env:RUNNER_TEMP\wix"
           "$env:RUNNER_TEMP\wix" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
