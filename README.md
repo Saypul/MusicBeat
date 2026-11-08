@@ -84,8 +84,11 @@
 <h1><a id="download"></a>Download</h1>
 
 <a href="https://github.com/Saypul/MusicBeat/releases" target="_blank" rel="noopener noreferrer"><img src="https://cdn.jsdelivr.net/gh/JMcrafter26/badges@main/src/assets/supported/android/cozy.svg" alt="Download for Android" height="55"/></a>
+<a href="https://github.com/Saypul/MusicBeat/releases" target="_blank" rel="noopener noreferrer"><img src="https://cdn.jsdelivr.net/gh/JMcrafter26/badges@main/src/assets/supported/windows/cozy.svg" alt="Download for Windows" height="55"/></a>
 
 Grab the latest signed APK from the [Releases](https://github.com/Saypul/MusicBeat/releases) page. Most phones want the `arm64-v8a` build. Sideloading requires enabling "Install unknown apps" for whichever app you download it with.
+
+On Windows, take `MusicBeat-<version>-windows-x64-setup.exe` from the same page (beta). See the [code signing policy](docs/CODE_SIGNING.md).
 
 </div>
 

@@ -26,6 +26,8 @@ jobs:
   windows:
     name: Windows · installer, msi, portable
     runs-on: windows-latest
+    env:
+      SIGNPATH_ON: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -88,10 +90,43 @@ jobs:
           Pop-Location
           Get-ChildItem dist | Format-Table Name, Length
 
+      - id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: musicbeat-windows-${{ steps.version.outputs.value }}${{ env.SIGNPATH_ON == 'true' && '-unsigned' || '' }}
+          path: dist/*
+
+      # Code signing through SignPath Foundation, once the project is accepted
+      # (see docs/CODE_SIGNING.md). Until SIGNPATH_API_TOKEN is set the files
+      # ship unsigned. SignPath signs the installer, the MSI and the launcher
+      # inside the portable zip, per .signpath/artifact-configuration.xml.
+      - name: Sign with SignPath
+        if: env.SIGNPATH_ON == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: musicbeat
+          signing-policy-slug: ${{ startsWith(inputs.release_tag, 'v') && 'release-signing' || 'test-signing' }}
+          artifact-configuration-slug: windows
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Use the signed files
+        if: env.SIGNPATH_ON == 'true'
+        shell: bash
+        run: rm -rf dist && mv signed dist && ls -l dist
+
       - uses: actions/upload-artifact@v4
+        if: env.SIGNPATH_ON == 'true'
         with:
           name: musicbeat-windows-${{ steps.version.outputs.value }}
           path: dist/*
+
+      - name: Checksums
+        shell: bash
+        run: (cd dist && sha256sum MusicBeat-* > "SHA256SUMS-windows-${{ steps.version.outputs.value }}")
 
       - name: Attach to the release
         if: inputs.release_tag != ''
