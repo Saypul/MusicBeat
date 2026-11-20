@@ -49,6 +49,9 @@ sealed interface AppRoute {
 
     /** The Equalizer's list of preset curves. */
     data object EqualizerPresets : AppRoute
+
+    /** The Equalizer's search through AutoEQ's headphone corrections. */
+    data object AutoEq : AppRoute
 }
 
 /**

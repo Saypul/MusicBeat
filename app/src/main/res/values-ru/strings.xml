@@ -1169,6 +1169,26 @@
     <string name="equalizer_headroom_ok_subtitle">Самая громкая точка: %1$s</string>
     <string name="equalizer_headroom_over">Пики на %1$s выше максимума</string>
     <string name="equalizer_headroom_over_subtitle">Лимитер их сдерживает. Уменьшите предусилитель, если громкие места звучат плоско.</string>
+    <string name="equalizer_autoeq">Найти наушники</string>
+    <string name="equalizer_autoeq_subtitle">Коррекция из AutoEQ</string>
+    <string name="equalizer_autoeq_footer">Коррекции, измеренные проектом AutoEQ, почти для девяти тысяч наушников. Выберите свои — коррекция применится на вкладке «Параметрический» и сохранится в профилях.</string>
+    <string name="equalizer_autoeq_hint">Модель, например HD 650</string>
+    <string name="equalizer_autoeq_offline">Не удалось загрузить список наушников</string>
+    <string name="equalizer_autoeq_retry">Нажмите, чтобы повторить</string>
+    <string name="equalizer_autoeq_none">Нет подходящих наушников</string>
+    <string name="equalizer_autoeq_failed">Не удалось загрузить коррекцию для %1$s</string>
+    <string name="equalizer_import_applied">Применено: %1$s</string>
+    <string name="equalizer_import_applied_skipped">Применено: %1$s (пропущено фильтров: %2$d)</string>
+    <string name="equalizer_import_empty">Подходящих фильтров не найдено</string>
+    <string name="equalizer_profiles">Профили</string>
+    <string name="equalizer_profiles_footer">Файлы в формате ParametricEQ из AutoEQ и Equalizer APO. При импорте автоматический предусилитель выключается и используется значение из файла.</string>
+    <string name="equalizer_import_file">Импорт файла</string>
+    <string name="equalizer_import_paste">Вставить текст</string>
+    <string name="equalizer_import_paste_message">Вставьте коррекцию в формате ParametricEQ: строку Preamp и по строке Filter на каждую полосу.</string>
+    <string name="equalizer_import_apply">Применить</string>
+    <string name="equalizer_import_pasted">Вставленная коррекция</string>
+    <string name="equalizer_export">Поделиться текстом</string>
+    <string name="equalizer_save_parametric_message">Сохраняет текущие параметрические полосы и предусилитель. Существующее имя заменит этот профиль.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

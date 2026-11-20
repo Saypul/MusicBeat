@@ -1146,6 +1146,26 @@
     <string name="equalizer_headroom_ok_subtitle">Ponto mais alto: %1$s</string>
     <string name="equalizer_headroom_over">Picos %1$s acima do máximo</string>
     <string name="equalizer_headroom_over_subtitle">O limitador segura-os. Baixe o pré-amplificador se as partes altas soarem achatadas.</string>
+    <string name="equalizer_autoeq">Encontre seus fones</string>
+    <string name="equalizer_autoeq_subtitle">Correção do AutoEQ</string>
+    <string name="equalizer_autoeq_footer">Correções medidas pelo projeto AutoEQ para quase nove mil fones. Escolha o seu e ela será aplicada na aba Paramétrico e guardada nos seus perfis.</string>
+    <string name="equalizer_autoeq_hint">Modelo, ex. HD 650</string>
+    <string name="equalizer_autoeq_offline">Não foi possível carregar a lista de fones</string>
+    <string name="equalizer_autoeq_retry">Toque para tentar de novo</string>
+    <string name="equalizer_autoeq_none">Nenhum fone corresponde</string>
+    <string name="equalizer_autoeq_failed">Não foi possível carregar a correção de %1$s</string>
+    <string name="equalizer_import_applied">%1$s aplicado</string>
+    <string name="equalizer_import_applied_skipped">%1$s aplicado (%2$d filtros omitidos)</string>
+    <string name="equalizer_import_empty">Nenhum filtro utilizável</string>
+    <string name="equalizer_profiles">Perfis</string>
+    <string name="equalizer_profiles_footer">Os arquivos usam o formato ParametricEQ do AutoEQ e do Equalizer APO. Importar desliga o pré-amplificador automático e usa o do arquivo.</string>
+    <string name="equalizer_import_file">Importar arquivo</string>
+    <string name="equalizer_import_paste">Colar texto</string>
+    <string name="equalizer_import_paste_message">Cole uma correção no formato ParametricEQ: uma linha Preamp e uma linha Filter por banda.</string>
+    <string name="equalizer_import_apply">Aplicar</string>
+    <string name="equalizer_import_pasted">Correção colada</string>
+    <string name="equalizer_export">Compartilhar como texto</string>
+    <string name="equalizer_save_parametric_message">Salva as bandas paramétricas e o pré-amplificador atuais. Um nome existente substitui esse perfil.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

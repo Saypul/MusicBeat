@@ -894,6 +894,26 @@
     <string name="equalizer_headroom_ok_subtitle">Điểm to nhất: %1$s</string>
     <string name="equalizer_headroom_over">Đỉnh vượt mức tối đa %1$s</string>
     <string name="equalizer_headroom_over_subtitle">Bộ giới hạn sẽ giữ lại. Hạ preamp nếu đoạn to nghe bị phẳng.</string>
+    <string name="equalizer_autoeq">Tìm tai nghe của bạn</string>
+    <string name="equalizer_autoeq_subtitle">Hiệu chỉnh từ AutoEQ</string>
+    <string name="equalizer_autoeq_footer">Các hiệu chỉnh do dự án AutoEQ đo cho gần chín nghìn tai nghe. Chọn tai nghe của bạn, hiệu chỉnh sẽ được áp dụng ở thẻ Tham số và lưu vào hồ sơ.</string>
+    <string name="equalizer_autoeq_hint">Mẫu, ví dụ HD 650</string>
+    <string name="equalizer_autoeq_offline">Không tải được danh sách tai nghe</string>
+    <string name="equalizer_autoeq_retry">Chạm để thử lại</string>
+    <string name="equalizer_autoeq_none">Không có tai nghe phù hợp</string>
+    <string name="equalizer_autoeq_failed">Không tải được hiệu chỉnh cho %1$s</string>
+    <string name="equalizer_import_applied">Đã áp dụng %1$s</string>
+    <string name="equalizer_import_applied_skipped">Đã áp dụng %1$s (bỏ qua %2$d bộ lọc)</string>
+    <string name="equalizer_import_empty">Không tìm thấy bộ lọc dùng được</string>
+    <string name="equalizer_profiles">Hồ sơ</string>
+    <string name="equalizer_profiles_footer">Tệp dùng định dạng ParametricEQ của AutoEQ và Equalizer APO. Khi nhập, preamp tự động sẽ tắt và dùng preamp trong tệp.</string>
+    <string name="equalizer_import_file">Nhập tệp</string>
+    <string name="equalizer_import_paste">Dán văn bản</string>
+    <string name="equalizer_import_paste_message">Dán hiệu chỉnh định dạng ParametricEQ: một dòng Preamp và một dòng Filter cho mỗi dải.</string>
+    <string name="equalizer_import_apply">Áp dụng</string>
+    <string name="equalizer_import_pasted">Hiệu chỉnh đã dán</string>
+    <string name="equalizer_export">Chia sẻ dạng văn bản</string>
+    <string name="equalizer_save_parametric_message">Lưu các dải tham số và preamp hiện tại. Tên đã có sẽ thay thế hồ sơ đó.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

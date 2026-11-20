@@ -1141,6 +1141,26 @@
     <string name="equalizer_headroom_ok_subtitle">सबसे तेज़ बिंदु: %1$s</string>
     <string name="equalizer_headroom_over">पीक फ़ुल स्केल से %1$s ऊपर</string>
     <string name="equalizer_headroom_over_subtitle">लिमिटर उन्हें रोकता है। तेज़ हिस्से सपाट लगें तो प्रीएम्प कम करें।</string>
+    <string name="equalizer_autoeq">अपना हेडफ़ोन खोजें</string>
+    <string name="equalizer_autoeq_subtitle">AutoEQ से सुधार</string>
+    <string name="equalizer_autoeq_footer">AutoEQ प्रोजेक्ट द्वारा मापे गए लगभग नौ हज़ार हेडफ़ोन के सुधार। अपना चुनें, यह पैरामीट्रिक टैब पर लागू होगा और आपकी प्रोफ़ाइल में सहेजा जाएगा।</string>
+    <string name="equalizer_autoeq_hint">मॉडल, जैसे HD 650</string>
+    <string name="equalizer_autoeq_offline">हेडफ़ोन सूची लोड नहीं हो सकी</string>
+    <string name="equalizer_autoeq_retry">फिर से कोशिश करने के लिए टैप करें</string>
+    <string name="equalizer_autoeq_none">कोई हेडफ़ोन मेल नहीं खाता</string>
+    <string name="equalizer_autoeq_failed">%1$s का सुधार लोड नहीं हो सका</string>
+    <string name="equalizer_import_applied">%1$s लागू किया</string>
+    <string name="equalizer_import_applied_skipped">%1$s लागू किया (%2$d फ़िल्टर छोड़े गए)</string>
+    <string name="equalizer_import_empty">कोई उपयोगी फ़िल्टर नहीं मिला</string>
+    <string name="equalizer_profiles">प्रोफ़ाइल</string>
+    <string name="equalizer_profiles_footer">फ़ाइलें AutoEQ और Equalizer APO के ParametricEQ फ़ॉर्मैट में होती हैं। इम्पोर्ट करने पर ऑटोमैटिक प्रीएम्प बंद हो जाता है और फ़ाइल का प्रीएम्प लगता है।</string>
+    <string name="equalizer_import_file">फ़ाइल इम्पोर्ट करें</string>
+    <string name="equalizer_import_paste">टेक्स्ट पेस्ट करें</string>
+    <string name="equalizer_import_paste_message">ParametricEQ फ़ॉर्मैट में सुधार पेस्ट करें: एक Preamp लाइन और हर बैंड के लिए एक Filter लाइन।</string>
+    <string name="equalizer_import_apply">लागू करें</string>
+    <string name="equalizer_import_pasted">पेस्ट किया गया सुधार</string>
+    <string name="equalizer_export">टेक्स्ट के रूप में शेयर करें</string>
+    <string name="equalizer_save_parametric_message">मौजूदा पैरामीट्रिक बैंड और प्रीएम्प सहेजता है। पहले से मौजूद नाम उस प्रोफ़ाइल को बदल देगा।</string>
 
     <string name="system_equalizer">System equalizer</string>
 

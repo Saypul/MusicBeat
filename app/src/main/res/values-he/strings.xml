@@ -1146,6 +1146,26 @@
     <string name="equalizer_headroom_ok_subtitle">הנקודה החזקה ביותר: %1$s</string>
     <string name="equalizer_headroom_over">שיאים %1$s מעל המקסימום</string>
     <string name="equalizer_headroom_over_subtitle">המגביל מרסן אותם. הנמיכו את הקדם-מגבר אם קטעים חזקים נשמעים שטוחים.</string>
+    <string name="equalizer_autoeq">חיפוש האוזניות שלך</string>
+    <string name="equalizer_autoeq_subtitle">תיקון מ-AutoEQ</string>
+    <string name="equalizer_autoeq_footer">תיקונים שנמדדו בפרויקט AutoEQ לכמעט תשעת אלפים אוזניות. בחרו את שלכם והתיקון יוחל בכרטיסייה פרמטרי וישמר בפרופילים.</string>
+    <string name="equalizer_autoeq_hint">דגם, למשל HD 650</string>
+    <string name="equalizer_autoeq_offline">לא ניתן לטעון את רשימת האוזניות</string>
+    <string name="equalizer_autoeq_retry">הקישו כדי לנסות שוב</string>
+    <string name="equalizer_autoeq_none">אין אוזניות תואמות</string>
+    <string name="equalizer_autoeq_failed">לא ניתן לטעון את התיקון עבור %1$s</string>
+    <string name="equalizer_import_applied">%1$s הוחל</string>
+    <string name="equalizer_import_applied_skipped">%1$s הוחל (%2$d מסננים הושמטו)</string>
+    <string name="equalizer_import_empty">לא נמצאו מסננים שמישים</string>
+    <string name="equalizer_profiles">פרופילים</string>
+    <string name="equalizer_profiles_footer">הקבצים בפורמט ParametricEQ של AutoEQ ו-Equalizer APO. ייבוא מכבה את הקדם-מגבר האוטומטי ומשתמש בערך שבקובץ.</string>
+    <string name="equalizer_import_file">ייבוא קובץ</string>
+    <string name="equalizer_import_paste">הדבקת טקסט</string>
+    <string name="equalizer_import_paste_message">הדביקו תיקון בפורמט ParametricEQ: שורת Preamp ושורת Filter לכל פס.</string>
+    <string name="equalizer_import_apply">החלה</string>
+    <string name="equalizer_import_pasted">תיקון שהודבק</string>
+    <string name="equalizer_export">שיתוף כטקסט</string>
+    <string name="equalizer_save_parametric_message">שומר את הפסים הפרמטריים והקדם-מגבר כפי שהם. שם קיים יחליף את הפרופיל.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

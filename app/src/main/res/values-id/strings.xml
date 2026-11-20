@@ -1120,6 +1120,26 @@
     <string name="equalizer_headroom_ok_subtitle">Titik terkeras: %1$s</string>
     <string name="equalizer_headroom_over">Puncak %1$s di atas batas</string>
     <string name="equalizer_headroom_over_subtitle">Limiter menahannya. Turunkan preamp kalau bagian yang keras terdengar datar.</string>
+    <string name="equalizer_autoeq">Cari headphone Anda</string>
+    <string name="equalizer_autoeq_subtitle">Koreksi dari AutoEQ</string>
+    <string name="equalizer_autoeq_footer">Koreksi hasil pengukuran proyek AutoEQ untuk hampir sembilan ribu headphone dan earphone. Pilih milik Anda, koreksinya diterapkan di tab Parametrik dan disimpan di profil Anda.</string>
+    <string name="equalizer_autoeq_hint">Model, mis. HD 650</string>
+    <string name="equalizer_autoeq_offline">Gagal memuat daftar headphone</string>
+    <string name="equalizer_autoeq_retry">Ketuk untuk mencoba lagi</string>
+    <string name="equalizer_autoeq_none">Tidak ada headphone yang cocok</string>
+    <string name="equalizer_autoeq_failed">Gagal memuat koreksi untuk %1$s</string>
+    <string name="equalizer_import_applied">%1$s diterapkan</string>
+    <string name="equalizer_import_applied_skipped">%1$s diterapkan (%2$d filter dilewati)</string>
+    <string name="equalizer_import_empty">Tidak ada filter yang bisa dipakai</string>
+    <string name="equalizer_profiles">Profil</string>
+    <string name="equalizer_profiles_footer">File memakai format ParametricEQ dari AutoEQ dan Equalizer APO. Import mematikan preamp otomatis dan memakai preamp dari file.</string>
+    <string name="equalizer_import_file">Import file</string>
+    <string name="equalizer_import_paste">Tempel teks</string>
+    <string name="equalizer_import_paste_message">Tempel koreksi berformat ParametricEQ: satu baris Preamp dan satu baris Filter per band.</string>
+    <string name="equalizer_import_apply">Terapkan</string>
+    <string name="equalizer_import_pasted">Koreksi yang ditempel</string>
+    <string name="equalizer_export">Bagikan sebagai teks</string>
+    <string name="equalizer_save_parametric_message">Menyimpan band parametrik dan preamp saat ini. Nama yang sudah ada di profil akan diganti.</string>
 
     <string name="system_equalizer">Equalizer sistem</string>
 

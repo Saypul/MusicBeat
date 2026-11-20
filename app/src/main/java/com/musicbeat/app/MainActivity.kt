@@ -166,6 +166,7 @@ import com.musicbeat.app.ui.components.handleDacVolumeKey
 import com.musicbeat.app.ui.components.VolumeHud
 import com.musicbeat.app.ui.navigation.AppDestination
 import com.musicbeat.app.ui.navigation.AppRoute
+import com.musicbeat.app.ui.screens.AutoEqSearchPage
 import com.musicbeat.app.ui.screens.EqualizerPresetPage
 import com.musicbeat.app.ui.screens.SettingsChoicePage
 import com.musicbeat.app.ui.components.SpotifyImportAlert
@@ -3045,6 +3046,12 @@ private fun MusicBeatApp(
                             EqualizerScreen(
                                 contentPadding = listPadding,
                                 onOpenPresets = { navigator.push(AppRoute.EqualizerPresets) },
+                                onOpenAutoEq = { navigator.push(AppRoute.AutoEq) },
+                            )
+                        } else if (pageRoute == AppRoute.AutoEq) {
+                            AutoEqSearchPage(
+                                onApplied = { navigator.pop() },
+                                contentPadding = listPadding,
                             )
                         } else if (pageRoute == AppRoute.EqualizerPresets) {
                             EqualizerPresetPage(
@@ -3748,6 +3755,7 @@ private fun MusicBeatApp(
                         is AppRoute.SettingsSection -> stringResource(route.category.title)
                         is AppRoute.SettingsChoice -> stringResource(route.choice.title)
                         AppRoute.EqualizerPresets -> stringResource(R.string.equalizer_preset)
+                        AppRoute.AutoEq -> stringResource(R.string.equalizer_autoeq)
                         AppRoute.Replay -> stringResource(R.string.replay)
                         null -> when {
                             detail != null && detailActiveShelf != null -> detailActiveShelf?.title.orEmpty()

@@ -932,6 +932,26 @@
     <string name="equalizer_headroom_ok_subtitle">จุดที่ดังที่สุด: %1$s</string>
     <string name="equalizer_headroom_over">พีคเกินสเกลเต็ม %1$s</string>
     <string name="equalizer_headroom_over_subtitle">ลิมิเตอร์จะกดไว้ ลดปรีแอมป์ถ้าช่วงที่ดังฟังดูแบน</string>
+    <string name="equalizer_autoeq">ค้นหาหูฟังของคุณ</string>
+    <string name="equalizer_autoeq_subtitle">การแก้เสียงจาก AutoEQ</string>
+    <string name="equalizer_autoeq_footer">การแก้เสียงที่วัดโดยโปรเจกต์ AutoEQ สำหรับหูฟังเกือบเก้าพันรุ่น เลือกรุ่นของคุณแล้วจะใช้ในแท็บพาราเมตริกและบันทึกในโปรไฟล์</string>
+    <string name="equalizer_autoeq_hint">รุ่น เช่น HD 650</string>
+    <string name="equalizer_autoeq_offline">โหลดรายการหูฟังไม่ได้</string>
+    <string name="equalizer_autoeq_retry">แตะเพื่อลองอีกครั้ง</string>
+    <string name="equalizer_autoeq_none">ไม่พบหูฟังที่ตรงกัน</string>
+    <string name="equalizer_autoeq_failed">โหลดการแก้เสียงของ %1$s ไม่ได้</string>
+    <string name="equalizer_import_applied">ใช้ %1$s แล้ว</string>
+    <string name="equalizer_import_applied_skipped">ใช้ %1$s แล้ว (ข้าม %2$d ฟิลเตอร์)</string>
+    <string name="equalizer_import_empty">ไม่พบฟิลเตอร์ที่ใช้ได้</string>
+    <string name="equalizer_profiles">โปรไฟล์</string>
+    <string name="equalizer_profiles_footer">ไฟล์ใช้รูปแบบ ParametricEQ ของ AutoEQ และ Equalizer APO การนำเข้าจะปิดปรีแอมป์อัตโนมัติและใช้ค่าจากไฟล์</string>
+    <string name="equalizer_import_file">นำเข้าไฟล์</string>
+    <string name="equalizer_import_paste">วางข้อความ</string>
+    <string name="equalizer_import_paste_message">วางการแก้เสียงในรูปแบบ ParametricEQ: บรรทัด Preamp หนึ่งบรรทัดและบรรทัด Filter หนึ่งบรรทัดต่อแบนด์</string>
+    <string name="equalizer_import_apply">ใช้</string>
+    <string name="equalizer_import_pasted">การแก้เสียงที่วาง</string>
+    <string name="equalizer_export">แชร์เป็นข้อความ</string>
+    <string name="equalizer_save_parametric_message">บันทึกแบนด์พาราเมตริกและปรีแอมป์ปัจจุบัน ชื่อที่มีอยู่แล้วจะถูกแทนที่</string>
 
     <string name="system_equalizer">System equalizer</string>
 

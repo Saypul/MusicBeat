@@ -1,5 +1,12 @@
 package com.musicbeat.app.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +24,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,16 +44,21 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.musicbeat.app.R
 import com.musicbeat.app.data.settings.AppSettings
+import com.musicbeat.app.data.settings.USER_EQ_PRESET_NAME_MAX
+import com.musicbeat.app.playback.AutoEqFormat
 import com.musicbeat.app.playback.EqCurve
 import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.FilterKind
 import com.musicbeat.app.playback.ParametricBand
 import com.musicbeat.app.playback.ParametricLimits
+import com.musicbeat.app.playback.parametricCurve
 import com.musicbeat.app.ui.components.IosSwitch
 import com.musicbeat.app.ui.haptics.Haptic
 import com.musicbeat.app.ui.haptics.rememberHaptics
@@ -497,3 +515,206 @@ private const val CURVE_POINTS = 140
 private val GRID_HZ = floatArrayOf(50f, 100f, 200f, 500f, 1_000f, 2_000f, 5_000f, 10_000f)
 private val GRID_DB = floatArrayOf(-12f, -6f, 0f, 6f, 12f)
 private val GRID_LABELS = listOf(30f to "30", 100f to "100", 300f to "300", 1_000f to "1k", 3_000f to "3k", 10_000f to "10k")
+
+// ---- Profiles and AutoEQ ---------------------------------------------------
+
+/**
+ * Where a parametric curve comes from and goes to: AutoEQ's headphone
+ * corrections, a correction file or pasted text in the same format, the
+ * listener's saved profiles, and the current curve shared out as text.
+ */
+@Composable
+internal fun ParametricProfiles(
+    bands: List<ParametricBand>,
+    autoPreamp: Boolean,
+    preampDb: Float,
+    enabled: Boolean,
+    onOpenAutoEq: () -> Unit,
+    onApplied: () -> Unit,
+) {
+    val context = LocalContext.current
+    val haptics = rememberHaptics()
+    val presets by AppSettings.equalizerParametricPresets.collectAsStateWithLifecycle()
+    val current = presets.firstOrNull { it.matches(bands, autoPreamp, preampDb) }
+    var pasting by remember { mutableStateOf(false) }
+    var saving by remember { mutableStateOf(false) }
+
+    fun apply(name: String, text: String) {
+        val parsed = AutoEqFormat.parse(text)
+        if (parsed == null) {
+            Toast.makeText(context, context.getString(R.string.equalizer_import_empty), Toast.LENGTH_SHORT).show()
+            return
+        }
+        AppSettings.applyEqualizerImport(name, parsed)
+        onApplied()
+        Toast.makeText(context, importMessage(context, name, parsed.skipped), Toast.LENGTH_SHORT).show()
+    }
+
+    val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        val text = runCatching {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes().take(MAX_IMPORT_BYTES).toByteArray().decodeToString() }
+        }.getOrNull()
+        if (text == null) {
+            Toast.makeText(context, context.getString(R.string.equalizer_import_empty), Toast.LENGTH_SHORT).show()
+            return@rememberLauncherForActivityResult
+        }
+        apply(fileName(context, uri), text)
+    }
+
+    SettingsGroup(
+        header = stringResource(R.string.equalizer_profiles),
+        footer = stringResource(R.string.equalizer_profiles_footer),
+    ) {
+        SettingsRow(
+            icon = SfIcons.Bluetooth,
+            title = stringResource(R.string.equalizer_autoeq),
+            subtitle = stringResource(R.string.equalizer_autoeq_subtitle),
+            enabled = enabled,
+            onClick = onOpenAutoEq,
+        )
+        RowDivider()
+        SettingsRow(
+            icon = SfIcons.Download,
+            title = stringResource(R.string.equalizer_import_file),
+            enabled = enabled,
+            onClick = { openFile.launch(arrayOf("text/*", "application/octet-stream")) },
+        )
+        RowDivider()
+        SettingsRow(
+            icon = SfIcons.Add,
+            title = stringResource(R.string.equalizer_import_paste),
+            enabled = enabled,
+            onClick = { pasting = true },
+        )
+        RowDivider()
+        SettingsRow(
+            icon = SfIcons.Share,
+            title = stringResource(R.string.equalizer_export),
+            enabled = enabled,
+            onClick = {
+                val text = AutoEqFormat.format(
+                    if (autoPreamp) parametricCurve(bands).withPreamp(true, preampDb).preampDb else preampDb,
+                    bands,
+                )
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, "ParametricEQ.txt")
+                    putExtra(Intent.EXTRA_TEXT, text)
+                }
+                context.startActivity(Intent.createChooser(send, null))
+            },
+        )
+        RowDivider()
+        SettingsRow(
+            icon = SfIcons.Add,
+            title = stringResource(R.string.equalizer_save_preset),
+            enabled = enabled,
+            onClick = { saving = true },
+        )
+    }
+
+    if (presets.isNotEmpty()) {
+        SettingsGroup(header = stringResource(R.string.equalizer_my_presets)) {
+            presets.forEachIndexed { index, preset ->
+                if (index > 0) RowDivider()
+                UserPresetRow(
+                    name = preset.name,
+                    selected = preset == current,
+                    onClick = {
+                        if (enabled) {
+                            AppSettings.applyEqualizerParametricPreset(preset)
+                            onApplied()
+                        }
+                    },
+                    onDelete = { AppSettings.deleteEqualizerParametricPreset(preset) },
+                )
+            }
+        }
+    }
+
+    if (pasting) {
+        PasteCorrectionDialog(
+            onApply = { name, text ->
+                pasting = false
+                apply(name.ifBlank { context.getString(R.string.equalizer_import_pasted) }, text)
+            },
+            onDismiss = { pasting = false },
+        )
+    }
+    if (saving) {
+        SavePresetDialog(
+            initialName = current?.name.orEmpty(),
+            message = stringResource(R.string.equalizer_save_parametric_message),
+            onSave = { name ->
+                haptics.play(Haptic.Select)
+                AppSettings.saveEqualizerParametricPreset(name)
+                saving = false
+            },
+            onDismiss = { saving = false },
+        )
+    }
+}
+
+@Composable
+private fun PasteCorrectionDialog(
+    onApply: (name: String, text: String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.equalizer_import_paste)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.equalizer_import_paste_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it.take(USER_EQ_PRESET_NAME_MAX) },
+                    label = { Text(stringResource(R.string.equalizer_preset_name)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it.take(MAX_IMPORT_BYTES) },
+                    placeholder = { Text("Preamp: -6.1 dB\nFilter 1: ON PK Fc 105 Hz Gain 6.4 dB Q 0.70") },
+                    minLines = 4,
+                    maxLines = 8,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onApply(name, text) }, enabled = text.isNotBlank()) {
+                Text(stringResource(R.string.equalizer_import_apply))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        },
+    )
+}
+
+/** The file's own name, less its extension and the " ParametricEQ" AutoEQ appends. */
+private fun fileName(context: Context, uri: Uri): String {
+    val display = runCatching {
+        context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(0) else null
+        }
+    }.getOrNull() ?: uri.lastPathSegment.orEmpty()
+    return display.substringBeforeLast('.')
+        .removeSuffix(" ParametricEQ")
+        .trim()
+        .ifEmpty { context.getString(R.string.equalizer_import_pasted) }
+        .take(USER_EQ_PRESET_NAME_MAX)
+}
+
+/** Far more than any correction needs; it keeps a wrong pick from reading a whole video into memory. */
+private const val MAX_IMPORT_BYTES = 64 * 1024

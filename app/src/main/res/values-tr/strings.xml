@@ -1096,6 +1096,26 @@
     <string name="equalizer_headroom_ok_subtitle">En yüksek nokta: %1$s</string>
     <string name="equalizer_headroom_over">Tepeler tam ölçeğin %1$s üstünde</string>
     <string name="equalizer_headroom_over_subtitle">Sınırlayıcı onları tutar. Yüksek bölümler düz geliyorsa ön amfiyi düşürün.</string>
+    <string name="equalizer_autoeq">Kulaklığınızı bulun</string>
+    <string name="equalizer_autoeq_subtitle">AutoEQ düzeltmesi</string>
+    <string name="equalizer_autoeq_footer">AutoEQ projesinin yaklaşık dokuz bin kulaklık için ölçtüğü düzeltmeler. Kendinizinkini seçin; Parametrik sekmesinde uygulanır ve profillerinize kaydedilir.</string>
+    <string name="equalizer_autoeq_hint">Model, ör. HD 650</string>
+    <string name="equalizer_autoeq_offline">Kulaklık listesi yüklenemedi</string>
+    <string name="equalizer_autoeq_retry">Yeniden denemek için dokunun</string>
+    <string name="equalizer_autoeq_none">Eşleşen kulaklık yok</string>
+    <string name="equalizer_autoeq_failed">%1$s için düzeltme yüklenemedi</string>
+    <string name="equalizer_import_applied">%1$s uygulandı</string>
+    <string name="equalizer_import_applied_skipped">%1$s uygulandı (%2$d filtre atlandı)</string>
+    <string name="equalizer_import_empty">Kullanılabilir filtre bulunamadı</string>
+    <string name="equalizer_profiles">Profiller</string>
+    <string name="equalizer_profiles_footer">Dosyalar AutoEQ ve Equalizer APO\'nun ParametricEQ biçimindedir. İçe aktarma otomatik ön amfiyi kapatır ve dosyadaki değeri kullanır.</string>
+    <string name="equalizer_import_file">Dosya içe aktar</string>
+    <string name="equalizer_import_paste">Metin yapıştır</string>
+    <string name="equalizer_import_paste_message">ParametricEQ biçiminde bir düzeltme yapıştırın: bir Preamp satırı ve her bant için bir Filter satırı.</string>
+    <string name="equalizer_import_apply">Uygula</string>
+    <string name="equalizer_import_pasted">Yapıştırılan düzeltme</string>
+    <string name="equalizer_export">Metin olarak paylaş</string>
+    <string name="equalizer_save_parametric_message">Mevcut parametrik bantları ve ön amfiyi kaydeder. Var olan bir ad o profilin yerine geçer.</string>
 
     <string name="system_equalizer">Sistem ekolayzırı</string>
 

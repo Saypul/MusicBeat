@@ -116,6 +116,8 @@ fun EqualizerScreen(
     modifier: Modifier = Modifier,
     /** Opens the list of preset curves as a page — see [EqualizerPresetPage]. */
     onOpenPresets: () -> Unit = {},
+    /** Opens the headphone search — see [AutoEqSearchPage]. */
+    onOpenAutoEq: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val sessionId by AppSettings.audioSessionId.collectAsStateWithLifecycle()
@@ -263,6 +265,14 @@ fun EqualizerScreen(
                             onSelect = { selectedBand = it },
                         )
                     }
+                    ParametricProfiles(
+                        bands = parametric,
+                        autoPreamp = autoPreamp,
+                        preampDb = preampDb,
+                        enabled = enabled,
+                        onOpenAutoEq = onOpenAutoEq,
+                        onApplied = { selectedBand = 0 },
+                    )
                     SettingsGroup {
                         DestructiveRow(
                             label = stringResource(R.string.equalizer_reset_parametric),
@@ -417,10 +427,11 @@ fun EqualizerScreen(
 
 /** Names the Manual tab's current curve and keeps it among the presets. */
 @Composable
-private fun SavePresetDialog(
+internal fun SavePresetDialog(
     initialName: String,
     onSave: (String) -> Unit,
     onDismiss: () -> Unit,
+    message: String = stringResource(R.string.equalizer_save_preset_message),
 ) {
     var name by remember { mutableStateOf(initialName) }
     val canSave = name.isNotBlank()
@@ -430,7 +441,7 @@ private fun SavePresetDialog(
         text = {
             Column {
                 Text(
-                    text = stringResource(R.string.equalizer_save_preset_message),
+                    text = message,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(12.dp))
@@ -1039,7 +1050,7 @@ fun EqualizerPresetPage(
                 userPresets.forEachIndexed { index, preset ->
                     if (index > 0) RowDivider()
                     UserPresetRow(
-                        preset = preset,
+                        name = preset.name,
                         selected = preset == selectedUser,
                         onClick = {
                             AppSettings.applyEqualizerUserPreset(preset)
@@ -1056,8 +1067,8 @@ fun EqualizerPresetPage(
 
 /** One saved curve: tap to use it, the bin to forget it. */
 @Composable
-private fun UserPresetRow(
-    preset: UserEqPreset,
+internal fun UserPresetRow(
+    name: String,
     selected: Boolean,
     onClick: () -> Unit,
     onDelete: () -> Unit,
@@ -1074,7 +1085,7 @@ private fun UserPresetRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = preset.name,
+            text = name,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f),
@@ -1093,7 +1104,7 @@ private fun UserPresetRow(
         }) {
             Icon(
                 imageVector = SfIcons.Trash,
-                contentDescription = stringResource(R.string.equalizer_delete_preset, preset.name),
+                contentDescription = stringResource(R.string.equalizer_delete_preset, name),
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(20.dp),
             )

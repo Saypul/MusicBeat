@@ -1121,6 +1121,26 @@
     <string name="equalizer_headroom_ok_subtitle">最大点: %1$s</string>
     <string name="equalizer_headroom_over">ピークがフルスケールを %1$s 超過</string>
     <string name="equalizer_headroom_over_subtitle">リミッターが抑えます。大きな音の部分が平坦に聞こえる場合はプリアンプを下げてください。</string>
+    <string name="equalizer_autoeq">ヘッドホンを探す</string>
+    <string name="equalizer_autoeq_subtitle">AutoEQ の補正</string>
+    <string name="equalizer_autoeq_footer">AutoEQ プロジェクトが測定した約 9,000 機種のヘッドホン・イヤホン用補正です。選ぶとパラメトリックタブに適用され、プロファイルに保存されます。</string>
+    <string name="equalizer_autoeq_hint">モデル名（例: HD 650）</string>
+    <string name="equalizer_autoeq_offline">ヘッドホン一覧を読み込めませんでした</string>
+    <string name="equalizer_autoeq_retry">タップして再試行</string>
+    <string name="equalizer_autoeq_none">一致するヘッドホンがありません</string>
+    <string name="equalizer_autoeq_failed">%1$s の補正を読み込めませんでした</string>
+    <string name="equalizer_import_applied">%1$s を適用しました</string>
+    <string name="equalizer_import_applied_skipped">%1$s を適用しました（%2$d 個のフィルターを省略）</string>
+    <string name="equalizer_import_empty">使用できるフィルターがありません</string>
+    <string name="equalizer_profiles">プロファイル</string>
+    <string name="equalizer_profiles_footer">ファイルは AutoEQ と Equalizer APO の ParametricEQ 形式です。インポートすると自動プリアンプがオフになり、ファイルのプリアンプが使われます。</string>
+    <string name="equalizer_import_file">ファイルをインポート</string>
+    <string name="equalizer_import_paste">テキストを貼り付け</string>
+    <string name="equalizer_import_paste_message">ParametricEQ 形式の補正を貼り付けてください: Preamp 行と、バンドごとの Filter 行。</string>
+    <string name="equalizer_import_apply">適用</string>
+    <string name="equalizer_import_pasted">貼り付けた補正</string>
+    <string name="equalizer_export">テキストで共有</string>
+    <string name="equalizer_save_parametric_message">現在のパラメトリックバンドとプリアンプを保存します。同じ名前のプロファイルは置き換えられます。</string>
 
     <string name="system_equalizer">System equalizer</string>
 

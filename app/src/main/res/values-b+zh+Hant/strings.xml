@@ -1119,6 +1119,26 @@
     <string name="equalizer_headroom_ok_subtitle">最高點：%1$s</string>
     <string name="equalizer_headroom_over">峰值超出滿刻度 %1$s</string>
     <string name="equalizer_headroom_over_subtitle">限幅器會壓住它們。如果響亮段落聽起來發扁，請降低前級增益。</string>
+    <string name="equalizer_autoeq">尋找你的耳機</string>
+    <string name="equalizer_autoeq_subtitle">來自 AutoEQ 的校正</string>
+    <string name="equalizer_autoeq_footer">AutoEQ 專案為近九千款耳機測量的校正。選擇你的耳機後，校正會套用到「參數等化」分頁並儲存到你的設定檔。</string>
+    <string name="equalizer_autoeq_hint">型號，例如 HD 650</string>
+    <string name="equalizer_autoeq_offline">無法載入耳機清單</string>
+    <string name="equalizer_autoeq_retry">輕觸以重試</string>
+    <string name="equalizer_autoeq_none">沒有相符的耳機</string>
+    <string name="equalizer_autoeq_failed">無法載入 %1$s 的校正</string>
+    <string name="equalizer_import_applied">已套用 %1$s</string>
+    <string name="equalizer_import_applied_skipped">已套用 %1$s（略過 %2$d 個濾波器）</string>
+    <string name="equalizer_import_empty">找不到可用的濾波器</string>
+    <string name="equalizer_profiles">設定檔</string>
+    <string name="equalizer_profiles_footer">檔案使用 AutoEQ 與 Equalizer APO 的 ParametricEQ 格式。匯入會關閉自動前級增益並使用檔案中的數值。</string>
+    <string name="equalizer_import_file">匯入檔案</string>
+    <string name="equalizer_import_paste">貼上文字</string>
+    <string name="equalizer_import_paste_message">貼上 ParametricEQ 格式的校正：一行 Preamp，每個頻段一行 Filter。</string>
+    <string name="equalizer_import_apply">套用</string>
+    <string name="equalizer_import_pasted">貼上的校正</string>
+    <string name="equalizer_export">以文字分享</string>
+    <string name="equalizer_save_parametric_message">儲存目前的參數頻段與前級增益。已存在的名稱會取代該設定檔。</string>
 
     <string name="system_equalizer">System equalizer</string>
 

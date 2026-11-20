@@ -1080,6 +1080,26 @@
     <string name="equalizer_headroom_ok_subtitle">Punto più forte: %1$s</string>
     <string name="equalizer_headroom_over">Picchi %1$s oltre il fondo scala</string>
     <string name="equalizer_headroom_over_subtitle">Il limiter li trattiene. Abbassa il preamplificatore se i passaggi forti suonano piatti.</string>
+    <string name="equalizer_autoeq">Trova le tue cuffie</string>
+    <string name="equalizer_autoeq_subtitle">Correzione da AutoEQ</string>
+    <string name="equalizer_autoeq_footer">Correzioni misurate dal progetto AutoEQ per quasi novemila cuffie e auricolari. Scegli le tue: la correzione viene applicata nella scheda Parametrico e salvata nei tuoi profili.</string>
+    <string name="equalizer_autoeq_hint">Modello, es. HD 650</string>
+    <string name="equalizer_autoeq_offline">Impossibile caricare l\'elenco delle cuffie</string>
+    <string name="equalizer_autoeq_retry">Tocca per riprovare</string>
+    <string name="equalizer_autoeq_none">Nessuna cuffia corrisponde</string>
+    <string name="equalizer_autoeq_failed">Impossibile caricare la correzione per %1$s</string>
+    <string name="equalizer_import_applied">%1$s applicato</string>
+    <string name="equalizer_import_applied_skipped">%1$s applicato (%2$d filtri esclusi)</string>
+    <string name="equalizer_import_empty">Nessun filtro utilizzabile</string>
+    <string name="equalizer_profiles">Profili</string>
+    <string name="equalizer_profiles_footer">I file usano il formato ParametricEQ di AutoEQ ed Equalizer APO. L\'importazione disattiva il preamplificatore automatico e usa quello del file.</string>
+    <string name="equalizer_import_file">Importa file</string>
+    <string name="equalizer_import_paste">Incolla testo</string>
+    <string name="equalizer_import_paste_message">Incolla una correzione in formato ParametricEQ: una riga Preamp e una riga Filter per banda.</string>
+    <string name="equalizer_import_apply">Applica</string>
+    <string name="equalizer_import_pasted">Correzione incollata</string>
+    <string name="equalizer_export">Condividi come testo</string>
+    <string name="equalizer_save_parametric_message">Salva le bande parametriche e il preamplificatore attuali. Un nome esistente sostituisce quel profilo.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

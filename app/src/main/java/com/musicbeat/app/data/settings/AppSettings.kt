@@ -12,6 +12,7 @@ import com.musicbeat.app.auth.AuthStore
 import com.musicbeat.app.data.canvas.SpotifyToken
 import com.musicbeat.app.data.lyrics.LyricsSource
 import com.musicbeat.app.data.sources.SourceKind
+import com.musicbeat.app.playback.EqImport
 import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.EqualizerPreset
 import com.musicbeat.app.playback.ParametricBand
@@ -417,6 +418,9 @@ object AppSettings {
 
     /** The listener's own pre-amp, in decibels, on top of the automatic one when that is on. */
     val equalizerPreampDb = MutableStateFlow(0f)
+
+    /** Parametric curves saved by name, imported headphone corrections among them. */
+    val equalizerParametricPresets = MutableStateFlow<List<ParametricPreset>>(emptyList())
 
     /**
      * Which preset the bands currently are, or [EqualizerPreset.CUSTOM].
@@ -996,6 +1000,8 @@ object AppSettings {
         equalizerParametric.value = EqualizerCodec.parametric(prefs.getString(KEY_EQ_PARAMETRIC, null))
             ?: ParametricLimits.DEFAULT_BANDS
         equalizerAutoPreamp.value = prefs.getBoolean(KEY_EQ_AUTO_PREAMP, true)
+        equalizerParametricPresets.value =
+            EqualizerCodec.parametricPresets(prefs.getString(KEY_EQ_PARAMETRIC_PRESETS, null))
         equalizerPreampDb.value = prefs.getFloat(KEY_EQ_PREAMP, 0f)
             .coerceIn(-ParametricLimits.PREAMP_RANGE_DB, ParametricLimits.PREAMP_RANGE_DB)
         equalizerPreset.value = EqualizerPreset.matching(equalizerBands.value)
@@ -1372,6 +1378,58 @@ object AppSettings {
         equalizerPreampDb.value = clamped
         prefs.edit().putFloat(KEY_EQ_PREAMP, clamped).apply()
         rememberEqualizerForOutput()
+    }
+
+    /**
+     * Saves the parametric tab as it stands under [name], in the old place of
+     * a preset that already has the name, as [saveEqualizerUserPreset] does.
+     */
+    fun saveEqualizerParametricPreset(name: String) {
+        val trimmed = name.trim().take(USER_EQ_PRESET_NAME_MAX)
+        if (trimmed.isEmpty()) return
+        val preset = ParametricPreset(
+            name = trimmed,
+            bands = equalizerParametric.value,
+            autoPreamp = equalizerAutoPreamp.value,
+            preampDb = equalizerPreampDb.value,
+        )
+        val current = equalizerParametricPresets.value
+        val index = current.indexOfFirst { it.name.equals(trimmed, ignoreCase = true) }
+        storeEqualizerParametricPresets(
+            if (index >= 0) current.toMutableList().also { it[index] = preset } else current + preset,
+        )
+    }
+
+    fun deleteEqualizerParametricPreset(preset: ParametricPreset) {
+        storeEqualizerParametricPresets(equalizerParametricPresets.value.filterNot { it.name == preset.name })
+    }
+
+    fun applyEqualizerParametricPreset(preset: ParametricPreset) {
+        setEqualizerParametric(preset.bands)
+        setEqualizerAutoPreamp(preset.autoPreamp)
+        setEqualizerPreamp(preset.preampDb)
+    }
+
+    /**
+     * Puts an imported correction in force and keeps it under [name].
+     *
+     * The automatic pre-amp goes off because a correction names its own, worked
+     * out for exactly these bands, and both at once would turn it down twice.
+     * The equaliser is switched on and to the parametric tab, since that is the
+     * only place the bands can be heard.
+     */
+    fun applyEqualizerImport(name: String, import: EqImport) {
+        setEqualizerParametric(import.bands)
+        setEqualizerAutoPreamp(false)
+        setEqualizerPreamp(import.preampDb)
+        setEqualizerMode(EqualizerMode.PARAMETRIC)
+        setEqualizerEnabled(true)
+        saveEqualizerParametricPreset(name)
+    }
+
+    private fun storeEqualizerParametricPresets(value: List<ParametricPreset>) {
+        equalizerParametricPresets.value = value
+        prefs.edit().putString(KEY_EQ_PARAMETRIC_PRESETS, EqualizerCodec.parametricPresets(value)).apply()
     }
 
     /** Applies a preset's curve. [EqualizerPreset.CUSTOM] carries none, so it does nothing. */
@@ -2330,6 +2388,7 @@ object AppSettings {
     private const val KEY_EQ_PARAMETRIC = "equalizer_parametric"
     private const val KEY_EQ_AUTO_PREAMP = "equalizer_auto_preamp"
     private const val KEY_EQ_PREAMP = "equalizer_preamp_db"
+    private const val KEY_EQ_PARAMETRIC_PRESETS = "equalizer_parametric_presets"
     private const val KEY_SPEED = "playback_speed"
     private const val KEY_THEME = "theme_mode"
     private const val KEY_APP_FONT = "app_font"

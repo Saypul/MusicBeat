@@ -19,6 +19,21 @@ data class UserEqPreset(val name: String, val bands: List<Float>) {
 }
 
 /**
+ * A parametric curve saved under a name: the listener's own, or a headphone
+ * correction kept under the headphone's name when it was imported.
+ */
+@Serializable
+data class ParametricPreset(
+    val name: String,
+    val bands: List<ParametricBand>,
+    val autoPreamp: Boolean,
+    val preampDb: Float,
+) {
+    fun matches(bands: List<ParametricBand>, autoPreamp: Boolean, preampDb: Float): Boolean =
+        this.bands == bands && this.autoPreamp == autoPreamp && abs(this.preampDb - preampDb) < BAND_EPSILON_DB
+}
+
+/**
  * Everything the equaliser screen sets, as one value: what a per-device profile
  * keeps. The mode is held by name so a build that renames or drops one reads an
  * old profile back as the default rather than failing to read it at all.
@@ -66,6 +81,7 @@ internal object EqualizerCodec {
     private val presets = ListSerializer(UserEqPreset.serializer())
     private val profiles = MapSerializer(String.serializer(), EqSnapshot.serializer())
     private val parametric = ListSerializer(ParametricBand.serializer())
+    private val parametricPresets = ListSerializer(ParametricPreset.serializer())
 
     fun presets(text: String?): List<UserEqPreset> =
         text?.let { runCatching { json.decodeFromString(presets, it) }.getOrNull() }.orEmpty()
@@ -82,6 +98,11 @@ internal object EqualizerCodec {
         text?.let { runCatching { json.decodeFromString(parametric, it) }.getOrNull() }
 
     fun parametric(value: List<ParametricBand>): String = json.encodeToString(parametric, value)
+
+    fun parametricPresets(text: String?): List<ParametricPreset> =
+        text?.let { runCatching { json.decodeFromString(parametricPresets, it) }.getOrNull() }.orEmpty()
+
+    fun parametricPresets(value: List<ParametricPreset>): String = json.encodeToString(parametricPresets, value)
 }
 
 /** Longest name a saved preset keeps; the row it is shown on has room for about this much. */
