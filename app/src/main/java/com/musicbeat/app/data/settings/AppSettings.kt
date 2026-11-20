@@ -14,6 +14,8 @@ import com.musicbeat.app.data.lyrics.LyricsSource
 import com.musicbeat.app.data.sources.SourceKind
 import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.EqualizerPreset
+import com.musicbeat.app.playback.ParametricBand
+import com.musicbeat.app.playback.ParametricLimits
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -148,6 +150,9 @@ enum class EqualizerMode {
 
     /** Seven sliders and a preset list. */
     MANUAL,
+
+    /** Up to ten bands, each with its own shape, centre, gain and width. */
+    PARAMETRIC,
 }
 
 /** Stable persisted ordering for each on-device music library. */
@@ -399,6 +404,19 @@ object AppSettings {
 
     /** The manual tab's seven gains, in decibels, low to high. */
     val equalizerBands = MutableStateFlow(EqualizerPreset.FLAT.bands)
+
+    /** The parametric tab's bands, in the order they were added. */
+    val equalizerParametric = MutableStateFlow(ParametricLimits.DEFAULT_BANDS)
+
+    /**
+     * Whether the pre-amp takes back half of the curve's boost by itself —
+     * see [EqCurve.preampDb]. Off, only [equalizerPreampDb] is applied, which
+     * is what a correction that names its own pre-amp wants.
+     */
+    val equalizerAutoPreamp = MutableStateFlow(true)
+
+    /** The listener's own pre-amp, in decibels, on top of the automatic one when that is on. */
+    val equalizerPreampDb = MutableStateFlow(0f)
 
     /**
      * Which preset the bands currently are, or [EqualizerPreset.CUSTOM].
@@ -975,6 +993,11 @@ object AppSettings {
         equalizerFocused.value = prefs.getBoolean(KEY_EQ_FOCUSED, false)
         equalizerBalance.value = prefs.getFloat(KEY_EQ_BALANCE, 0f).coerceIn(-1f, 1f)
         equalizerBands.value = readEqualizerBands()
+        equalizerParametric.value = EqualizerCodec.parametric(prefs.getString(KEY_EQ_PARAMETRIC, null))
+            ?: ParametricLimits.DEFAULT_BANDS
+        equalizerAutoPreamp.value = prefs.getBoolean(KEY_EQ_AUTO_PREAMP, true)
+        equalizerPreampDb.value = prefs.getFloat(KEY_EQ_PREAMP, 0f)
+            .coerceIn(-ParametricLimits.PREAMP_RANGE_DB, ParametricLimits.PREAMP_RANGE_DB)
         equalizerPreset.value = EqualizerPreset.matching(equalizerBands.value)
         equalizerUserPresets.value = EqualizerCodec.presets(prefs.getString(KEY_EQ_USER_PRESETS, null))
         equalizerPerDevice.value = prefs.getBoolean(KEY_EQ_PER_DEVICE, false)
@@ -1330,6 +1353,27 @@ object AppSettings {
         rememberEqualizerForOutput()
     }
 
+    /** Writes the parametric tab's bands; anything past [EqLayout.PARAMETRIC_COUNT] is dropped. */
+    fun setEqualizerParametric(values: List<ParametricBand>) {
+        val clamped = values.take(EqLayout.PARAMETRIC_COUNT).map { it.clamped() }
+        equalizerParametric.value = clamped
+        prefs.edit().putString(KEY_EQ_PARAMETRIC, EqualizerCodec.parametric(clamped)).apply()
+        rememberEqualizerForOutput()
+    }
+
+    fun setEqualizerAutoPreamp(value: Boolean) {
+        equalizerAutoPreamp.value = value
+        prefs.edit().putBoolean(KEY_EQ_AUTO_PREAMP, value).apply()
+        rememberEqualizerForOutput()
+    }
+
+    fun setEqualizerPreamp(valueDb: Float) {
+        val clamped = valueDb.coerceIn(-ParametricLimits.PREAMP_RANGE_DB, ParametricLimits.PREAMP_RANGE_DB)
+        equalizerPreampDb.value = clamped
+        prefs.edit().putFloat(KEY_EQ_PREAMP, clamped).apply()
+        rememberEqualizerForOutput()
+    }
+
     /** Applies a preset's curve. [EqualizerPreset.CUSTOM] carries none, so it does nothing. */
     fun setEqualizerPreset(preset: EqualizerPreset) {
         if (preset == EqualizerPreset.CUSTOM) return
@@ -1397,6 +1441,9 @@ object AppSettings {
             setEqualizerFocused(profile.focused)
             setEqualizerBalance(profile.balance)
             setEqualizerBands(profile.bands)
+            profile.parametric?.let { setEqualizerParametric(it) }
+            setEqualizerAutoPreamp(profile.autoPreamp)
+            setEqualizerPreamp(profile.preampDb)
         } finally {
             applyingEqualizerProfile = false
         }
@@ -1414,6 +1461,9 @@ object AppSettings {
             focused = equalizerFocused.value,
             balance = equalizerBalance.value,
             bands = equalizerBands.value,
+            parametric = equalizerParametric.value,
+            autoPreamp = equalizerAutoPreamp.value,
+            preampDb = equalizerPreampDb.value,
         )
         if (equalizerProfiles[output.key] == snapshot) return
         equalizerProfiles = equalizerProfiles + (output.key to snapshot)
@@ -2277,6 +2327,9 @@ object AppSettings {
     private const val KEY_EQ_USER_PRESETS = "equalizer_user_presets"
     private const val KEY_EQ_PER_DEVICE = "equalizer_per_device"
     private const val KEY_EQ_PROFILES = "equalizer_profiles"
+    private const val KEY_EQ_PARAMETRIC = "equalizer_parametric"
+    private const val KEY_EQ_AUTO_PREAMP = "equalizer_auto_preamp"
+    private const val KEY_EQ_PREAMP = "equalizer_preamp_db"
     private const val KEY_SPEED = "playback_speed"
     private const val KEY_THEME = "theme_mode"
     private const val KEY_APP_FONT = "app_font"

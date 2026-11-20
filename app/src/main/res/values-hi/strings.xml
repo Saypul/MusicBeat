@@ -1121,6 +1121,26 @@
     <string name="equalizer_bitstream_title">अभी चालू नहीं है</string>
     <string name="equalizer_bitstream_subtitle">यह ट्रैक बिना डीकोड किए आउटपुट पर भेजा जा रहा है</string>
     <string name="equalizer_bitstream_footer">इक्वलाइज़र डीकोड किए गए ऑडियो पर काम करता है। यह ट्रैक बिटस्ट्रीम के रूप में आपके डिवाइस को डीकोड करने के लिए भेजा जाता है, इसलिए यहाँ फ़िल्टर करने के लिए कोई सैंपल नहीं है।</string>
+    <string name="equalizer_parametric">पैरामीट्रिक</string>
+    <string name="equalizer_response">रिस्पॉन्स</string>
+    <string name="equalizer_parametric_footer">बैंड को हिलाने के लिए बिंदु खींचें: फ़्रीक्वेंसी के लिए दाएँ-बाएँ, गेन के लिए ऊपर-नीचे। आकार और चौड़ाई सेट करने के लिए नीचे एक बैंड चुनें।</string>
+    <string name="equalizer_band_n">बैंड %1$d</string>
+    <string name="equalizer_band_bell">बेल</string>
+    <string name="equalizer_band_low_shelf">लो शेल्फ़</string>
+    <string name="equalizer_band_high_shelf">हाई शेल्फ़</string>
+    <string name="equalizer_frequency">फ़्रीक्वेंसी</string>
+    <string name="equalizer_gain">गेन</string>
+    <string name="equalizer_q">चौड़ाई (Q)</string>
+    <string name="equalizer_remove_band">यह बैंड हटाएँ</string>
+    <string name="equalizer_reset_parametric">पैरामीट्रिक बैंड रीसेट करें</string>
+    <string name="equalizer_preamp">प्रीएम्प</string>
+    <string name="equalizer_auto_preamp">ऑटोमैटिक प्रीएम्प</string>
+    <string name="equalizer_auto_preamp_subtitle">कर्व के बूस्ट का आधा वापस लेता है</string>
+    <string name="equalizer_preamp_footer">ऑटोमैटिक प्रीएम्प चालू होने पर स्लाइडर उसमें जुड़ता है। अपना प्रीएम्प बताने वाले सुधार, जैसे AutoEQ प्रोफ़ाइल, के लिए इसे बंद करें।</string>
+    <string name="equalizer_headroom_ok">कोई क्लिपिंग नहीं</string>
+    <string name="equalizer_headroom_ok_subtitle">सबसे तेज़ बिंदु: %1$s</string>
+    <string name="equalizer_headroom_over">पीक फ़ुल स्केल से %1$s ऊपर</string>
+    <string name="equalizer_headroom_over_subtitle">लिमिटर उन्हें रोकता है। तेज़ हिस्से सपाट लगें तो प्रीएम्प कम करें।</string>
 
     <string name="system_equalizer">System equalizer</string>
 

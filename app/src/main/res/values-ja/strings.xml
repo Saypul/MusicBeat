@@ -1101,6 +1101,26 @@
     <string name="equalizer_bitstream_title">現在は動作していません</string>
     <string name="equalizer_bitstream_subtitle">この曲はデコードされずに出力へ送られます</string>
     <string name="equalizer_bitstream_footer">イコライザーはデコード済みの音声に作用します。この曲はデバイス側でデコードするビットストリームとしてそのまま渡されるため、ここには処理できるサンプルがありません。</string>
+    <string name="equalizer_parametric">パラメトリック</string>
+    <string name="equalizer_response">周波数特性</string>
+    <string name="equalizer_parametric_footer">点をドラッグしてバンドを動かします。左右で周波数、上下でゲイン。下でバンドを選ぶと形と幅を設定できます。</string>
+    <string name="equalizer_band_n">バンド %1$d</string>
+    <string name="equalizer_band_bell">ベル</string>
+    <string name="equalizer_band_low_shelf">ローシェルフ</string>
+    <string name="equalizer_band_high_shelf">ハイシェルフ</string>
+    <string name="equalizer_frequency">周波数</string>
+    <string name="equalizer_gain">ゲイン</string>
+    <string name="equalizer_q">幅 (Q)</string>
+    <string name="equalizer_remove_band">このバンドを削除</string>
+    <string name="equalizer_reset_parametric">パラメトリックバンドをリセット</string>
+    <string name="equalizer_preamp">プリアンプ</string>
+    <string name="equalizer_auto_preamp">自動プリアンプ</string>
+    <string name="equalizer_auto_preamp_subtitle">カーブのブースト分の半分を下げます</string>
+    <string name="equalizer_preamp_footer">自動プリアンプがオンのとき、スライダーはそれに加算されます。AutoEQ プロファイルのように独自のプリアンプを指定する補正ではオフにしてください。</string>
+    <string name="equalizer_headroom_ok">クリッピングなし</string>
+    <string name="equalizer_headroom_ok_subtitle">最大点: %1$s</string>
+    <string name="equalizer_headroom_over">ピークがフルスケールを %1$s 超過</string>
+    <string name="equalizer_headroom_over_subtitle">リミッターが抑えます。大きな音の部分が平坦に聞こえる場合はプリアンプを下げてください。</string>
 
     <string name="system_equalizer">System equalizer</string>
 

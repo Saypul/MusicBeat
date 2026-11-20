@@ -7137,8 +7137,8 @@ class PlaybackService : MediaLibraryService() {
             // Explicit <Any, _>: these flows have mixed element types, and
             // letting the reified vararg combine() infer T lands on an
             // intersection type. Nothing is read out of the array — the
-            // equaliser reads the settings it wants directly — because seven
-            // sources of one curve is seven chances to destructure them in the
+            // equaliser reads the settings it wants directly — because ten
+            // sources of one curve is ten chances to destructure them in the
             // wrong order.
             combine<Any, Unit>(
                 AppSettings.equalizerEnabled,
@@ -7148,6 +7148,9 @@ class PlaybackService : MediaLibraryService() {
                 AppSettings.equalizerFocused,
                 AppSettings.equalizerBalance,
                 AppSettings.equalizerBands,
+                AppSettings.equalizerParametric,
+                AppSettings.equalizerAutoPreamp,
+                AppSettings.equalizerPreampDb,
             ) { }.collect { applyEqualizer() }
         }
     }
@@ -7174,7 +7177,8 @@ class PlaybackService : MediaLibraryService() {
                 focused = AppSettings.equalizerFocused.value,
             )
             EqualizerMode.MANUAL -> manualCurve(AppSettings.equalizerBands.value)
-        }
+            EqualizerMode.PARAMETRIC -> parametricCurve(AppSettings.equalizerParametric.value)
+        }.withPreamp(AppSettings.equalizerAutoPreamp.value, AppSettings.equalizerPreampDb.value)
         val balance = AppSettings.equalizerBalance.value
         equalizerProcessorA.setTuning(enabled, curve, balance)
         equalizerProcessorB.setTuning(enabled, curve, balance)

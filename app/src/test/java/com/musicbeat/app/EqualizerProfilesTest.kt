@@ -3,6 +3,8 @@ package com.musicbeat.app
 import com.musicbeat.app.data.settings.EqSnapshot
 import com.musicbeat.app.data.settings.EqualizerCodec
 import com.musicbeat.app.data.settings.UserEqPreset
+import com.musicbeat.app.playback.FilterKind
+import com.musicbeat.app.playback.ParametricBand
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -25,6 +27,25 @@ class EqualizerProfilesTest {
             "BLUETOOTH:Galaxy Buds2" to EqSnapshot(true, "MANUAL", 2, -1, true, -0.2f, bands),
         )
         assertEquals(profiles, EqualizerCodec.profiles(EqualizerCodec.profiles(profiles)))
+    }
+
+    @Test
+    fun `a profile saved before the parametric tab still reads`() {
+        val old = """{"PHONE":{"enabled":true,"mode":"MANUAL","toneX":0,"toneY":0,"focused":false,"balance":0.0,"bands":[1,2,3,4,5,6,7]}}"""
+        val profile = EqualizerCodec.profiles(old).getValue("PHONE")
+        assertEquals(null, profile.parametric)
+        assertTrue(profile.autoPreamp)
+        assertEquals(0f, profile.preampDb)
+    }
+
+    @Test
+    fun `parametric bands read back as they were written`() {
+        val bands = listOf(
+            ParametricBand(FilterKind.LOW_SHELF, 105f, -2.3f, 0.7f),
+            ParametricBand(FilterKind.BELL, 3_400f, 4f, 2.5f, enabled = false),
+        )
+        assertEquals(bands, EqualizerCodec.parametric(EqualizerCodec.parametric(bands)))
+        assertEquals(null, EqualizerCodec.parametric("nonsense"))
     }
 
     @Test

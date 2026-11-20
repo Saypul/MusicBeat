@@ -1149,6 +1149,26 @@
     <string name="equalizer_bitstream_title">Сейчас не работает</string>
     <string name="equalizer_bitstream_subtitle">Этот трек передаётся на выход без декодирования</string>
     <string name="equalizer_bitstream_footer">Эквалайзер работает с декодированным звуком. Этот трек передаётся битстримом, и декодирует его ваше устройство, поэтому здесь нет сэмплов для обработки.</string>
+    <string name="equalizer_parametric">Параметрический</string>
+    <string name="equalizer_response">АЧХ</string>
+    <string name="equalizer_parametric_footer">Перетащите точку, чтобы сдвинуть её полосу: вбок для частоты, вверх и вниз для усиления. Выберите полосу ниже, чтобы задать форму и ширину.</string>
+    <string name="equalizer_band_n">Полоса %1$d</string>
+    <string name="equalizer_band_bell">Колокол</string>
+    <string name="equalizer_band_low_shelf">Низкая полка</string>
+    <string name="equalizer_band_high_shelf">Высокая полка</string>
+    <string name="equalizer_frequency">Частота</string>
+    <string name="equalizer_gain">Усиление</string>
+    <string name="equalizer_q">Ширина (Q)</string>
+    <string name="equalizer_remove_band">Удалить полосу</string>
+    <string name="equalizer_reset_parametric">Сбросить параметрические полосы</string>
+    <string name="equalizer_preamp">Предусилитель</string>
+    <string name="equalizer_auto_preamp">Автоматический предусилитель</string>
+    <string name="equalizer_auto_preamp_subtitle">Снимает половину подъёма кривой</string>
+    <string name="equalizer_preamp_footer">Когда автоматический предусилитель включён, ползунок добавляется к нему. Выключите его для коррекции со своим предусилителем, например профиля AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Без перегрузки</string>
+    <string name="equalizer_headroom_ok_subtitle">Самая громкая точка: %1$s</string>
+    <string name="equalizer_headroom_over">Пики на %1$s выше максимума</string>
+    <string name="equalizer_headroom_over_subtitle">Лимитер их сдерживает. Уменьшите предусилитель, если громкие места звучат плоско.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

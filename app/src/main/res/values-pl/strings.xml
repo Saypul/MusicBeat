@@ -1161,6 +1161,26 @@
     <string name="equalizer_bitstream_title">Teraz nieaktywny</string>
     <string name="equalizer_bitstream_subtitle">Ten utwór trafia na wyjście bez dekodowania</string>
     <string name="equalizer_bitstream_footer">Korektor działa na zdekodowanym dźwięku. Ten utwór jest przekazywany jako bitstream do zdekodowania przez twoje urządzenie, więc nie ma tu próbek do filtrowania.</string>
+    <string name="equalizer_parametric">Parametryczny</string>
+    <string name="equalizer_response">Charakterystyka</string>
+    <string name="equalizer_parametric_footer">Przeciągnij punkt, aby przesunąć jego pasmo: w bok dla częstotliwości, w górę i w dół dla wzmocnienia. Wybierz pasmo poniżej, aby ustawić jego kształt i szerokość.</string>
+    <string name="equalizer_band_n">Pasmo %1$d</string>
+    <string name="equalizer_band_bell">Dzwon</string>
+    <string name="equalizer_band_low_shelf">Półka niska</string>
+    <string name="equalizer_band_high_shelf">Półka wysoka</string>
+    <string name="equalizer_frequency">Częstotliwość</string>
+    <string name="equalizer_gain">Wzmocnienie</string>
+    <string name="equalizer_q">Szerokość (Q)</string>
+    <string name="equalizer_remove_band">Usuń to pasmo</string>
+    <string name="equalizer_reset_parametric">Resetuj pasma parametryczne</string>
+    <string name="equalizer_preamp">Przedwzmacniacz</string>
+    <string name="equalizer_auto_preamp">Automatyczny przedwzmacniacz</string>
+    <string name="equalizer_auto_preamp_subtitle">Odbiera połowę podbicia krzywej</string>
+    <string name="equalizer_preamp_footer">Gdy automatyczny przedwzmacniacz jest włączony, suwak jest do niego dodawany. Wyłącz go dla korekcji z własnym przedwzmacniaczem, np. profilu AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Bez przesterowania</string>
+    <string name="equalizer_headroom_ok_subtitle">Najgłośniejszy punkt: %1$s</string>
+    <string name="equalizer_headroom_over">Szczyty %1$s ponad pełną skalę</string>
+    <string name="equalizer_headroom_over_subtitle">Limiter je powstrzymuje. Obniż przedwzmacniacz, jeśli głośne fragmenty brzmią płasko.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

@@ -1093,6 +1093,26 @@
     <string name="equalizer_bitstream_title">No está activo ahora</string>
     <string name="equalizer_bitstream_subtitle">Esta pista se envía a la salida sin decodificar</string>
     <string name="equalizer_bitstream_footer">El ecualizador trabaja con audio decodificado. Esta pista pasa como bitstream para que tu dispositivo la decodifique, así que aquí no hay muestras que filtrar.</string>
+    <string name="equalizer_parametric">Paramétrico</string>
+    <string name="equalizer_response">Respuesta</string>
+    <string name="equalizer_parametric_footer">Arrastra un punto para mover su banda: de lado para la frecuencia, arriba y abajo para la ganancia. Elige una banda abajo para ajustar su forma y anchura.</string>
+    <string name="equalizer_band_n">Banda %1$d</string>
+    <string name="equalizer_band_bell">Campana</string>
+    <string name="equalizer_band_low_shelf">Shelf grave</string>
+    <string name="equalizer_band_high_shelf">Shelf agudo</string>
+    <string name="equalizer_frequency">Frecuencia</string>
+    <string name="equalizer_gain">Ganancia</string>
+    <string name="equalizer_q">Anchura (Q)</string>
+    <string name="equalizer_remove_band">Quitar esta banda</string>
+    <string name="equalizer_reset_parametric">Restablecer bandas paramétricas</string>
+    <string name="equalizer_preamp">Preamplificador</string>
+    <string name="equalizer_auto_preamp">Preamplificador automático</string>
+    <string name="equalizer_auto_preamp_subtitle">Compensa la mitad del realce de la curva</string>
+    <string name="equalizer_preamp_footer">Con el preamplificador automático activado, el control se suma a él. Desactívalo para una corrección con su propio preamplificador, como un perfil de AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Sin saturación</string>
+    <string name="equalizer_headroom_ok_subtitle">Punto más alto: %1$s</string>
+    <string name="equalizer_headroom_over">Picos %1$s por encima del máximo</string>
+    <string name="equalizer_headroom_over_subtitle">El limitador los contiene. Baja el preamplificador si los pasajes fuertes suenan planos.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

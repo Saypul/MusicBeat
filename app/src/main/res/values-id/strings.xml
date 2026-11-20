@@ -1100,6 +1100,26 @@
     <string name="equalizer_bitstream_title">Tidak berjalan saat ini</string>
     <string name="equalizer_bitstream_subtitle">Lagu ini dikirim ke output tanpa didekode</string>
     <string name="equalizer_bitstream_footer">Equalizer bekerja pada audio yang sudah didekode. Lagu ini diteruskan sebagai bitstream untuk didekode oleh perangkatmu, jadi tidak ada sampel yang bisa difilter di sini.</string>
+    <string name="equalizer_parametric">Parametrik</string>
+    <string name="equalizer_response">Respons</string>
+    <string name="equalizer_parametric_footer">Geser titik untuk memindahkan band-nya: ke samping untuk frekuensi, ke atas dan bawah untuk gain. Pilih band di bawah untuk mengatur bentuk dan lebarnya.</string>
+    <string name="equalizer_band_n">Band %1$d</string>
+    <string name="equalizer_band_bell">Bell</string>
+    <string name="equalizer_band_low_shelf">Low shelf</string>
+    <string name="equalizer_band_high_shelf">High shelf</string>
+    <string name="equalizer_frequency">Frekuensi</string>
+    <string name="equalizer_gain">Gain</string>
+    <string name="equalizer_q">Lebar (Q)</string>
+    <string name="equalizer_remove_band">Hapus band ini</string>
+    <string name="equalizer_reset_parametric">Reset band parametrik</string>
+    <string name="equalizer_preamp">Preamp</string>
+    <string name="equalizer_auto_preamp">Preamp otomatis</string>
+    <string name="equalizer_auto_preamp_subtitle">Menurunkan separuh dari boost kurva</string>
+    <string name="equalizer_preamp_footer">Saat preamp otomatis aktif, slider ditambahkan di atasnya. Matikan untuk koreksi yang menentukan preamp sendiri, seperti profil AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Tidak clipping</string>
+    <string name="equalizer_headroom_ok_subtitle">Titik terkeras: %1$s</string>
+    <string name="equalizer_headroom_over">Puncak %1$s di atas batas</string>
+    <string name="equalizer_headroom_over_subtitle">Limiter menahannya. Turunkan preamp kalau bagian yang keras terdengar datar.</string>
 
     <string name="system_equalizer">Equalizer sistem</string>
 

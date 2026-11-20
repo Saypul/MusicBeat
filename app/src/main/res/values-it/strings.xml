@@ -1060,6 +1060,26 @@
     <string name="equalizer_bitstream_title">Non attivo al momento</string>
     <string name="equalizer_bitstream_subtitle">Questo brano viene inviato all\'uscita senza decodifica</string>
     <string name="equalizer_bitstream_footer">L\'equalizzatore lavora sull\'audio decodificato. Questo brano passa come bitstream che il tuo dispositivo decodifica da solo, quindi qui non ci sono campioni da filtrare.</string>
+    <string name="equalizer_parametric">Parametrico</string>
+    <string name="equalizer_response">Risposta</string>
+    <string name="equalizer_parametric_footer">Trascina un punto per spostare la sua banda: di lato per la frequenza, su e giù per il guadagno. Scegli una banda qui sotto per impostarne forma e larghezza.</string>
+    <string name="equalizer_band_n">Banda %1$d</string>
+    <string name="equalizer_band_bell">Campana</string>
+    <string name="equalizer_band_low_shelf">Shelf bassi</string>
+    <string name="equalizer_band_high_shelf">Shelf alti</string>
+    <string name="equalizer_frequency">Frequenza</string>
+    <string name="equalizer_gain">Guadagno</string>
+    <string name="equalizer_q">Larghezza (Q)</string>
+    <string name="equalizer_remove_band">Rimuovi questa banda</string>
+    <string name="equalizer_reset_parametric">Ripristina bande parametriche</string>
+    <string name="equalizer_preamp">Preamplificatore</string>
+    <string name="equalizer_auto_preamp">Preamplificatore automatico</string>
+    <string name="equalizer_auto_preamp_subtitle">Recupera metà dell\'enfasi della curva</string>
+    <string name="equalizer_preamp_footer">Con il preamplificatore automatico attivo, il cursore si somma a esso. Disattivalo per una correzione con un suo preamplificatore, come un profilo AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Nessun clipping</string>
+    <string name="equalizer_headroom_ok_subtitle">Punto più forte: %1$s</string>
+    <string name="equalizer_headroom_over">Picchi %1$s oltre il fondo scala</string>
+    <string name="equalizer_headroom_over_subtitle">Il limiter li trattiene. Abbassa il preamplificatore se i passaggi forti suonano piatti.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

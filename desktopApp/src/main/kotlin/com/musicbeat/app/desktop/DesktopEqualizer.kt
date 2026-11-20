@@ -3,6 +3,7 @@ package com.musicbeat.app.desktop
 import com.musicbeat.app.playback.EqCurve
 import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.FilterKind
+import com.musicbeat.app.playback.FilterSlot
 import com.musicbeat.app.playback.PeakLimiter
 import kotlin.math.PI
 import kotlin.math.abs
@@ -49,6 +50,8 @@ internal class DesktopEqualizer {
 
     private val currentGainDb = FloatArray(EqLayout.SLOTS)
     private val currentQ = FloatArray(EqLayout.SLOTS) { 0.707f }
+    private val currentHz = FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz }
+    private val currentKind = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind }
     private var currentPreampDb = 0f
     private var currentBalance = 0f
 
@@ -153,6 +156,8 @@ internal class DesktopEqualizer {
         val tuning = target
         tuning.curve.gainsDb.copyInto(currentGainDb)
         tuning.curve.qs.copyInto(currentQ)
+        tuning.curve.frequenciesHz.copyInto(currentHz)
+        tuning.curve.kinds.copyInto(currentKind)
         currentPreampDb = tuning.curve.preampDb
         currentBalance = tuning.balance
     }
@@ -164,6 +169,11 @@ internal class DesktopEqualizer {
             currentGainDb[slot] = linearGlide(currentGainDb[slot], tuning.curve.gainsDb[slot])
             // Q the other way round — a bandwidth halves and doubles, it does not step.
             currentQ[slot] = geometricGlide(currentQ[slot], tuning.curve.qs[slot])
+            // A parametric band's centre glides the same way, so dragging one sweeps rather than steps.
+            currentHz[slot] = geometricGlide(currentHz[slot], tuning.curve.frequenciesHz[slot])
+            // A shape can't glide. It changes outright, which is only heard when the band is
+            // boosting or cutting at the moment the listener picks another one.
+            currentKind[slot] = tuning.curve.kinds[slot]
         }
         currentPreampDb = linearGlide(currentPreampDb, tuning.curve.preampDb)
         currentBalance = linearGlide(currentBalance, tuning.balance)
@@ -188,6 +198,7 @@ internal class DesktopEqualizer {
         if (abs(currentPreampDb - tuning.curve.preampDb) >= SETTLED_DB) return false
         for (slot in 0 until EqLayout.SLOTS) {
             if (abs(currentGainDb[slot] - tuning.curve.gainsDb[slot]) >= SETTLED_DB) return false
+            if (abs(currentHz[slot] - tuning.curve.frequenciesHz[slot]) >= SETTLED_HZ) return false
         }
         return true
     }
@@ -217,7 +228,7 @@ internal class DesktopEqualizer {
     }
 
     private fun updateCoefficients(slot: Int) {
-        val spec = EqLayout.slots[slot]
+        val spec = FilterSlot(currentKind[slot], currentHz[slot])
         val a = 10f.pow(currentGainDb[slot] / 40f)
         val q = currentQ[slot].coerceAtLeast(MIN_Q)
         val base = tan(PI * usableFrequency(spec.frequencyHz) / sampleRate).toFloat()
@@ -317,6 +328,9 @@ internal class DesktopEqualizer {
 
         /** Below this a band is doing nothing anyone can hear, so it counts as flat. */
         private const val SETTLED_DB = 0.01f
+
+        /** A centre within this of where it is headed has arrived. */
+        private const val SETTLED_HZ = 0.5f
 
         private const val SETTLED_BALANCE = 0.0005f
         private const val MIN_Q = 0.05f

@@ -1126,6 +1126,26 @@
     <string name="equalizer_bitstream_title">Inativo no momento</string>
     <string name="equalizer_bitstream_subtitle">Esta faixa é enviada à saída sem decodificação</string>
     <string name="equalizer_bitstream_footer">O equalizador trabalha com áudio decodificado. Esta faixa passa como bitstream para o seu dispositivo decodificar, então não há amostras aqui para filtrar.</string>
+    <string name="equalizer_parametric">Paramétrico</string>
+    <string name="equalizer_response">Resposta</string>
+    <string name="equalizer_parametric_footer">Arraste um ponto para mover a banda: para os lados para a frequência, para cima e para baixo para o ganho. Escolha uma banda abaixo para ajustar a forma e a largura.</string>
+    <string name="equalizer_band_n">Banda %1$d</string>
+    <string name="equalizer_band_bell">Sino</string>
+    <string name="equalizer_band_low_shelf">Shelf grave</string>
+    <string name="equalizer_band_high_shelf">Shelf agudo</string>
+    <string name="equalizer_frequency">Frequência</string>
+    <string name="equalizer_gain">Ganho</string>
+    <string name="equalizer_q">Largura (Q)</string>
+    <string name="equalizer_remove_band">Remover esta banda</string>
+    <string name="equalizer_reset_parametric">Redefinir bandas paramétricas</string>
+    <string name="equalizer_preamp">Pré-amplificador</string>
+    <string name="equalizer_auto_preamp">Pré-amplificador automático</string>
+    <string name="equalizer_auto_preamp_subtitle">Compensa metade do reforço da curva</string>
+    <string name="equalizer_preamp_footer">Com o pré-amplificador automático ligado, o controle soma-se a ele. Desligue-o para uma correção com pré-amplificador próprio, como um perfil AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Sem distorção</string>
+    <string name="equalizer_headroom_ok_subtitle">Ponto mais alto: %1$s</string>
+    <string name="equalizer_headroom_over">Picos %1$s acima do máximo</string>
+    <string name="equalizer_headroom_over_subtitle">O limitador segura-os. Baixe o pré-amplificador se as partes altas soarem achatadas.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

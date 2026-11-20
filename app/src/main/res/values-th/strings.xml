@@ -912,6 +912,26 @@
     <string name="equalizer_bitstream_title">ไม่ได้ทำงานในขณะนี้</string>
     <string name="equalizer_bitstream_subtitle">แทร็กนี้ถูกส่งไปยังเอาต์พุตโดยไม่ถอดรหัส</string>
     <string name="equalizer_bitstream_footer">อีควอไลเซอร์ทำงานกับเสียงที่ถอดรหัสแล้ว แทร็กนี้ถูกส่งผ่านเป็นบิตสตรีมให้อุปกรณ์ของคุณถอดรหัสเอง จึงไม่มีตัวอย่างเสียงให้กรองที่นี่</string>
+    <string name="equalizer_parametric">พาราเมตริก</string>
+    <string name="equalizer_response">การตอบสนอง</string>
+    <string name="equalizer_parametric_footer">ลากจุดเพื่อย้ายแบนด์: ซ้ายขวาเพื่อความถี่ ขึ้นลงเพื่อเกน เลือกแบนด์ด้านล่างเพื่อตั้งรูปทรงและความกว้าง</string>
+    <string name="equalizer_band_n">แบนด์ %1$d</string>
+    <string name="equalizer_band_bell">เบลล์</string>
+    <string name="equalizer_band_low_shelf">โลว์เชลฟ์</string>
+    <string name="equalizer_band_high_shelf">ไฮเชลฟ์</string>
+    <string name="equalizer_frequency">ความถี่</string>
+    <string name="equalizer_gain">เกน</string>
+    <string name="equalizer_q">ความกว้าง (Q)</string>
+    <string name="equalizer_remove_band">ลบแบนด์นี้</string>
+    <string name="equalizer_reset_parametric">รีเซ็ตแบนด์พาราเมตริก</string>
+    <string name="equalizer_preamp">ปรีแอมป์</string>
+    <string name="equalizer_auto_preamp">ปรีแอมป์อัตโนมัติ</string>
+    <string name="equalizer_auto_preamp_subtitle">ลดบูสต์ของเคิร์ฟลงครึ่งหนึ่ง</string>
+    <string name="equalizer_preamp_footer">เมื่อเปิดปรีแอมป์อัตโนมัติ สไลเดอร์จะบวกเพิ่มเข้าไป ปิดไว้สำหรับการแก้เสียงที่กำหนดปรีแอมป์เอง เช่น โปรไฟล์ AutoEQ</string>
+    <string name="equalizer_headroom_ok">ไม่มีการคลิป</string>
+    <string name="equalizer_headroom_ok_subtitle">จุดที่ดังที่สุด: %1$s</string>
+    <string name="equalizer_headroom_over">พีคเกินสเกลเต็ม %1$s</string>
+    <string name="equalizer_headroom_over_subtitle">ลิมิเตอร์จะกดไว้ ลดปรีแอมป์ถ้าช่วงที่ดังฟังดูแบน</string>
 
     <string name="system_equalizer">System equalizer</string>
 

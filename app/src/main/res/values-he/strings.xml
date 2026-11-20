@@ -1126,6 +1126,26 @@
     <string name="equalizer_bitstream_title">לא פועל כרגע</string>
     <string name="equalizer_bitstream_subtitle">הרצועה הזו נשלחת לפלט בלי פענוח</string>
     <string name="equalizer_bitstream_footer">האקולייזר פועל על אודיו מפוענח. הרצועה הזו מועברת כ-bitstream שהמכשיר שלכם מפענח בעצמו, כך שאין כאן דגימות לסנן.</string>
+    <string name="equalizer_parametric">פרמטרי</string>
+    <string name="equalizer_response">תגובה</string>
+    <string name="equalizer_parametric_footer">גררו נקודה כדי להזיז את הפס שלה: לצדדים לתדר, למעלה ולמטה להגבר. בחרו פס למטה כדי לכוונן את הצורה והרוחב שלו.</string>
+    <string name="equalizer_band_n">פס %1$d</string>
+    <string name="equalizer_band_bell">פעמון</string>
+    <string name="equalizer_band_low_shelf">מדף נמוך</string>
+    <string name="equalizer_band_high_shelf">מדף גבוה</string>
+    <string name="equalizer_frequency">תדר</string>
+    <string name="equalizer_gain">הגבר</string>
+    <string name="equalizer_q">רוחב (Q)</string>
+    <string name="equalizer_remove_band">הסרת הפס</string>
+    <string name="equalizer_reset_parametric">איפוס הפסים הפרמטריים</string>
+    <string name="equalizer_preamp">קדם-מגבר</string>
+    <string name="equalizer_auto_preamp">קדם-מגבר אוטומטי</string>
+    <string name="equalizer_auto_preamp_subtitle">מחזיר חצי מההגברה של העקומה</string>
+    <string name="equalizer_preamp_footer">כשהקדם-מגבר האוטומטי פעיל, המחוון מתווסף אליו. כבו אותו עבור תיקון שמגדיר קדם-מגבר משלו, כמו פרופיל AutoEQ.</string>
+    <string name="equalizer_headroom_ok">אין עיוות</string>
+    <string name="equalizer_headroom_ok_subtitle">הנקודה החזקה ביותר: %1$s</string>
+    <string name="equalizer_headroom_over">שיאים %1$s מעל המקסימום</string>
+    <string name="equalizer_headroom_over_subtitle">המגביל מרסן אותם. הנמיכו את הקדם-מגבר אם קטעים חזקים נשמעים שטוחים.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

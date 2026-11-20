@@ -2,7 +2,11 @@ package com.musicbeat.app
 
 import androidx.media3.common.C
 import androidx.media3.common.audio.AudioProcessor
+import com.musicbeat.app.playback.EqCurve
 import com.musicbeat.app.playback.EqLayout
+import com.musicbeat.app.playback.FilterKind
+import com.musicbeat.app.playback.ParametricBand
+import com.musicbeat.app.playback.parametricCurve
 import com.musicbeat.app.playback.EqualizerPreset
 import com.musicbeat.app.playback.EqualizerProcessor
 import com.musicbeat.app.playback.PeakLimiter
@@ -217,6 +221,46 @@ class EqualizerProcessorTest {
             val preamp = manualCurve(preset.bands).preampDb
             assertTrue("${preset.name} asked for $preamp dB of make-up", preamp <= 0.001f)
         }
+    }
+
+    @Test
+    fun `a parametric bell lifts the centre it was placed at`() {
+        for (hz in listOf(90f, 730f, 3_300f, 11_000f)) {
+            val curve = parametricCurve(listOf(ParametricBand(FilterKind.BELL, hz, BOOST_DB, 2f)))
+            val processor = EqualizerProcessor().also { it.setTuning(true, curve, 0f) }
+            val gain = measure(processor, hz.toDouble()) - curve.preampDb
+            assertEquals("bell at $hz Hz", BOOST_DB.toDouble(), gain, TOLERANCE_DB)
+        }
+    }
+
+    @Test
+    fun `a disabled parametric band is flat`() {
+        val curve = parametricCurve(listOf(ParametricBand(FilterKind.BELL, 1_000f, BOOST_DB, 1f, enabled = false)))
+        assertEquals(0f, curve.peakDb, 0.001f)
+        assertEquals(0f, curve.preampDb, 0.001f)
+    }
+
+    @Test
+    fun `a parametric low shelf lifts what is below its corner`() {
+        val curve = parametricCurve(listOf(ParametricBand(FilterKind.LOW_SHELF, 300f, BOOST_DB, 0.707f)))
+        val processor = EqualizerProcessor().also { it.setTuning(true, curve, 0f) }
+        assertEquals(BOOST_DB.toDouble(), measure(processor, 40.0) - curve.preampDb, TOLERANCE_DB)
+        assertEquals(0.0, measure(processor, 8_000.0) - curve.preampDb, TOLERANCE_DB)
+    }
+
+    @Test
+    fun `the manual pre-amp replaces the automatic one when that is off`() {
+        val curve = parametricCurve(listOf(ParametricBand(FilterKind.BELL, 1_000f, 6f, 1f)))
+        assertEquals(-3f, curve.preampDb, 0.1f)
+        assertEquals(-4.5f, curve.withPreamp(auto = false, trimDb = -4.5f).preampDb, 0.001f)
+        assertEquals(-5f, curve.withPreamp(auto = true, trimDb = -2f).preampDb, 0.1f)
+    }
+
+    @Test
+    fun `a pre-amp cut is heard as a cut`() {
+        val curve = EqCurve.FLAT.withPreamp(auto = true, trimDb = -6f)
+        val processor = EqualizerProcessor().also { it.setTuning(true, curve, 0f) }
+        assertEquals(-6.0, measure(processor, 1_000.0), TOLERANCE_DB)
     }
 
     // ---- Harness -----------------------------------------------------------

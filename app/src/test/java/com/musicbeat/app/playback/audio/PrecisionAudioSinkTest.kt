@@ -1113,7 +1113,7 @@ class PrecisionAudioSinkTest {
         sink.configure(AudioSink.AudioSinkConfig.Builder(format).build())
 
         // Set high preamp (+6 dB ~= 2x gain)
-        eq.setTuning(enabled = true, com.musicbeat.app.playback.EqCurve(FloatArray(10), FloatArray(10), 6.0f), balance = 0f)
+        eq.setTuning(enabled = true, com.musicbeat.app.playback.EqCurve(FloatArray(com.musicbeat.app.playback.EqLayout.SLOTS), FloatArray(com.musicbeat.app.playback.EqLayout.SLOTS), 6.0f), balance = 0f)
 
         val frameCount = 2048
         val inputBuffer = ByteBuffer.allocateDirect(frameCount * 2 * 4).order(ByteOrder.LITTLE_ENDIAN)
@@ -1151,7 +1151,7 @@ class PrecisionAudioSinkTest {
         sink.configure(AudioSink.AudioSinkConfig.Builder(format).build())
 
         // Set high preamp (+6 dB ~= 2x gain)
-        eq.setTuning(enabled = true, com.musicbeat.app.playback.EqCurve(FloatArray(10), FloatArray(10), 6.0f), balance = 0f)
+        eq.setTuning(enabled = true, com.musicbeat.app.playback.EqCurve(FloatArray(com.musicbeat.app.playback.EqLayout.SLOTS), FloatArray(com.musicbeat.app.playback.EqLayout.SLOTS), 6.0f), balance = 0f)
 
         val frameCount = 2048
         val inputBuffer = ByteBuffer.allocateDirect(frameCount * 2 * 2).order(ByteOrder.LITTLE_ENDIAN)

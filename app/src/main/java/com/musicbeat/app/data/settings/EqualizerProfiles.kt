@@ -2,6 +2,7 @@ package com.musicbeat.app.data.settings
 
 import android.media.AudioDeviceInfo
 import com.musicbeat.app.playback.AudioRouting
+import com.musicbeat.app.playback.ParametricBand
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -31,6 +32,10 @@ data class EqSnapshot(
     val focused: Boolean,
     val balance: Float,
     val bands: List<Float>,
+    /** Null in a profile saved before the parametric tab existed; it then leaves the bands as they are. */
+    val parametric: List<ParametricBand>? = null,
+    val autoPreamp: Boolean = true,
+    val preampDb: Float = 0f,
 )
 
 /**
@@ -60,6 +65,7 @@ internal object EqualizerCodec {
     private val json = Json { ignoreUnknownKeys = true }
     private val presets = ListSerializer(UserEqPreset.serializer())
     private val profiles = MapSerializer(String.serializer(), EqSnapshot.serializer())
+    private val parametric = ListSerializer(ParametricBand.serializer())
 
     fun presets(text: String?): List<UserEqPreset> =
         text?.let { runCatching { json.decodeFromString(presets, it) }.getOrNull() }.orEmpty()
@@ -70,6 +76,12 @@ internal object EqualizerCodec {
         text?.let { runCatching { json.decodeFromString(profiles, it) }.getOrNull() }.orEmpty()
 
     fun profiles(value: Map<String, EqSnapshot>): String = json.encodeToString(profiles, value)
+
+    /** Null when there is nothing stored, or nothing readable, so the caller picks the default. */
+    fun parametric(text: String?): List<ParametricBand>? =
+        text?.let { runCatching { json.decodeFromString(parametric, it) }.getOrNull() }
+
+    fun parametric(value: List<ParametricBand>): String = json.encodeToString(parametric, value)
 }
 
 /** Longest name a saved preset keeps; the row it is shown on has room for about this much. */

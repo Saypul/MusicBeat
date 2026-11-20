@@ -1121,6 +1121,26 @@
     <string name="equalizer_bitstream_title">Gerade nicht aktiv</string>
     <string name="equalizer_bitstream_subtitle">Dieser Titel wird undekodiert an die Ausgabe gesendet</string>
     <string name="equalizer_bitstream_footer">Der Equalizer arbeitet mit dekodiertem Audio. Dieser Titel wird als Bitstream durchgereicht, den dein Gerät selbst dekodiert – hier gibt es also keine Samples zum Filtern.</string>
+    <string name="equalizer_parametric">Parametrisch</string>
+    <string name="equalizer_response">Frequenzgang</string>
+    <string name="equalizer_parametric_footer">Ziehe einen Punkt, um sein Band zu verschieben: seitwärts für die Frequenz, hoch und runter für die Verstärkung. Wähle unten ein Band, um Form und Breite einzustellen.</string>
+    <string name="equalizer_band_n">Band %1$d</string>
+    <string name="equalizer_band_bell">Glocke</string>
+    <string name="equalizer_band_low_shelf">Low-Shelf</string>
+    <string name="equalizer_band_high_shelf">High-Shelf</string>
+    <string name="equalizer_frequency">Frequenz</string>
+    <string name="equalizer_gain">Verstärkung</string>
+    <string name="equalizer_q">Breite (Q)</string>
+    <string name="equalizer_remove_band">Dieses Band entfernen</string>
+    <string name="equalizer_reset_parametric">Parametrische Bänder zurücksetzen</string>
+    <string name="equalizer_preamp">Vorverstärker</string>
+    <string name="equalizer_auto_preamp">Automatischer Vorverstärker</string>
+    <string name="equalizer_auto_preamp_subtitle">Nimmt die Hälfte der Anhebung zurück</string>
+    <string name="equalizer_preamp_footer">Ist der automatische Vorverstärker an, kommt der Regler hinzu. Schalte ihn für eine Korrektur mit eigenem Vorverstärker aus, etwa ein AutoEQ-Profil.</string>
+    <string name="equalizer_headroom_ok">Keine Übersteuerung</string>
+    <string name="equalizer_headroom_ok_subtitle">Lautester Punkt: %1$s</string>
+    <string name="equalizer_headroom_over">Spitzen %1$s über Vollaussteuerung</string>
+    <string name="equalizer_headroom_over_subtitle">Der Limiter hält sie zurück. Senke den Vorverstärker, wenn laute Stellen flach klingen.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

@@ -35,7 +35,9 @@ import com.musicbeat.app.ui.components.IosSwitch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -65,6 +67,10 @@ import com.musicbeat.app.playback.AudioOutputStatus
 import com.musicbeat.app.playback.AudioRouting
 import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.EqualizerPreset
+import com.musicbeat.app.playback.ParametricLimits
+import com.musicbeat.app.playback.manualCurve
+import com.musicbeat.app.playback.parametricCurve
+import com.musicbeat.app.playback.toneCurve
 import com.musicbeat.app.sharedui.resources.Res
 import com.musicbeat.app.sharedui.resources.hdmi_output
 import com.musicbeat.app.sharedui.resources.this_phone
@@ -96,6 +102,9 @@ import kotlin.math.roundToInt
  *
  * **Manual** is the seven-band graphic equaliser, with a preset list over it.
  *
+ * **Parametric** is up to ten bands placed anywhere, each with its own shape,
+ * gain and width, set by dragging points on the response graph.
+ *
  * Both drive the same filters — see [EqLayout] — so the tab is a way of
  * describing a curve rather than a different piece of audio machinery, and
  * switching between them glides rather than clicks.
@@ -120,6 +129,19 @@ fun EqualizerScreen(
     val preset by AppSettings.equalizerPreset.collectAsStateWithLifecycle()
     val userPresets by AppSettings.equalizerUserPresets.collectAsStateWithLifecycle()
     val perDevice by AppSettings.equalizerPerDevice.collectAsStateWithLifecycle()
+    val parametric by AppSettings.equalizerParametric.collectAsStateWithLifecycle()
+    val autoPreamp by AppSettings.equalizerAutoPreamp.collectAsStateWithLifecycle()
+    val preampDb by AppSettings.equalizerPreampDb.collectAsStateWithLifecycle()
+    var selectedBand by rememberSaveable { mutableIntStateOf(0) }
+    // The same curve [PlaybackService] hands the processors, so the graph and
+    // the headroom readout show what is being heard rather than an estimate.
+    val curve = remember(mode, toneX, toneY, focused, bands, parametric, autoPreamp, preampDb) {
+        when (mode) {
+            EqualizerMode.DYNAMIC -> toneCurve(toneX, toneY, focused)
+            EqualizerMode.MANUAL -> manualCurve(bands)
+            EqualizerMode.PARAMETRIC -> parametricCurve(parametric)
+        }.withPreamp(autoPreamp, preampDb)
+    }
     val output by AppSettings.equalizerOutput.collectAsStateWithLifecycle()
     val outputStatus by AudioOutputStatus.current.collectAsStateWithLifecycle()
     // A saved curve is named by what it was saved as; a built-in one by its preset.
@@ -205,7 +227,54 @@ fun EqualizerScreen(
                 modifier = Modifier.padding(horizontal = GROUP_INSET),
             )
 
+            if (mode != EqualizerMode.PARAMETRIC) {
+                SettingsGroup(header = stringResource(R.string.equalizer_response)) {
+                    EqResponseGraph(curve = curve, enabled = enabled)
+                }
+            }
+
             when (mode) {
+                EqualizerMode.PARAMETRIC -> {
+                    val selected = selectedBand.coerceIn(0, (parametric.size - 1).coerceAtLeast(0))
+                    SettingsGroup(
+                        header = stringResource(R.string.equalizer_response),
+                        footer = stringResource(R.string.equalizer_parametric_footer),
+                    ) {
+                        EqResponseGraph(
+                            curve = curve,
+                            enabled = enabled,
+                            bands = parametric,
+                            selected = selected,
+                            onSelect = { selectedBand = it },
+                            onMove = { index, hz, gain ->
+                                AppSettings.setEqualizerParametric(
+                                    parametric.toMutableList().also {
+                                        it[index] = it[index].copy(frequencyHz = hz, gainDb = gain)
+                                    },
+                                )
+                            },
+                        )
+                    }
+                    SettingsGroup(header = stringResource(R.string.equalizer_bands)) {
+                        ParametricEditor(
+                            bands = parametric,
+                            selected = selected,
+                            enabled = enabled,
+                            onSelect = { selectedBand = it },
+                        )
+                    }
+                    SettingsGroup {
+                        DestructiveRow(
+                            label = stringResource(R.string.equalizer_reset_parametric),
+                            enabled = enabled,
+                        ) {
+                            haptics.play(Haptic.Select)
+                            AppSettings.setEqualizerParametric(ParametricLimits.DEFAULT_BANDS)
+                            selectedBand = 0
+                        }
+                    }
+                }
+
                 EqualizerMode.DYNAMIC -> {
                     SettingsGroup(
                         header = stringResource(R.string.equalizer_tone),
@@ -274,6 +343,13 @@ fun EqualizerScreen(
                     }
                 }
             }
+
+            PreampSection(
+                curve = curve,
+                autoPreamp = autoPreamp,
+                preampDb = preampDb,
+                enabled = enabled,
+            )
 
             SettingsGroup(
                 header = stringResource(R.string.equalizer_balance),
@@ -1030,6 +1106,7 @@ private fun EqualizerMode.localizedLabel(): String = stringResource(
     when (this) {
         EqualizerMode.DYNAMIC -> R.string.equalizer_dynamic
         EqualizerMode.MANUAL -> R.string.equalizer_manual
+        EqualizerMode.PARAMETRIC -> R.string.equalizer_parametric
     },
 )
 

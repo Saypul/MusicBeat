@@ -1100,6 +1100,26 @@
     <string name="equalizer_bitstream_title">当前未运行</string>
     <string name="equalizer_bitstream_subtitle">此曲目未经解码直接发送到输出</string>
     <string name="equalizer_bitstream_footer">均衡器作用于解码后的音频。此曲目以比特流形式直通，由你的设备解码，因此这里没有可供处理的采样。</string>
+    <string name="equalizer_parametric">参数均衡</string>
+    <string name="equalizer_response">频响</string>
+    <string name="equalizer_parametric_footer">拖动圆点来移动频段：左右调频率，上下调增益。在下方选择频段以设置形状和宽度。</string>
+    <string name="equalizer_band_n">频段 %1$d</string>
+    <string name="equalizer_band_bell">峰值</string>
+    <string name="equalizer_band_low_shelf">低架</string>
+    <string name="equalizer_band_high_shelf">高架</string>
+    <string name="equalizer_frequency">频率</string>
+    <string name="equalizer_gain">增益</string>
+    <string name="equalizer_q">宽度 (Q)</string>
+    <string name="equalizer_remove_band">删除此频段</string>
+    <string name="equalizer_reset_parametric">重置参数频段</string>
+    <string name="equalizer_preamp">前级增益</string>
+    <string name="equalizer_auto_preamp">自动前级增益</string>
+    <string name="equalizer_auto_preamp_subtitle">抵消曲线一半的提升</string>
+    <string name="equalizer_preamp_footer">开启自动前级增益时，滑块会叠加在其上。对于自带前级增益的校正（如 AutoEQ 配置），请关闭它。</string>
+    <string name="equalizer_headroom_ok">无削波</string>
+    <string name="equalizer_headroom_ok_subtitle">最高点：%1$s</string>
+    <string name="equalizer_headroom_over">峰值超出满刻度 %1$s</string>
+    <string name="equalizer_headroom_over_subtitle">限幅器会压住它们。如果响亮段落听起来发扁，请降低前级增益。</string>
 
     <string name="system_equalizer">System equalizer</string>
 

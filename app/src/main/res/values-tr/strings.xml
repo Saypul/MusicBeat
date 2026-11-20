@@ -1076,6 +1076,26 @@
     <string name="equalizer_bitstream_title">Şu anda çalışmıyor</string>
     <string name="equalizer_bitstream_subtitle">Bu parça çıkışa çözülmeden gönderiliyor</string>
     <string name="equalizer_bitstream_footer">Ekolayzır çözülmüş ses üzerinde çalışır. Bu parça, cihazının çözmesi için bitstream olarak aktarılıyor; bu yüzden burada filtrelenecek örnek yok.</string>
+    <string name="equalizer_parametric">Parametrik</string>
+    <string name="equalizer_response">Tepki</string>
+    <string name="equalizer_parametric_footer">Bandını taşımak için bir noktayı sürükleyin: frekans için yana, kazanç için yukarı ve aşağı. Şeklini ve genişliğini ayarlamak için aşağıdan bir bant seçin.</string>
+    <string name="equalizer_band_n">Bant %1$d</string>
+    <string name="equalizer_band_bell">Çan</string>
+    <string name="equalizer_band_low_shelf">Alçak raf</string>
+    <string name="equalizer_band_high_shelf">Yüksek raf</string>
+    <string name="equalizer_frequency">Frekans</string>
+    <string name="equalizer_gain">Kazanç</string>
+    <string name="equalizer_q">Genişlik (Q)</string>
+    <string name="equalizer_remove_band">Bu bandı kaldır</string>
+    <string name="equalizer_reset_parametric">Parametrik bantları sıfırla</string>
+    <string name="equalizer_preamp">Ön amfi</string>
+    <string name="equalizer_auto_preamp">Otomatik ön amfi</string>
+    <string name="equalizer_auto_preamp_subtitle">Eğrinin yükseltmesinin yarısını geri alır</string>
+    <string name="equalizer_preamp_footer">Otomatik ön amfi açıkken kaydırıcı ona eklenir. AutoEQ profili gibi kendi ön amfisini belirten bir düzeltme için kapatın.</string>
+    <string name="equalizer_headroom_ok">Kırpılma yok</string>
+    <string name="equalizer_headroom_ok_subtitle">En yüksek nokta: %1$s</string>
+    <string name="equalizer_headroom_over">Tepeler tam ölçeğin %1$s üstünde</string>
+    <string name="equalizer_headroom_over_subtitle">Sınırlayıcı onları tutar. Yüksek bölümler düz geliyorsa ön amfiyi düşürün.</string>
 
     <string name="system_equalizer">Sistem ekolayzırı</string>
 

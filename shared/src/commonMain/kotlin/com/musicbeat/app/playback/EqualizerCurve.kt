@@ -1,5 +1,6 @@
 package com.musicbeat.app.playback
 
+import kotlinx.serialization.Serializable
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
@@ -51,7 +52,15 @@ object EqLayout {
     const val TONE_MID = 8
     const val TONE_HIGH = 9
 
-    const val SLOTS = 10
+    /**
+     * Slots 10..19: the parametric tab. Unlike the others these have no fixed
+     * identity — each band brings its own shape and centre — so the entries in
+     * [slots] for them are only what a curve that doesn't set them falls back to.
+     */
+    const val PARAMETRIC_FIRST = 10
+    const val PARAMETRIC_COUNT = 10
+
+    const val SLOTS = PARAMETRIC_FIRST + PARAMETRIC_COUNT
 
     val slots: List<FilterSlot> = buildList {
         MANUAL_BANDS_HZ.forEachIndexed { index, hz ->
@@ -65,6 +74,7 @@ object EqLayout {
         add(FilterSlot(FilterKind.LOW_SHELF, 250f))
         add(FilterSlot(FilterKind.BELL, 1_000f))
         add(FilterSlot(FilterKind.HIGH_SHELF, 4_000f))
+        repeat(PARAMETRIC_COUNT) { add(FilterSlot(FilterKind.BELL, 1_000f)) }
     }
 
     /** How far a manual slider travels either way. */
@@ -84,11 +94,16 @@ object EqLayout {
  * A tuning, rendered: what every slot in [EqLayout] is set to right now.
  *
  * Gains and Qs both, because Broad/Focused moves Q while the pad stays put —
- * see [toneCurve].
+ * see [toneCurve]. Shapes and centres too, for the parametric slots, whose
+ * bands bring their own; every other slot keeps the one [EqLayout] gave it.
  */
 class EqCurve(
     val gainsDb: FloatArray,
     val qs: FloatArray,
+    val kinds: Array<FilterKind>,
+    val frequenciesHz: FloatArray,
+    /** The loudest point of the summed response, in decibels; zero for a curve that only cuts. */
+    val peakDb: Float,
     /**
      * Make-up attenuation, always at or below zero: half of however far the
      * curve's loudest point was pushed up.
@@ -103,12 +118,48 @@ class EqCurve(
      */
     val preampDb: Float,
 ) {
+    /** A curve on [EqLayout]'s own shapes and centres with a pre-amp of the caller's choosing. */
+    constructor(gainsDb: FloatArray, qs: FloatArray, preampDb: Float) : this(
+        gainsDb,
+        qs,
+        Array(EqLayout.SLOTS) { EqLayout.slots[it].kind },
+        FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz },
+        0f,
+        preampDb,
+    )
+
+    fun slot(index: Int): FilterSlot = FilterSlot(kinds[index], frequenciesHz[index])
+
+    /**
+     * The same curve behind a different pre-amp: the automatic make-up when
+     * [auto], or none, and [trimDb] on top of either. The listener's own
+     * pre-amp slider, and what an imported correction asks for.
+     */
+    fun withPreamp(auto: Boolean, trimDb: Float): EqCurve {
+        val base = if (auto) -peakDb * MAKEUP_FRACTION else 0f
+        return EqCurve(gainsDb, qs, kinds, frequenciesHz, peakDb, base + trimDb)
+    }
+
     companion object {
         val FLAT = of(FloatArray(EqLayout.SLOTS), FloatArray(EqLayout.SLOTS) { 0.707f })
 
         /** Builds a curve and works out the attenuation it needs. */
-        fun of(gainsDb: FloatArray, qs: FloatArray): EqCurve =
-            EqCurve(gainsDb, qs, preampFor(gainsDb, qs))
+        fun of(
+            gainsDb: FloatArray,
+            qs: FloatArray,
+            kinds: Array<FilterKind> = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind },
+            frequenciesHz: FloatArray = FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz },
+        ): EqCurve {
+            val peak = peakOf(gainsDb, qs, kinds, frequenciesHz)
+            return EqCurve(gainsDb, qs, kinds, frequenciesHz, peak, -peak * MAKEUP_FRACTION)
+        }
+    }
+
+    /** The summed response at [hz], in decibels, before the pre-amp. */
+    fun responseDb(hz: Float): Float {
+        var sum = 0f
+        for (slot in 0 until EqLayout.SLOTS) sum += sectionGainDb(slot(slot), gainsDb[slot], qs[slot], hz)
+        return sum
     }
 }
 
@@ -158,7 +209,66 @@ fun toneCurve(x: Int, y: Int, focused: Boolean): EqCurve {
 }
 
 /**
- * How far down the curve is pulled: [MAKEUP_FRACTION] of its peak boost.
+ * One band of the parametric tab: a filter the listener places anywhere.
+ *
+ * [enabled] off keeps the band's settings but runs it at 0 dB, so switching
+ * one out to compare glides like any other change.
+ */
+@Serializable
+data class ParametricBand(
+    val kind: FilterKind = FilterKind.BELL,
+    val frequencyHz: Float = 1_000f,
+    val gainDb: Float = 0f,
+    val q: Float = 1f,
+    val enabled: Boolean = true,
+) {
+    /** The same band with every value pulled inside what the processor accepts. */
+    fun clamped(): ParametricBand = copy(
+        frequencyHz = frequencyHz.coerceIn(ParametricLimits.MIN_HZ, ParametricLimits.MAX_HZ),
+        gainDb = gainDb.coerceIn(-ParametricLimits.RANGE_DB, ParametricLimits.RANGE_DB),
+        q = q.coerceIn(ParametricLimits.MIN_Q, ParametricLimits.MAX_Q),
+    )
+}
+
+object ParametricLimits {
+    const val MIN_HZ = 20f
+    const val MAX_HZ = 20_000f
+    const val RANGE_DB = 15f
+    const val MIN_Q = 0.1f
+    const val MAX_Q = 10f
+
+    /** How far the pre-amp slider travels either way. */
+    const val PREAMP_RANGE_DB = 15f
+
+    /** Where a new parametric tab starts: five flat bands spread across the spectrum. */
+    val DEFAULT_BANDS = listOf(
+        ParametricBand(FilterKind.LOW_SHELF, 80f, 0f, 0.707f),
+        ParametricBand(FilterKind.BELL, 250f, 0f, 1f),
+        ParametricBand(FilterKind.BELL, 1_000f, 0f, 1f),
+        ParametricBand(FilterKind.BELL, 4_000f, 0f, 1f),
+        ParametricBand(FilterKind.HIGH_SHELF, 10_000f, 0f, 0.707f),
+    )
+}
+
+/** The parametric bands, as a curve. At most [EqLayout.PARAMETRIC_COUNT] are used. */
+fun parametricCurve(bands: List<ParametricBand>): EqCurve {
+    val gains = FloatArray(EqLayout.SLOTS)
+    val qs = FloatArray(EqLayout.SLOTS) { 0.707f }
+    val kinds = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind }
+    val frequencies = FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz }
+    bands.take(EqLayout.PARAMETRIC_COUNT).forEachIndexed { index, raw ->
+        val band = raw.clamped()
+        val slot = EqLayout.PARAMETRIC_FIRST + index
+        gains[slot] = if (band.enabled) band.gainDb else 0f
+        qs[slot] = band.q
+        kinds[slot] = band.kind
+        frequencies[slot] = band.frequencyHz
+    }
+    return EqCurve.of(gains, qs, kinds, frequencies)
+}
+
+/**
+ * The curve's loudest point, at or above zero.
  *
  * Taking the largest single band gain would under-read it: the bands overlap,
  * so two neighbours at +6 dB are worth more than +6 dB between them. This walks
@@ -166,17 +276,22 @@ fun toneCurve(x: Int, y: Int, focused: Boolean): EqCurve {
  * decibels add — and takes its actual peak. Runs on whoever changed the
  * setting, never on the audio thread.
  */
-private fun preampFor(gainsDb: FloatArray, qs: FloatArray): Float {
+private fun peakOf(
+    gainsDb: FloatArray,
+    qs: FloatArray,
+    kinds: Array<FilterKind>,
+    frequenciesHz: FloatArray,
+): Float {
     var peak = 0f
     for (point in 0 until RESPONSE_POINTS) {
         val hz = responseFrequency(point)
         var sum = 0f
         for (slot in 0 until EqLayout.SLOTS) {
-            sum += sectionGainDb(EqLayout.slots[slot], gainsDb[slot], qs[slot], hz)
+            sum += sectionGainDb(FilterSlot(kinds[slot], frequenciesHz[slot]), gainsDb[slot], qs[slot], hz)
         }
         if (sum > peak) peak = sum
     }
-    return -peak * MAKEUP_FRACTION
+    return peak
 }
 
 /** Log-spaced across the audible band: 20 Hz to 20 kHz. */
@@ -217,8 +332,8 @@ internal fun sectionGainDb(slot: FilterSlot, gainDb: Float, q: Float, hz: Float)
     return (20.0 * log10(magnitude)).toFloat()
 }
 
-/** How much of a curve's peak boost [preampFor] takes back; [PeakLimiter] covers the rest. */
+/** How much of a curve's peak boost the automatic make-up takes back; [PeakLimiter] covers the rest. */
 private const val MAKEUP_FRACTION = 0.5f
 
 /** Enough to find the peak of a curve this smooth without wasting time on it. */
-private const val RESPONSE_POINTS = 96
+private const val RESPONSE_POINTS = 240

@@ -874,6 +874,26 @@
     <string name="equalizer_bitstream_title">Hiện không hoạt động</string>
     <string name="equalizer_bitstream_subtitle">Bản nhạc này được gửi tới đầu ra mà không giải mã</string>
     <string name="equalizer_bitstream_footer">Bộ chỉnh âm chỉ hoạt động trên âm thanh đã giải mã. Bản nhạc này được truyền thẳng dưới dạng bitstream để thiết bị của bạn tự giải mã, nên ở đây không có mẫu âm thanh nào để lọc.</string>
+    <string name="equalizer_parametric">Tham số</string>
+    <string name="equalizer_response">Đáp tuyến</string>
+    <string name="equalizer_parametric_footer">Kéo một điểm để di chuyển dải: sang ngang cho tần số, lên xuống cho độ lợi. Chọn một dải bên dưới để đặt hình dạng và độ rộng.</string>
+    <string name="equalizer_band_n">Dải %1$d</string>
+    <string name="equalizer_band_bell">Chuông</string>
+    <string name="equalizer_band_low_shelf">Shelf trầm</string>
+    <string name="equalizer_band_high_shelf">Shelf cao</string>
+    <string name="equalizer_frequency">Tần số</string>
+    <string name="equalizer_gain">Độ lợi</string>
+    <string name="equalizer_q">Độ rộng (Q)</string>
+    <string name="equalizer_remove_band">Xóa dải này</string>
+    <string name="equalizer_reset_parametric">Đặt lại các dải tham số</string>
+    <string name="equalizer_preamp">Preamp</string>
+    <string name="equalizer_auto_preamp">Preamp tự động</string>
+    <string name="equalizer_auto_preamp_subtitle">Bù lại một nửa mức tăng của đường cong</string>
+    <string name="equalizer_preamp_footer">Khi bật preamp tự động, thanh trượt được cộng thêm vào. Tắt đi cho bản hiệu chỉnh có preamp riêng, như hồ sơ AutoEQ.</string>
+    <string name="equalizer_headroom_ok">Không bị méo</string>
+    <string name="equalizer_headroom_ok_subtitle">Điểm to nhất: %1$s</string>
+    <string name="equalizer_headroom_over">Đỉnh vượt mức tối đa %1$s</string>
+    <string name="equalizer_headroom_over_subtitle">Bộ giới hạn sẽ giữ lại. Hạ preamp nếu đoạn to nghe bị phẳng.</string>
 
     <string name="system_equalizer">System equalizer</string>
 

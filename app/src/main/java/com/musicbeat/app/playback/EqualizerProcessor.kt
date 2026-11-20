@@ -73,6 +73,8 @@ class EqualizerProcessor : BaseAudioProcessor() {
 
     private val currentGainDb = FloatArray(EqLayout.SLOTS)
     private val currentQ = FloatArray(EqLayout.SLOTS) { 0.707f }
+    private val currentHz = FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz }
+    private val currentKind = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind }
     private var currentPreampDb = 0f
     private var currentBalance = 0f
 
@@ -271,6 +273,8 @@ class EqualizerProcessor : BaseAudioProcessor() {
         val tuning = target
         tuning.curve.gainsDb.copyInto(currentGainDb)
         tuning.curve.qs.copyInto(currentQ)
+        tuning.curve.frequenciesHz.copyInto(currentHz)
+        tuning.curve.kinds.copyInto(currentKind)
         currentPreampDb = tuning.curve.preampDb
         currentBalance = tuning.balance
     }
@@ -279,6 +283,11 @@ class EqualizerProcessor : BaseAudioProcessor() {
         for (slot in 0 until EqLayout.SLOTS) {
             currentGainDb[slot] = linearGlide(currentGainDb[slot], tuning.curve.gainsDb[slot])
             currentQ[slot] = geometricGlide(currentQ[slot], tuning.curve.qs[slot])
+            // A parametric band's centre glides the same way, so dragging one sweeps rather than steps.
+            currentHz[slot] = geometricGlide(currentHz[slot], tuning.curve.frequenciesHz[slot])
+            // A shape can't glide. It changes outright, which is only heard when the band is
+            // boosting or cutting at the moment the listener picks another one.
+            currentKind[slot] = tuning.curve.kinds[slot]
         }
         currentPreampDb = linearGlide(currentPreampDb, tuning.curve.preampDb)
         currentBalance = linearGlide(currentBalance, tuning.balance)
@@ -303,6 +312,7 @@ class EqualizerProcessor : BaseAudioProcessor() {
         if (abs(currentPreampDb - tuning.curve.preampDb) >= SETTLED_DB) return false
         for (slot in 0 until EqLayout.SLOTS) {
             if (abs(currentGainDb[slot] - tuning.curve.gainsDb[slot]) >= SETTLED_DB) return false
+            if (abs(currentHz[slot] - tuning.curve.frequenciesHz[slot]) >= SETTLED_HZ) return false
         }
         return true
     }
@@ -326,7 +336,7 @@ class EqualizerProcessor : BaseAudioProcessor() {
 
     private fun updateCoefficients(slot: Int) {
         if (sampleRate <= 0) return
-        val spec = EqLayout.slots[slot]
+        val spec = FilterSlot(currentKind[slot], currentHz[slot])
         val a = 10f.pow(currentGainDb[slot] / 40f)
         val q = currentQ[slot].coerceAtLeast(MIN_Q)
         val base = tan(Math.PI * usableFrequency(spec.frequencyHz) / sampleRate).toFloat()
@@ -420,6 +430,9 @@ class EqualizerProcessor : BaseAudioProcessor() {
 
         /** Below this a band is doing nothing anyone can hear, so it counts as flat. */
         private const val SETTLED_DB = 0.01f
+
+        /** A centre within this of where it is headed has arrived. */
+        private const val SETTLED_HZ = 0.5f
 
         /** Same idea for the balance trim, where the scale is -1 to 1. */
         private const val SETTLED_BALANCE = 0.0005f
