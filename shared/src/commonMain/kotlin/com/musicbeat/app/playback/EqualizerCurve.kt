@@ -23,7 +23,7 @@ class FilterSlot(val kind: FilterKind, val frequencyHz: Float)
 /**
  * Every filter either tab can ask for, in one fixed list.
  *
- * Both tabs drive the *same* ten slots, and a slot the current tab doesn't use
+ * Every tab drives the *same* slots, and a slot the current tab doesn't use
  * is held at 0 dB rather than removed. That costs nothing — a section at 0 dB
  * is skipped outright by [EqualizerProcessor] — and it buys the thing that
  * matters: the set of running filters never changes shape, so switching tab or
@@ -33,7 +33,7 @@ class FilterSlot(val kind: FilterKind, val frequencyHz: Float)
  */
 object EqLayout {
 
-    /** The seven centres the manual tab puts a slider under. */
+    /** The seven centres the manual tab puts a slider under by default. */
     val MANUAL_BANDS_HZ = floatArrayOf(60f, 150f, 400f, 1_000f, 2_500f, 6_000f, 14_000f)
 
     /**
@@ -43,21 +43,28 @@ object EqLayout {
      */
     const val MANUAL_Q = 1.0f
 
-    /** Slots 0..6: the manual tab. */
+    /** Slots 0..31: the manual tab, however many sliders it is showing. */
     const val MANUAL_FIRST = 0
+
+    /** The default slider count, and the one every built-in preset is written for. */
     const val MANUAL_COUNT = 7
 
-    /** Slots 7..9: the tone pad's tilt pair and its mid contour. */
-    const val TONE_LOW = 7
-    const val TONE_MID = 8
-    const val TONE_HIGH = 9
+    /** The slider counts the manual tab offers. */
+    val MANUAL_BAND_COUNTS = listOf(MANUAL_COUNT, 10, 16, 32)
+
+    const val MANUAL_MAX = 32
+
+    /** Slots 32..34: the tone pad's tilt pair and its mid contour. */
+    const val TONE_LOW = MANUAL_FIRST + MANUAL_MAX
+    const val TONE_MID = TONE_LOW + 1
+    const val TONE_HIGH = TONE_LOW + 2
 
     /**
-     * Slots 10..19: the parametric tab. Unlike the others these have no fixed
+     * Slots 35..44: the parametric tab. Unlike the others these have no fixed
      * identity — each band brings its own shape and centre — so the entries in
      * [slots] for them are only what a curve that doesn't set them falls back to.
      */
-    const val PARAMETRIC_FIRST = 10
+    const val PARAMETRIC_FIRST = TONE_HIGH + 1
     const val PARAMETRIC_COUNT = 10
 
     const val SLOTS = PARAMETRIC_FIRST + PARAMETRIC_COUNT
@@ -71,10 +78,65 @@ object EqLayout {
             }
             add(FilterSlot(kind, hz))
         }
+        repeat(MANUAL_MAX - MANUAL_COUNT) { add(FilterSlot(FilterKind.BELL, 1_000f)) }
         add(FilterSlot(FilterKind.LOW_SHELF, 250f))
         add(FilterSlot(FilterKind.BELL, 1_000f))
         add(FilterSlot(FilterKind.HIGH_SHELF, 4_000f))
         repeat(PARAMETRIC_COUNT) { add(FilterSlot(FilterKind.BELL, 1_000f)) }
+    }
+
+    /**
+     * Where [count] sliders sit. Seven keeps the original centres; the others
+     * are evenly spaced on a log scale up to 16 kHz — ten is the octave layout
+     * a hardware graphic EQ uses (31 Hz, 62 Hz, 125 Hz…), and 16 and 32 split
+     * 25 Hz–16 kHz into two-thirds and one-third octave steps, near enough.
+     */
+    fun manualBandsHz(count: Int): FloatArray {
+        if (count == MANUAL_COUNT || count !in MANUAL_BAND_COUNTS) return MANUAL_BANDS_HZ
+        val low = if (count == 10) 31.25 else 25.0
+        val ratio = (16_000.0 / low).pow(1.0 / (count - 1))
+        return FloatArray(count) { (low * ratio.pow(it)).toFloat() }
+    }
+
+    /**
+     * The bandwidth that lets [count] neighbouring bells meet where they
+     * overlap, from their spacing in octaves. Seven lands on [MANUAL_Q] itself;
+     * 32 bands a third of an octave apart need a Q near 4.3.
+     */
+    fun manualQ(count: Int): Float {
+        if (count == MANUAL_COUNT || count !in MANUAL_BAND_COUNTS) return MANUAL_Q
+        val hz = manualBandsHz(count)
+        val ratio = (hz.last() / hz.first()).toDouble().pow(1.0 / (count - 1))
+        return (sqrt(ratio) / (ratio - 1)).toFloat()
+    }
+
+    /**
+     * [bandsDb] moved onto [count] sliders by reading the old sliders as a line
+     * across a log-frequency axis and sampling it at the new centres. Lets a
+     * seven-band preset or a saved curve land on whichever layout is showing,
+     * and keeps the shape when the listener changes how many sliders there are.
+     */
+    fun resampleBands(bandsDb: List<Float>, count: Int): List<Float> {
+        val target = if (count in MANUAL_BAND_COUNTS) count else MANUAL_COUNT
+        val source = if (bandsDb.size in MANUAL_BAND_COUNTS) {
+            bandsDb
+        } else {
+            List(MANUAL_COUNT) { bandsDb.getOrElse(it) { 0f } }
+        }
+        if (source.size == target) return source
+        val fromHz = manualBandsHz(source.size)
+        return manualBandsHz(target).map { hz ->
+            when {
+                hz <= fromHz.first() -> source.first()
+                hz >= fromHz.last() -> source.last()
+                else -> {
+                    val upper = fromHz.indexOfFirst { it >= hz }
+                    val lower = upper - 1
+                    val fraction = log10(hz / fromHz[lower]) / log10(fromHz[upper] / fromHz[lower])
+                    source[lower] + (source[upper] - source[lower]) * fraction
+                }
+            }
+        }
     }
 
     /** How far a manual slider travels either way. */
@@ -163,16 +225,32 @@ class EqCurve(
     }
 }
 
-/** The seven sliders, as a curve. Slots the tone pad owns stay flat. */
+/**
+ * The sliders, as a curve: as many as [bandsDb] has, if that is one of
+ * [EqLayout.MANUAL_BAND_COUNTS], else the first seven. Slots the tone pad owns
+ * stay flat.
+ */
 fun manualCurve(bandsDb: List<Float>): EqCurve {
+    val count = if (bandsDb.size in EqLayout.MANUAL_BAND_COUNTS) bandsDb.size else EqLayout.MANUAL_COUNT
     val gains = FloatArray(EqLayout.SLOTS)
     val qs = FloatArray(EqLayout.SLOTS) { 0.707f }
-    for (band in 0 until EqLayout.MANUAL_COUNT) {
-        gains[EqLayout.MANUAL_FIRST + band] =
-            bandsDb.getOrElse(band) { 0f }.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
-        qs[EqLayout.MANUAL_FIRST + band] = EqLayout.MANUAL_Q
+    val kinds = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind }
+    val frequencies = FloatArray(EqLayout.SLOTS) { EqLayout.slots[it].frequencyHz }
+    val centres = EqLayout.manualBandsHz(count)
+    val q = EqLayout.manualQ(count)
+    for (band in 0 until count) {
+        val slot = EqLayout.MANUAL_FIRST + band
+        gains[slot] = bandsDb.getOrElse(band) { 0f }.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
+        kinds[slot] = when (band) {
+            0 -> FilterKind.LOW_SHELF
+            count - 1 -> FilterKind.HIGH_SHELF
+            else -> FilterKind.BELL
+        }
+        // A shelf as narrow as a third-octave bell would ring at its corner.
+        qs[slot] = if (kinds[slot] == FilterKind.BELL) q else minOf(q, EqLayout.MANUAL_Q)
+        frequencies[slot] = centres[band]
     }
-    return EqCurve.of(gains, qs)
+    return EqCurve.of(gains, qs, kinds, frequencies)
 }
 
 /**

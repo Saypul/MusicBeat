@@ -1343,15 +1343,17 @@ object AppSettings {
     }
 
     /**
-     * Writes the manual tab's seven gains, and renames the preset row to suit.
+     * Writes the manual tab's gains, and renames the preset row to suit.
+     * [values] laid out for a different slider count — a seven-band preset
+     * while 32 are showing — are resampled onto [count] of them.
      *
      * Stored as text rather than seven keys of their own so that a backup
      * carries them: [exportPrefs] copies the preference file as it stands, and
      * one string is one thing to keep in step rather than seven.
      */
-    fun setEqualizerBands(values: List<Float>) {
-        val clamped = List(EqLayout.MANUAL_COUNT) {
-            values.getOrElse(it) { 0f }.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
+    fun setEqualizerBands(values: List<Float>, count: Int = equalizerBands.value.size) {
+        val clamped = EqLayout.resampleBands(values, count).map {
+            it.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
         }
         equalizerBands.value = clamped
         equalizerPreset.value = EqualizerPreset.matching(clamped)
@@ -1432,6 +1434,16 @@ object AppSettings {
         prefs.edit().putString(KEY_EQ_PARAMETRIC_PRESETS, EqualizerCodec.parametricPresets(value)).apply()
     }
 
+    /**
+     * Shows [count] sliders instead, carrying the current curve's shape across
+     * to them. Going down and back up again smooths away detail the coarser
+     * layout couldn't hold, which is the price of not keeping one curve per count.
+     */
+    fun setEqualizerBandCount(count: Int) {
+        if (count !in EqLayout.MANUAL_BAND_COUNTS || count == equalizerBands.value.size) return
+        setEqualizerBands(equalizerBands.value, count)
+    }
+
     /** Applies a preset's curve. [EqualizerPreset.CUSTOM] carries none, so it does nothing. */
     fun setEqualizerPreset(preset: EqualizerPreset) {
         if (preset == EqualizerPreset.CUSTOM) return
@@ -1498,7 +1510,7 @@ object AppSettings {
             setEqualizerTone(profile.toneX, profile.toneY)
             setEqualizerFocused(profile.focused)
             setEqualizerBalance(profile.balance)
-            setEqualizerBands(profile.bands)
+            setEqualizerBands(profile.bands, profile.bands.size)
             profile.parametric?.let { setEqualizerParametric(it) }
             setEqualizerAutoPreamp(profile.autoPreamp)
             setEqualizerPreamp(profile.preampDb)
@@ -1535,8 +1547,8 @@ object AppSettings {
             .orEmpty()
         // Padded rather than rejected: a backup written by a build with a
         // different number of bands should restore the ones it does have.
-        return List(EqLayout.MANUAL_COUNT) {
-            stored.getOrElse(it) { 0f }.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
+        return EqLayout.resampleBands(stored, stored.size).map {
+            it.coerceIn(-EqLayout.MANUAL_RANGE_DB, EqLayout.MANUAL_RANGE_DB)
         }
     }
 

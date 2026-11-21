@@ -263,6 +263,43 @@ class EqualizerProcessorTest {
         assertEquals(-6.0, measure(processor, 1_000.0), TOLERANCE_DB)
     }
 
+    @Test
+    fun `every slider count lifts its interior centres by what each slider says`() {
+        for (count in EqLayout.MANUAL_BAND_COUNTS) {
+            val centres = EqLayout.manualBandsHz(count)
+            assertEquals(count, centres.size)
+            for (band in listOf(1, count / 2, count - 2)) {
+                val bands = MutableList(count) { 0f }
+                bands[band] = BOOST_DB
+                val curve = manualCurve(bands)
+                val processor = EqualizerProcessor().also { it.setTuning(true, curve, 0f) }
+                val gain = measure(processor, centres[band].toDouble()) - curve.preampDb
+                assertEquals("$count bands, band $band", BOOST_DB.toDouble(), gain, TOLERANCE_DB)
+            }
+        }
+    }
+
+    @Test
+    fun `a curve keeps its shape when the slider count changes`() {
+        val rock = EqualizerPreset.ROCK.bands
+        for (count in EqLayout.MANUAL_BAND_COUNTS) {
+            val resampled = EqLayout.resampleBands(rock, count)
+            assertEquals(count, resampled.size)
+            // The sliders trace the same line, so going back to seven lands
+            // near where they started.
+            val back = EqLayout.resampleBands(resampled, EqLayout.MANUAL_COUNT)
+            rock.indices.forEach { assertEquals("$count bands, slider $it", rock[it], back[it], 0.5f) }
+            assertEquals(EqualizerPreset.ROCK, EqualizerPreset.matching(resampled))
+        }
+        assertEquals(rock, EqLayout.resampleBands(rock, EqLayout.MANUAL_COUNT))
+    }
+
+    @Test
+    fun `a slider list of no known length is read as the first seven`() {
+        assertEquals(EqLayout.MANUAL_COUNT, EqLayout.resampleBands(listOf(1f, 2f, 3f), 99).size)
+        assertEquals(listOf(1f, 2f, 3f, 0f, 0f, 0f, 0f), EqLayout.resampleBands(listOf(1f, 2f, 3f), 7))
+    }
+
     // ---- Harness -----------------------------------------------------------
 
     /** Sets one band and reports what the cascade did at [atHz], net of make-up. */

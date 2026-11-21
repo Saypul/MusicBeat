@@ -44,8 +44,9 @@ enum class EqualizerPreset(vararg val bandsDb: Float) {
          * slider dragged back to where it started stop saying "Custom".
          */
         fun matching(bandsDb: List<Float>): EqualizerPreset = entries.firstOrNull { preset ->
-            preset != CUSTOM && preset.bandsDb.size == bandsDb.size &&
-                preset.bandsDb.indices.all { kotlin.math.abs(preset.bandsDb[it] - bandsDb[it]) < 0.05f }
+            if (preset == CUSTOM) return@firstOrNull false
+            val gains = EqLayout.resampleBands(preset.bands, bandsDb.size)
+            gains.size == bandsDb.size && gains.indices.all { kotlin.math.abs(gains[it] - bandsDb[it]) < 0.05f }
         } ?: CUSTOM
     }
 }

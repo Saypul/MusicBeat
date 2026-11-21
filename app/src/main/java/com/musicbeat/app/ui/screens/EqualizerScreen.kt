@@ -9,6 +9,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitVerticalTouchSlopOrCancellation
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.rounded.Check
@@ -330,6 +333,17 @@ fun EqualizerScreen(
                         header = stringResource(R.string.equalizer_bands),
                         footer = stringResource(R.string.equalizer_bands_footer),
                     ) {
+                        SegmentedControl(
+                            options = EqLayout.MANUAL_BAND_COUNTS.map { it.toString() },
+                            selectedIndex = EqLayout.MANUAL_BAND_COUNTS.indexOf(bands.size),
+                            onSelect = { index ->
+                                haptics.play(Haptic.Select)
+                                AppSettings.setEqualizerBandCount(EqLayout.MANUAL_BAND_COUNTS[index])
+                            },
+                            enabled = enabled,
+                            modifier = Modifier.padding(horizontal = ROW_INSET, vertical = 12.dp),
+                        )
+                        RowDivider()
                         BandSliders(
                             bands = bands,
                             onChange = { AppSettings.setEqualizerBands(it) },
@@ -703,7 +717,7 @@ private fun ChoiceRow(
 // ---- Manual bands ----------------------------------------------------------
 
 /**
- * Seven vertical faders, drawn.
+ * The manual tab's vertical faders, drawn.
  *
  * Material's `Slider` rotated a quarter turn keeps its horizontal touch
  * geometry and its horizontal thumb, which is why every Compose equaliser built
@@ -714,6 +728,11 @@ private fun ChoiceRow(
  * showing is signed: a band at −6 dB and a band at +6 dB are equal and opposite,
  * and a bar growing from the floor would draw them as a short one and a tall
  * one.
+ *
+ * Past [FADERS_THAT_FIT] the row scrolls sideways instead of squeezing: 32
+ * faders across a phone would be a few dp each, too thin to aim at. Each fader
+ * then waits to see which way a drag goes, so a sideways swipe across them
+ * scrolls the row rather than yanking whichever knob it started on.
  */
 @Composable
 private fun BandSliders(
@@ -721,16 +740,18 @@ private fun BandSliders(
     enabled: Boolean,
     onChange: (List<Float>) -> Unit,
 ) {
+    val scrolls = bands.size > FADERS_THAT_FIT
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(if (scrolls) Modifier.horizontalScroll(rememberScrollState()) else Modifier)
             .padding(horizontal = ROW_INSET - 4.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        EqLayout.MANUAL_BANDS_HZ.forEachIndexed { index, hz ->
+        EqLayout.manualBandsHz(bands.size).forEachIndexed { index, hz ->
             val value = bands.getOrElse(index) { 0f }
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = if (scrolls) Modifier.width(SCROLLING_COLUMN_WIDTH) else Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -747,6 +768,7 @@ private fun BandSliders(
                 BandFader(
                     enabled = enabled,
                     value = value,
+                    deferToScroll = scrolls,
                     onChange = { updated ->
                         onChange(bands.toMutableList().also { it[index] = updated })
                     },
@@ -769,6 +791,7 @@ private fun BandFader(
     value: Float,
     enabled: Boolean,
     onChange: (Float) -> Unit,
+    deferToScroll: Boolean = false,
 ) {
     val haptics = rememberHaptics()
     val trackColor = MaterialTheme.colorScheme.outline
@@ -784,13 +807,13 @@ private fun BandFader(
 
     Canvas(
         modifier = Modifier
-            .width(FADER_WIDTH)
+            .widthIn(max = FADER_WIDTH)
+            .fillMaxWidth()
             .height(FADER_HEIGHT)
-            .pointerInput(enabled) {
+            .pointerInput(enabled, deferToScroll) {
                 if (!enabled) return@pointerInput
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
-                    down.consume()
                     var last = latest
                     fun report(offset: Offset) {
                         val inset = KNOB_RADIUS.toPx()
@@ -806,7 +829,16 @@ private fun BandFader(
                             currentOnChange(snapped)
                         }
                     }
-                    report(down.position)
+                    if (deferToScroll) {
+                        // Null when the row took the drag sideways, or the finger lifted.
+                        val start = awaitVerticalTouchSlopOrCancellation(down.id) { change, _ ->
+                            change.consume()
+                        } ?: return@awaitEachGesture
+                        report(start.position)
+                    } else {
+                        down.consume()
+                        report(down.position)
+                    }
                     while (true) {
                         val event = awaitPointerEvent()
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
@@ -888,7 +920,7 @@ private fun trimGain(value: Float): String =
 /** "60", "2.5k", "14k" — the labels a hardware equaliser prints. */
 private fun formatFrequency(hz: Float): String = when {
     hz < 1_000f -> hz.roundToInt().toString()
-    hz % 1_000f == 0f -> "${(hz / 1_000f).roundToInt()}k"
+    hz % 1_000f == 0f || hz >= 9_950f -> "${(hz / 1_000f).roundToInt()}k"
     else -> String.format(Locale.getDefault(), "%.1fk", hz / 1_000f)
 }
 
@@ -1149,6 +1181,8 @@ private val PUCK_RADIUS = 19.dp
 private val DOT_RADIUS = 2.5.dp
 private val FADER_HEIGHT = 150.dp
 private val FADER_WIDTH = 34.dp
+private const val FADERS_THAT_FIT = 10
+private val SCROLLING_COLUMN_WIDTH = 44.dp
 private val TRACK_WIDTH = 5.dp
 private val KNOB_RADIUS = 10.dp
 

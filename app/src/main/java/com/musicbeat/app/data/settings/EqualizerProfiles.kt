@@ -2,6 +2,7 @@ package com.musicbeat.app.data.settings
 
 import android.media.AudioDeviceInfo
 import com.musicbeat.app.playback.AudioRouting
+import com.musicbeat.app.playback.EqLayout
 import com.musicbeat.app.playback.ParametricBand
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -14,8 +15,10 @@ import kotlin.math.abs
 @Serializable
 data class UserEqPreset(val name: String, val bands: List<Float>) {
     /** Whether [bands] are this curve, give or take what a slider can't show. */
-    fun matches(bands: List<Float>): Boolean =
-        this.bands.size == bands.size && this.bands.indices.all { abs(this.bands[it] - bands[it]) < BAND_EPSILON_DB }
+    fun matches(bands: List<Float>): Boolean {
+        val mine = EqLayout.resampleBands(this.bands, bands.size)
+        return mine.size == bands.size && mine.indices.all { abs(mine[it] - bands[it]) < BAND_EPSILON_DB }
+    }
 }
 
 /**
