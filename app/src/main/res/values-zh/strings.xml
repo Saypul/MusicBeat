@@ -1080,6 +1080,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">声道</string>
+    <string name="equalizer_channels_stereo">立体声</string>
+    <string name="equalizer_channels_mono">单声道</string>
+    <string name="equalizer_channels_swapped">左右互换</string>
+    <string name="equalizer_channels_footer">单声道会把两侧声音送到每只耳朵，适合只戴一只耳机或严重偏向一侧的混音。互换适用于耳机戴反的情况。</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

@@ -1129,6 +1129,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Каналы</string>
+    <string name="equalizer_channels_stereo">Стерео</string>
+    <string name="equalizer_channels_mono">Моно</string>
+    <string name="equalizer_channels_swapped">Поменять Л/П</string>
+    <string name="equalizer_channels_footer">Моно подаёт обе стороны в каждое ухо — для одного наушника или сведения, сильно смещённого в сторону. «Поменять» — для наушников, надетых наоборот.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

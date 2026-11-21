@@ -1080,6 +1080,11 @@
 
     <string name="equalizer_reset">Reset semua band</string>
 
+    <string name="equalizer_channels">Channel</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Tukar Ki/Ka</string>
+    <string name="equalizer_channels_footer">Mono memasukkan kedua sisi ke tiap telinga, untuk satu earbud atau mix yang condong ke satu sisi. Tukar untuk headphone yang terpasang terbalik.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

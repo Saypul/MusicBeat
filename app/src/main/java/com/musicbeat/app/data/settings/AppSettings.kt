@@ -156,6 +156,22 @@ enum class EqualizerMode {
     PARAMETRIC,
 }
 
+/**
+ * How the two channels reach the ears, as a stereo width: one is the
+ * recording as it is, zero sums both sides into each ear, and minus one is the
+ * same image mirrored. A width rather than a switch so the processor can glide
+ * between them like every other setting.
+ */
+enum class ChannelMode(val width: Float) {
+    STEREO(1f),
+
+    /** Both channels in both ears: one earbud, or a mix panned hard to one side. */
+    MONO(0f),
+
+    /** Left and right swapped, for headphones worn the other way round. */
+    SWAPPED(-1f),
+}
+
 /** Stable persisted ordering for each on-device music library. */
 enum class LocalMusicSort {
     TITLE_ASC,
@@ -402,6 +418,9 @@ object AppSettings {
 
     /** Left/right trim, -1 hard left to +1 hard right. Applies to both tabs. */
     val equalizerBalance = MutableStateFlow(0f)
+
+    /** Stereo, mono or swapped; applies to every tab, ahead of [equalizerBalance]. */
+    val equalizerChannels = MutableStateFlow(ChannelMode.STEREO)
 
     /** The manual tab's seven gains, in decibels, low to high. */
     val equalizerBands = MutableStateFlow(EqualizerPreset.FLAT.bands)
@@ -996,6 +1015,7 @@ object AppSettings {
         equalizerToneY.value = prefs.getInt(KEY_EQ_TONE_Y, 0).coerceIn(-EqLayout.TONE_STEPS, EqLayout.TONE_STEPS)
         equalizerFocused.value = prefs.getBoolean(KEY_EQ_FOCUSED, false)
         equalizerBalance.value = prefs.getFloat(KEY_EQ_BALANCE, 0f).coerceIn(-1f, 1f)
+        equalizerChannels.value = channelModeOf(prefs.getString(KEY_EQ_CHANNELS, null))
         equalizerBands.value = readEqualizerBands()
         equalizerParametric.value = EqualizerCodec.parametric(prefs.getString(KEY_EQ_PARAMETRIC, null))
             ?: ParametricLimits.DEFAULT_BANDS
@@ -1342,6 +1362,15 @@ object AppSettings {
         rememberEqualizerForOutput()
     }
 
+    fun setEqualizerChannels(value: ChannelMode) {
+        equalizerChannels.value = value
+        prefs.edit().putString(KEY_EQ_CHANNELS, value.name).apply()
+        rememberEqualizerForOutput()
+    }
+
+    private fun channelModeOf(name: String?): ChannelMode =
+        ChannelMode.entries.firstOrNull { it.name == name } ?: ChannelMode.STEREO
+
     /**
      * Writes the manual tab's gains, and renames the preset row to suit.
      * [values] laid out for a different slider count — a seven-band preset
@@ -1510,6 +1539,7 @@ object AppSettings {
             setEqualizerTone(profile.toneX, profile.toneY)
             setEqualizerFocused(profile.focused)
             setEqualizerBalance(profile.balance)
+            setEqualizerChannels(channelModeOf(profile.channels))
             setEqualizerBands(profile.bands, profile.bands.size)
             profile.parametric?.let { setEqualizerParametric(it) }
             setEqualizerAutoPreamp(profile.autoPreamp)
@@ -1530,6 +1560,7 @@ object AppSettings {
             toneY = equalizerToneY.value,
             focused = equalizerFocused.value,
             balance = equalizerBalance.value,
+            channels = equalizerChannels.value.name,
             bands = equalizerBands.value,
             parametric = equalizerParametric.value,
             autoPreamp = equalizerAutoPreamp.value,
@@ -2393,6 +2424,7 @@ object AppSettings {
     private const val KEY_EQ_TONE_Y = "equalizer_tone_y"
     private const val KEY_EQ_FOCUSED = "equalizer_focused"
     private const val KEY_EQ_BALANCE = "equalizer_balance"
+    private const val KEY_EQ_CHANNELS = "equalizer_channels"
     private const val KEY_EQ_BANDS = "equalizer_bands"
     private const val KEY_EQ_USER_PRESETS = "equalizer_user_presets"
     private const val KEY_EQ_PER_DEVICE = "equalizer_per_device"

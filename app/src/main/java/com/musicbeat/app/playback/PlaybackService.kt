@@ -7147,6 +7147,7 @@ class PlaybackService : MediaLibraryService() {
                 AppSettings.equalizerToneY,
                 AppSettings.equalizerFocused,
                 AppSettings.equalizerBalance,
+                AppSettings.equalizerChannels,
                 AppSettings.equalizerBands,
                 AppSettings.equalizerParametric,
                 AppSettings.equalizerAutoPreamp,
@@ -7180,8 +7181,9 @@ class PlaybackService : MediaLibraryService() {
             EqualizerMode.PARAMETRIC -> parametricCurve(AppSettings.equalizerParametric.value)
         }.withPreamp(AppSettings.equalizerAutoPreamp.value, AppSettings.equalizerPreampDb.value)
         val balance = AppSettings.equalizerBalance.value
-        equalizerProcessorA.setTuning(enabled, curve, balance)
-        equalizerProcessorB.setTuning(enabled, curve, balance)
+        val width = AppSettings.equalizerChannels.value.width
+        equalizerProcessorA.setTuning(enabled, curve, balance, width)
+        equalizerProcessorB.setTuning(enabled, curve, balance, width)
     }
 
     /**

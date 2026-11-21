@@ -1101,6 +1101,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Kanäle</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">L/R tauschen</string>
+    <string name="equalizer_channels_footer">Mono legt beide Seiten auf jedes Ohr – für einen einzelnen Ohrhörer oder stark seitlich gemischte Aufnahmen. Tauschen hilft bei verkehrt herum getragenen Kopfhörern.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

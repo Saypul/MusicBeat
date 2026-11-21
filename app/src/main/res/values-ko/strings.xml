@@ -283,6 +283,11 @@
     <string name="equalizer_bands">음역대</string>
     <string name="equalizer_bands_footer">음역대를 조정하면 프리셋은 그대로 남겨 두고 맞춤 설정을 시작합니다.</string>
     <string name="equalizer_reset">모든 음역대 초기화</string>
+    <string name="equalizer_channels">채널</string>
+    <string name="equalizer_channels_stereo">스테레오</string>
+    <string name="equalizer_channels_mono">모노</string>
+    <string name="equalizer_channels_swapped">좌우 바꾸기</string>
+    <string name="equalizer_channels_footer">모노는 양쪽 소리를 두 귀에 모두 보냅니다. 이어버드 한쪽만 쓸 때나 한쪽으로 치우친 믹스에 좋습니다. 바꾸기는 헤드폰을 반대로 썼을 때 사용합니다.</string>
     <string name="equalizer_balance">균형</string>
     <string name="equalizer_balance_left">좌</string>
     <string name="equalizer_balance_right">우</string>

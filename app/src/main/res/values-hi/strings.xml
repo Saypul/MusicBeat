@@ -1101,6 +1101,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">चैनल</string>
+    <string name="equalizer_channels_stereo">स्टीरियो</string>
+    <string name="equalizer_channels_mono">मोनो</string>
+    <string name="equalizer_channels_swapped">बाएँ/दाएँ बदलें</string>
+    <string name="equalizer_channels_footer">मोनो दोनों तरफ़ की आवाज़ हर कान में देता है, एक ईयरबड या एक तरफ़ झुके मिक्स के लिए। बदलें उल्टे पहने हेडफ़ोन के लिए है।</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

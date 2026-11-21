@@ -1081,6 +1081,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">チャンネル</string>
+    <string name="equalizer_channels_stereo">ステレオ</string>
+    <string name="equalizer_channels_mono">モノラル</string>
+    <string name="equalizer_channels_swapped">左右入替</string>
+    <string name="equalizer_channels_footer">モノラルは左右の音を両耳に流します。片耳イヤホンや片側に偏ったミックスに。入替は左右逆に着けたヘッドホン用です。</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

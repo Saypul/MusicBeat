@@ -854,6 +854,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Kênh</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Đổi T/P</string>
+    <string name="equalizer_channels_footer">Mono đưa cả hai bên vào mỗi tai, dùng cho một bên tai nghe hoặc bản mix lệch hẳn về một phía. Đổi dùng khi đeo tai nghe ngược.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

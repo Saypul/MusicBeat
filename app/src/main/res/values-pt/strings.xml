@@ -1106,6 +1106,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Canais</string>
+    <string name="equalizer_channels_stereo">Estéreo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Inverter E/D</string>
+    <string name="equalizer_channels_footer">Mono envia os dois lados para cada ouvido, para um só fone ou uma mixagem puxada para um lado. Inverter serve para fones usados ao contrário.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

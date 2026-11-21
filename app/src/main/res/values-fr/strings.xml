@@ -1102,6 +1102,11 @@
 
     <string name="equalizer_reset">Réinitialiser toutes les bandes</string>
 
+    <string name="equalizer_channels">Canaux</string>
+    <string name="equalizer_channels_stereo">Stéréo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Inverser G/D</string>
+    <string name="equalizer_channels_footer">Mono envoie les deux côtés dans chaque oreille, pour une seule oreillette ou un mixage très décalé d’un côté. Inverser sert aux écouteurs portés à l’envers.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">G</string>

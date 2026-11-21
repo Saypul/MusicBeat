@@ -1056,6 +1056,11 @@
 
     <string name="equalizer_reset">Tüm bantları sıfırla</string>
 
+    <string name="equalizer_channels">Kanallar</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Sol/Sağ değiş</string>
+    <string name="equalizer_channels_footer">Mono her iki tarafı her kulağa verir; tek kulaklık ya da bir yana yaslanmış miksler için. Değiştir, ters takılmış kulaklıklar içindir.</string>
     <string name="equalizer_balance">Denge</string>
 
     <string name="equalizer_balance_left">L</string>

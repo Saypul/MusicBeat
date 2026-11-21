@@ -892,6 +892,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">ช่องเสียง</string>
+    <string name="equalizer_channels_stereo">สเตอริโอ</string>
+    <string name="equalizer_channels_mono">โมโน</string>
+    <string name="equalizer_channels_swapped">สลับซ้าย/ขวา</string>
+    <string name="equalizer_channels_footer">โมโนส่งเสียงทั้งสองข้างเข้าหูทั้งสองข้าง เหมาะกับหูฟังข้างเดียวหรือมิกซ์ที่เอียงไปข้างหนึ่ง สลับใช้เมื่อสวมหูฟังกลับด้าน</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

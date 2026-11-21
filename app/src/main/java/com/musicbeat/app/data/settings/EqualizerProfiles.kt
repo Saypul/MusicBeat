@@ -54,6 +54,8 @@ data class EqSnapshot(
     val parametric: List<ParametricBand>? = null,
     val autoPreamp: Boolean = true,
     val preampDb: Float = 0f,
+    /** A [ChannelMode] name; stereo for a profile saved before there was a choice. */
+    val channels: String = "STEREO",
 )
 
 /**

@@ -1106,6 +1106,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">ערוצים</string>
+    <string name="equalizer_channels_stereo">סטריאו</string>
+    <string name="equalizer_channels_mono">מונו</string>
+    <string name="equalizer_channels_swapped">החלפת ש/י</string>
+    <string name="equalizer_channels_footer">מונו משמיע את שני הצדדים בכל אוזן, לאוזנייה אחת או למיקס שנוטה לצד אחד. החלפה מיועדת לאוזניות שנחבשו הפוך.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

@@ -59,9 +59,9 @@ import kotlin.math.tan
 class EqualizerProcessor : BaseAudioProcessor() {
 
     /** What the processor is aiming at. Swapped whole, never mutated in place. */
-    private class Tuning(val curve: EqCurve, val balance: Float) {
+    private class Tuning(val curve: EqCurve, val balance: Float, val width: Float) {
         companion object {
-            val OFF = Tuning(EqCurve.FLAT, 0f)
+            val OFF = Tuning(EqCurve.FLAT, 0f, 1f)
         }
     }
 
@@ -77,6 +77,7 @@ class EqualizerProcessor : BaseAudioProcessor() {
     private val currentKind = Array(EqLayout.SLOTS) { EqLayout.slots[it].kind }
     private var currentPreampDb = 0f
     private var currentBalance = 0f
+    private var currentWidth = 1f
 
     private val coeffA1 = FloatArray(EqLayout.SLOTS)
     private val coeffA2 = FloatArray(EqLayout.SLOTS)
@@ -117,8 +118,8 @@ class EqualizerProcessor : BaseAudioProcessor() {
      * every other change instead of cutting the current curve out from under a
      * playing track.
      */
-    fun setTuning(enabled: Boolean, curve: EqCurve, balance: Float) {
-        target = if (enabled) Tuning(curve, balance.coerceIn(-1f, 1f)) else Tuning.OFF
+    fun setTuning(enabled: Boolean, curve: EqCurve, balance: Float, width: Float = 1f) {
+        target = if (enabled) Tuning(curve, balance.coerceIn(-1f, 1f), width.coerceIn(-1f, 1f)) else Tuning.OFF
     }
 
     val isEnabled: Boolean
@@ -168,6 +169,8 @@ class EqualizerProcessor : BaseAudioProcessor() {
             val active = prepareSections()
             prepareChannelGains()
 
+            val mixes = mixesChannels()
+
             for (f in 0 until subBlock) {
                 val baseIdx = (frameOffset + f) * channelCount
                 for (channel in 0 until channelCount) {
@@ -175,8 +178,12 @@ class EqualizerProcessor : BaseAudioProcessor() {
                     for (index in 0 until active) {
                         sample = section(activeSlots[index], channel, sample)
                     }
+                    frame[channel] = sample
+                }
+                if (mixes) mixChannels()
+                for (channel in 0 until channelCount) {
                     // Headroom is preserved: sample is stored directly as Float
-                    block.samples[baseIdx + channel] = sample * channelGain[channel]
+                    block.samples[baseIdx + channel] = frame[channel] * channelGain[channel]
                 }
             }
             flushDenormals(active)
@@ -245,14 +252,20 @@ class EqualizerProcessor : BaseAudioProcessor() {
             val active = prepareSections()
             prepareChannelGains()
 
+            val mixes = mixesChannels()
+
             repeat(block) {
-                var peak = 0f
                 for (channel in 0 until channelCount) {
                     var sample = inputBuffer.short.toFloat() * invScale
                     for (index in 0 until active) {
                         sample = section(activeSlots[index], channel, sample)
                     }
-                    sample *= channelGain[channel]
+                    frame[channel] = sample
+                }
+                if (mixes) mixChannels()
+                var peak = 0f
+                for (channel in 0 until channelCount) {
+                    val sample = frame[channel] * channelGain[channel]
                     frame[channel] = sample
                     if (abs(sample) > peak) peak = abs(sample)
                 }
@@ -277,6 +290,7 @@ class EqualizerProcessor : BaseAudioProcessor() {
         tuning.curve.kinds.copyInto(currentKind)
         currentPreampDb = tuning.curve.preampDb
         currentBalance = tuning.balance
+        currentWidth = tuning.width
     }
 
     private fun glideTowards(tuning: Tuning) {
@@ -291,6 +305,7 @@ class EqualizerProcessor : BaseAudioProcessor() {
         }
         currentPreampDb = linearGlide(currentPreampDb, tuning.curve.preampDb)
         currentBalance = linearGlide(currentBalance, tuning.balance)
+        currentWidth = linearGlide(currentWidth, tuning.width)
     }
 
     private fun linearGlide(current: Float, target: Float): Float =
@@ -304,11 +319,13 @@ class EqualizerProcessor : BaseAudioProcessor() {
 
     private fun isFlat(tuning: Tuning): Boolean =
         abs(tuning.balance) < SETTLED_BALANCE &&
+            abs(tuning.width - 1f) < SETTLED_BALANCE &&
             abs(tuning.curve.preampDb) < SETTLED_DB &&
             tuning.curve.gainsDb.all { abs(it) < SETTLED_DB }
 
     private fun isSettled(tuning: Tuning): Boolean {
         if (abs(currentBalance - tuning.balance) >= SETTLED_BALANCE) return false
+        if (abs(currentWidth - tuning.width) >= SETTLED_BALANCE) return false
         if (abs(currentPreampDb - tuning.curve.preampDb) >= SETTLED_DB) return false
         for (slot in 0 until EqLayout.SLOTS) {
             if (abs(currentGainDb[slot] - tuning.curve.gainsDb[slot]) >= SETTLED_DB) return false
@@ -382,6 +399,22 @@ class EqualizerProcessor : BaseAudioProcessor() {
         } else {
             channelGain.fill(preamp)
         }
+    }
+
+    // ---- Channels ----------------------------------------------------------
+
+    private fun mixesChannels(): Boolean = channelCount == 2 && abs(currentWidth - 1f) >= SETTLED_BALANCE
+
+    /**
+     * [frame]'s two channels as mid and side, with the side scaled by the
+     * width: the mid is what both ears share, so mono keeps a centred voice at
+     * the level it was and only what differed between the sides is folded in.
+     */
+    private fun mixChannels() {
+        val mid = (frame[0] + frame[1]) * 0.5f
+        val side = (frame[0] - frame[1]) * 0.5f * currentWidth
+        frame[0] = mid + side
+        frame[1] = mid - side
     }
 
     // ---- Filter ------------------------------------------------------------

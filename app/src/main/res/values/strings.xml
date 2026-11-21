@@ -291,6 +291,11 @@
     <string name="equalizer_bands">Bands</string>
     <string name="equalizer_bands_footer">Moving a band leaves the preset behind and the curve becomes your own.</string>
     <string name="equalizer_reset">Reset all bands</string>
+    <string name="equalizer_channels">Channels</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Swap L/R</string>
+    <string name="equalizer_channels_footer">Mono puts both sides in each ear, for one earbud or a mix panned hard to one side. Swap is for headphones worn the other way round.</string>
     <string name="equalizer_balance">Balance</string>
     <string name="equalizer_balance_left">L</string>
     <string name="equalizer_balance_right">R</string>

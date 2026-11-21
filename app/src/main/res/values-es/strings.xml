@@ -1073,6 +1073,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Canales</string>
+    <string name="equalizer_channels_stereo">Estéreo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Invertir I/D</string>
+    <string name="equalizer_channels_footer">Mono envía ambos lados a cada oído, para un solo auricular o una mezcla muy cargada a un lado. Invertir sirve para auriculares puestos al revés.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

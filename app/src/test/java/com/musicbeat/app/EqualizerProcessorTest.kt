@@ -300,6 +300,36 @@ class EqualizerProcessorTest {
         assertEquals(listOf(1f, 2f, 3f, 0f, 0f, 0f, 0f), EqLayout.resampleBands(listOf(1f, 2f, 3f), 7))
     }
 
+    @Test
+    fun `mono puts a left-only tone in both ears at half the level`() {
+        val processor = EqualizerProcessor().also { it.setTuning(true, EqCurve.FLAT, 0f, width = 0f) }
+        val output = run(processor, leftOnlyTone(1_000.0))
+        val input = leftOnlyTone(1_000.0)
+        val reference = amplitudeAt(input, 1_000.0, channel = 0)
+        assertEquals(-6.02, 20 * log10(amplitudeAt(output, 1_000.0, 0) / reference), TOLERANCE_DB)
+        assertEquals(-6.02, 20 * log10(amplitudeAt(output, 1_000.0, 1) / reference), TOLERANCE_DB)
+    }
+
+    @Test
+    fun `swapped moves the left channel to the right`() {
+        val processor = EqualizerProcessor().also { it.setTuning(true, EqCurve.FLAT, 0f, width = -1f) }
+        val input = leftOnlyTone(1_000.0)
+        val output = run(processor, input)
+        val reference = amplitudeAt(input, 1_000.0, channel = 0)
+        assertEquals(0.0, 20 * log10(amplitudeAt(output, 1_000.0, 1) / reference), TOLERANCE_DB)
+        assertTrue(amplitudeAt(output, 1_000.0, 0) < reference * 0.01)
+    }
+
+    @Test
+    fun `stereo leaves the channels apart`() {
+        val processor = EqualizerProcessor().also { it.setTuning(true, EqCurve.FLAT, 0f, width = 1f) }
+        val output = run(processor, leftOnlyTone(1_000.0))
+        assertTrue(amplitudeAt(output, 1_000.0, 1) < 1.0)
+    }
+
+    private fun leftOnlyTone(hz: Double): ShortArray =
+        stereoTone(hz).also { samples -> for (frame in 0 until samples.size / 2) samples[frame * 2 + 1] = 0 }
+
     // ---- Harness -----------------------------------------------------------
 
     /** Sets one band and reports what the cascade did at [atHz], net of make-up. */
@@ -328,13 +358,13 @@ class EqualizerProcessorTest {
      * whole number of its cycles. Rejects the quantisation noise and any
      * harmonics an RMS would have counted as signal.
      */
-    private fun amplitudeAt(samples: ShortArray, hz: Double): Double {
+    private fun amplitudeAt(samples: ShortArray, hz: Double, channel: Int = 0): Double {
         var real = 0.0
         var imaginary = 0.0
         var count = 0
         for (frame in SETTLE_FRAMES until samples.size / 2) {
             val angle = 2 * PI * hz * frame / SAMPLE_RATE
-            val value = samples[frame * 2].toDouble()
+            val value = samples[frame * 2 + channel].toDouble()
             real += value * cos(angle)
             imaginary += value * sin(angle)
             count++

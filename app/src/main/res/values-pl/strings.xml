@@ -1141,6 +1141,11 @@
 
     <string name="equalizer_reset">Reset all bands</string>
 
+    <string name="equalizer_channels">Kanały</string>
+    <string name="equalizer_channels_stereo">Stereo</string>
+    <string name="equalizer_channels_mono">Mono</string>
+    <string name="equalizer_channels_swapped">Zamień L/P</string>
+    <string name="equalizer_channels_footer">Mono kieruje obie strony do każdego ucha – dla jednej słuchawki lub miksu mocno przesuniętego w bok. Zamiana pomaga, gdy słuchawki są założone odwrotnie.</string>
     <string name="equalizer_balance">Balance</string>
 
     <string name="equalizer_balance_left">L</string>

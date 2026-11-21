@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.musicbeat.app.R
 import com.musicbeat.app.data.settings.AppSettings
+import com.musicbeat.app.data.settings.ChannelMode
 import com.musicbeat.app.data.settings.EqOutput
 import com.musicbeat.app.data.settings.EqualizerMode
 import com.musicbeat.app.data.settings.USER_EQ_PRESET_NAME_MAX
@@ -130,6 +131,7 @@ fun EqualizerScreen(
     val toneY by AppSettings.equalizerToneY.collectAsStateWithLifecycle()
     val focused by AppSettings.equalizerFocused.collectAsStateWithLifecycle()
     val balance by AppSettings.equalizerBalance.collectAsStateWithLifecycle()
+    val channels by AppSettings.equalizerChannels.collectAsStateWithLifecycle()
     val bands by AppSettings.equalizerBands.collectAsStateWithLifecycle()
     val preset by AppSettings.equalizerPreset.collectAsStateWithLifecycle()
     val userPresets by AppSettings.equalizerUserPresets.collectAsStateWithLifecycle()
@@ -374,6 +376,26 @@ fun EqualizerScreen(
                 preampDb = preampDb,
                 enabled = enabled,
             )
+
+            SettingsGroup(
+                header = stringResource(R.string.equalizer_channels),
+                footer = stringResource(R.string.equalizer_channels_footer),
+            ) {
+                SegmentedControl(
+                    options = listOf(
+                        stringResource(R.string.equalizer_channels_stereo),
+                        stringResource(R.string.equalizer_channels_mono),
+                        stringResource(R.string.equalizer_channels_swapped),
+                    ),
+                    selectedIndex = channels.ordinal,
+                    onSelect = { index ->
+                        haptics.play(Haptic.Select)
+                        AppSettings.setEqualizerChannels(ChannelMode.entries[index])
+                    },
+                    enabled = enabled,
+                    modifier = Modifier.padding(horizontal = ROW_INSET, vertical = 12.dp),
+                )
+            }
 
             SettingsGroup(
                 header = stringResource(R.string.equalizer_balance),
